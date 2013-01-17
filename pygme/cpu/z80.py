@@ -9,5 +9,6 @@ class Z80:
                      ]
 
     def nop(self):
+        """The CPU performs no operation during this machine cycle."""
         self.m += 1
         self.t += 4
