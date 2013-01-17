@@ -1,6 +1,7 @@
 # Python build directories
 dist/
 build/
+Pygme.egg-info/
 
 # Python binaries
 *.py[co]
