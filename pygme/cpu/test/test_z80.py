@@ -8,23 +8,54 @@ from pygme.cpu import z80
 
 class TestZ80(unittest.TestCase):
 
+    numTests = 10
+
     def setUp(self):
         self.z80 = z80.Z80()
 
     def test_nop(self):
-        self.validOpc("NOP", 0, self.z80.nop)
-        for _ in range(1, 10):
-            m = self.z80.m
-            t = self.z80.t
-            self.z80.nop()
-            self.regEq("M", m + 1, self.z80.m)
-            self.regEq("T", t + 4, self.z80.t)
+        opc = 0
+        self.validOpc(opc, self.z80.nop, 0)
+        for _ in range(0, self.numTests):
+            self.runOp(opc, 1, 4)
 
-    def validOpc(self, name, opc, func):
+    def test_ldBCnn(self):
+        opc = 1
+        self.validOpc(opc, self.z80.ldBCnn, 2)
+        for i in range(0, self.numTests):
+            b = self.z80.b
+            c = self.z80.c
+            self.runOp(opc, 2, 10, i * 2, i * 4)
+            self.regEq("B", i * 2, self.z80.b)
+            self.regEq("C", i * 4, self.z80.c)
+
+    def validOpc(self, opc, func, argc):
         self.assertTrue(opc <= len(self.z80.instr),
-            "%s instruction out of instruction range" % name)
-        self.assertEquals(self.z80.instr[opc], func,
-            "%s should be 0x%02x(%d)" % (name, opc, opc))
+            "Opcode out of instruction range")
+        func_, argc_ = self.z80.instr[opc]
+        self.assertEquals(func, func_,
+            "Opcode should be 0x%02x(%d)" % (opc, opc))
+        self.assertEquals(argc, argc_,
+            "Instruction should take %d args, got %d" % (argc, argc_))
+
+    def runOp(self, opc, m_, t_, a=None, b=None):
+        m = self.z80.m
+        t = self.z80.t
+        op, n = self.z80.instr[opc]
+        if n == 0:
+            self.assertIsNone(a, "Expect 0 instructions, got 'a'")
+            self.assertIsNone(b, "Expect 0 instructions, got 'b'")
+            op()
+        else:
+            self.assertIsNotNone(a, "Expect %d instructions, need 'a'" % n)
+            if n == 1:
+                self.assertIsNone(b, "Expect %d instructions, got 'b'" % n)
+                op(a)
+            else:
+                self.assertIsNotNone(b, "Expect %d instructions, need 'b'" % n)
+                op(a, b)
+        self.regEq("M", m + m_, self.z80.m)
+        self.regEq("T", t + t_, self.z80.t)
 
     def regEq(self, n, old, new):
         self.assertEquals(old, new, "%s should be %d, is %d" % (n, old, new))

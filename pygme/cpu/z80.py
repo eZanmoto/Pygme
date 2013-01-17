@@ -5,12 +5,22 @@
 class Z80:
 
     def __init__(self):
+        self.b = 0
+        self.c = 0
         self.m = 0
         self.t = 0
-        self.instr = [self.nop,
+        self.instr = [(self.nop,0),
+                      (self.ldBCnn,2),
                      ]
 
     def nop(self):
         """The CPU performs no operation during this machine cycle."""
         self.m += 1
         self.t += 4
+
+    def ldBCnn(self, n, m):
+        """Loads a byte into B and a byte into C."""
+        self.b = n
+        self.c = m
+        self.m += 2
+        self.t += 10
