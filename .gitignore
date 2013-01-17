@@ -1,0 +1,6 @@
+# Python build directories
+dist/
+build/
+
+# Python binaries
+*.py[co]
