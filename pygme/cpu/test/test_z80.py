@@ -29,6 +29,19 @@ class TestZ80(unittest.TestCase):
             self.regEq("B", i * 2, self.z80.b)
             self.regEq("C", i * 4, self.z80.c)
 
+    def test_ldBCnn_maxValue(self):
+        self.z80.ldBCnn(0x00, 0x00)
+        with self.assertRaises(ValueError):
+            self.z80.ldBCnn(0xff, 0x00)
+        with self.assertRaises(ValueError):
+            self.z80.ldBCnn(0x00, 0xff)
+
+    def test_ldBCnn_minValue(self):
+        with self.assertRaises(ValueError):
+            self.z80.ldBCnn(-1, 0)
+        with self.assertRaises(ValueError):
+            self.z80.ldBCnn(0, -1)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc <= len(self.z80.instr),
             "Opcode out of instruction range")

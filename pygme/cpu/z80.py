@@ -20,6 +20,10 @@ class Z80:
 
     def ldBCnn(self, n, m):
         """Loads a byte into B and a byte into C."""
+        if n < 0 or n >= 0xff:
+            raise ValueError
+        if m < 0 or m >= 0xff:
+            raise ValueError
         self.b = n
         self.c = m
         self.m += 2
