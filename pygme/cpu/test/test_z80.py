@@ -59,7 +59,7 @@ class TestZ80(unittest.TestCase):
         self.validOpc(opc, self.z80.incBC, 0)
         self.regEq("B", self.z80.b, 0)
         for i in range(0, 0x200):
-            self.regEq("B", self.z80.b, i & 0xff)
+            self.regEq("C", self.z80.c, i & 0xff)
             self.runOp(opc, 1, 4)
         self.regEq("B", self.z80.b, 2)
 
