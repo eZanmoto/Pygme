@@ -29,11 +29,11 @@ class Z80:
             raise ValueError("Value overflow for C: 0x%04x(%d)" % (c, c))
         self.b = b
         self.c = c
-        self.m += 2
-        self.t += 10
+        self.m += 3
+        self.t += 12
 
     def ldMemBCA(self):
         """Loads the contents of A into the memory address specified by BC."""
         self._mem.set8((self.b << 8) + self.c, self.a)
         self.m += 2
-        self.t += 7
+        self.t += 8

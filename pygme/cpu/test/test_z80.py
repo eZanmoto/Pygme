@@ -27,7 +27,7 @@ class TestZ80(unittest.TestCase):
         for i in range(0, self.numTests):
             b = self.z80.b
             c = self.z80.c
-            self.runOp(opc, 2, 10, i * 2, i * 4)
+            self.runOp(opc, 3, 12, i * 2, i * 4)
             self.regEq("B", i * 2, self.z80.b)
             self.regEq("C", i * 4, self.z80.c)
 
@@ -52,7 +52,7 @@ class TestZ80(unittest.TestCase):
             self.z80.ldBCnn(i * 2, i * 4)
             addr = (self.z80.b << 8) + self.z80.c
             self.assertEquals(self.mem.get8(addr), 0)
-            self.runOp(opc, 2, 7)
+            self.runOp(opc, 2, 8)
             self.assertEquals(self.mem.get8(addr), self.z80.a)
 
     def validOpc(self, opc, func, argc):
