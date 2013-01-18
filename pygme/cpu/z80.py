@@ -11,10 +11,10 @@ class Z80:
         self.m = 0
         self.t = 0
         self._mem = mem
-        self.instr = [(self.nop,0),
-                      (self.ldBCnn,2),
-                      (self.ldMemBCA,0),
-                      (self.incBC,0),
+        self.instr = [(self.nop, 0),
+                      (self.ldBCnn, 2),
+                      (self.ldMemBCA, 0),
+                      (self.incBC, 0),
                      ]
 
     def nop(self):
