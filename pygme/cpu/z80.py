@@ -2,6 +2,38 @@
 # Use of this source code is governed by a GPL
 # license that can be found in the LICENSE file.
 
+# Instructions that update flags:
+#     LDHL SP, n
+#     ADD  A, n
+#     ADC  A, n
+#     SUB  A, n
+#     SBC  A, n
+#     AND  A, n
+#     OR   A, n
+#     XOR  A, n
+#     CP   A, n
+#     INC  n
+#     DEC  n
+#     ADD  HL, n
+#     ADD  SP, n
+#     SWAP n
+#     DAA
+#     CPL
+#     CFF
+#     SCF
+#     RLCA
+#     RLA
+#     RRCA
+#     RRA
+#     RLC  n
+#     RL   n
+#     RRC  n
+#     RR   n
+#     SLA  n
+#     SRA  n
+#     SRL  n
+#     BIT  b, r
+#     JP   cc, nn
 class Z80:
 
     def __init__(self, mem):
