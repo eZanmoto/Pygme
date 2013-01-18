@@ -53,6 +53,7 @@ class Z80:
                       (self.incBC, 0),
                       (self.incB, 0),
                       (self.decB, 0),
+                      (self.ldBn, 1),
                      ]
 
     def nop(self):
@@ -100,6 +101,17 @@ class Z80:
         self.chkZ(self.b)
         self.m += 1
         self.t += 4
+
+    def ldBn(self, b):
+        """Loads a byte into B."""
+        self.chkRegByte("B", b)
+        self.b = b
+        self.m += 1
+        self.t += 4
+
+    def chkRegByte(self, r, b):
+        if b < 0 or b > 0xff:
+            raise ValueError("Value overflow for %s: 0x%x(%d)" % (r, b, b))
 
     def chkZ(self, v):
         self.z = v == 0

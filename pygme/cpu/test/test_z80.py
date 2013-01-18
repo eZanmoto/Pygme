@@ -88,6 +88,23 @@ class TestZ80(unittest.TestCase):
             self.assertEquals(self.z80.c, c)
             self.assertEquals(self.z80.h, i & 0xf != 0)
 
+    def test_ldBn(self):
+        opc = 0x06
+        self.validOpc(opc, self.z80.ldBn, 1)
+        for i in range(0, self.numTests):
+            self.runOp(opc, 1, 4, i)
+            self.regEq("B", self.z80.b, i)
+
+    def test_ldBn_maxValue(self):
+        self.z80.ldBn(0xff)
+        with self.assertRaises(ValueError):
+            self.z80.ldBn(0x100)
+
+    def test_ldBn_minValue(self):
+        self.z80.ldBn(0)
+        with self.assertRaises(ValueError):
+            self.z80.ldBn(-1)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
