@@ -69,7 +69,6 @@ class TestZ80(unittest.TestCase):
         opc = 4
         self.validOpc(opc, self.z80.incB, 0)
         for i in range(1, 0x200):
-            b = self.z80.b
             c = self.z80.c
             self.runOp(opc, 1, 4)
             self.assertEquals(self.z80.b, i & 0xff)
