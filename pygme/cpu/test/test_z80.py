@@ -16,13 +16,13 @@ class TestZ80(unittest.TestCase):
         self.z80 = z80.Z80(self.mem)
 
     def test_nop(self):
-        opc = 0
+        opc = 0x00
         self.validOpc(opc, self.z80.nop, 0)
         for _ in range(0, self.numTests):
             self.runOp(opc, 1, 4)
 
     def test_ldBCnn(self):
-        opc = 1
+        opc = 0x01
         self.validOpc(opc, self.z80.ldBCnn, 2)
         for i in range(0, self.numTests):
             b = self.z80.b
@@ -46,7 +46,7 @@ class TestZ80(unittest.TestCase):
             self.z80.ldBCnn(0, -1)
 
     def test_ldMemBCA(self):
-        opc = 2
+        opc = 0x02
         self.validOpc(opc, self.z80.ldMemBCA, 0)
         for i in range(0, self.numTests):
             self.z80.a = i
@@ -57,7 +57,7 @@ class TestZ80(unittest.TestCase):
             self.assertEquals(self.mem.get8(addr), self.z80.a)
 
     def test_incBC(self):
-        opc = 3
+        opc = 0x03
         self.validOpc(opc, self.z80.incBC, 0)
         self.assertEquals(self.z80.b, 0)
         for i in range(0, 0x200):
@@ -66,7 +66,7 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(self.z80.b, 2)
 
     def test_incB(self):
-        opc = 4
+        opc = 0x04
         self.validOpc(opc, self.z80.incB, 0)
         for i in range(1, 0x200):
             c = self.z80.c
@@ -78,7 +78,7 @@ class TestZ80(unittest.TestCase):
             self.assertEquals(self.z80.h, (i - 1) & 0xf == 0xf)
 
     def test_decB(self):
-        opc = 5
+        opc = 0x05
         self.validOpc(opc, self.z80.decB, 0)
         self.z80.ldBCnn(0x1ff & 0xff, 0)
         for i in range(0x1ff, 0, -1):
