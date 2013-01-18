@@ -5,13 +5,15 @@
 import unittest
 
 from pygme.cpu import z80
+from pygme.memory import array
 
 class TestZ80(unittest.TestCase):
 
     numTests = 10
 
     def setUp(self):
-        self.z80 = z80.Z80()
+        self.mem = array.Array(1 << 16)
+        self.z80 = z80.Z80(self.mem)
 
     def test_nop(self):
         opc = 0
@@ -41,6 +43,17 @@ class TestZ80(unittest.TestCase):
             self.z80.ldBCnn(-1, 0)
         with self.assertRaises(ValueError):
             self.z80.ldBCnn(0, -1)
+
+    def test_ldMemBCA(self):
+        opc = 2
+        self.validOpc(opc, self.z80.ldMemBCA, 0)
+        for i in range(0, self.numTests):
+            self.z80.a = i
+            self.z80.ldBCnn(i * 2, i * 4)
+            addr = (self.z80.b << 8) + self.z80.c
+            self.assertEquals(self.mem.get8(addr), 0)
+            self.runOp(opc, 2, 7)
+            self.assertEquals(self.mem.get8(addr), self.z80.a)
 
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc <= len(self.z80.instr),
@@ -74,6 +87,7 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(old, new, "%s should be %d, is %d" % (n, old, new))
 
     def tearDown(self):
+        self.mem = None
         self.z80 = None
 
 

@@ -4,13 +4,16 @@
 
 class Z80:
 
-    def __init__(self):
+    def __init__(self, mem):
+        self.a = 0
         self.b = 0
         self.c = 0
         self.m = 0
         self.t = 0
+        self._mem = mem
         self.instr = [(self.nop,0),
                       (self.ldBCnn,2),
+                      (self.ldMemBCA,0),
                      ]
 
     def nop(self):
@@ -18,13 +21,19 @@ class Z80:
         self.m += 1
         self.t += 4
 
-    def ldBCnn(self, n, m):
+    def ldBCnn(self, b, c):
         """Loads a byte into B and a byte into C."""
-        if n < 0 or n >= 0xff:
-            raise ValueError
-        if m < 0 or m >= 0xff:
-            raise ValueError
-        self.b = n
-        self.c = m
+        if b < 0 or b >= 0xff:
+            raise ValueError("Value overflow for B: 0x%04x(%d)" % (b, b))
+        if c < 0 or c >= 0xff:
+            raise ValueError("Value overflow for C: 0x%04x(%d)" % (c, c))
+        self.b = b
+        self.c = c
         self.m += 2
         self.t += 10
+
+    def ldMemBCA(self):
+        """Loads the contents of A into the memory address specified by BC."""
+        self._mem.set8((self.b << 8) + self.c, self.a)
+        self.m += 2
+        self.t += 7
