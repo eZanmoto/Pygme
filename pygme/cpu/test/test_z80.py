@@ -28,8 +28,8 @@ class TestZ80(unittest.TestCase):
             b = self.z80.b
             c = self.z80.c
             self.runOp(opc, 3, 12, i * 2, i * 4)
-            self.regEq("B", i * 2, self.z80.b)
-            self.regEq("C", i * 4, self.z80.c)
+            self.regEq("B", self.z80.b, i * 2)
+            self.regEq("C", self.z80.c, i * 4)
 
     def test_ldBCnn_maxValue(self):
         self.z80.ldBCnn(0xff, 0xff)
@@ -59,11 +59,11 @@ class TestZ80(unittest.TestCase):
     def test_incBC(self):
         opc = 0x03
         self.validOpc(opc, self.z80.incBC, 0)
-        self.assertEquals(self.z80.b, 0)
+        self.regEq("B", self.z80.b, 0)
         for i in range(0, 0x200):
-            self.assertEquals(self.z80.c, i & 0xff)
+            self.regEq("B", self.z80.b, i & 0xff)
             self.runOp(opc, 1, 4)
-        self.assertEquals(self.z80.b, 2)
+        self.regEq("B", self.z80.b, 2)
 
     def test_incB(self):
         opc = 0x04
@@ -71,11 +71,11 @@ class TestZ80(unittest.TestCase):
         for i in range(1, 0x200):
             c = self.z80.c
             self.runOp(opc, 1, 4)
-            self.assertEquals(self.z80.b, i & 0xff)
-            self.assertEquals(self.z80.z, i & 0xff == 0)
-            self.assertFalse(self.z80.n)
-            self.assertEquals(self.z80.c, c)
-            self.assertEquals(self.z80.h, (i - 1) & 0xf == 0xf)
+            self.regEq("B", self.z80.b, i & 0xff)
+            self.regEq("Z", self.z80.z, i & 0xff == 0)
+            self.regEq("N", self.z80.n, False)
+            self.regEq("C", self.z80.c, c)
+            self.regEq("H", self.z80.h, (i - 1) & 0xf == 0xf)
 
     def test_decB(self):
         opc = 0x05
@@ -118,8 +118,8 @@ class TestZ80(unittest.TestCase):
         self.regEq("M", m + m_, self.z80.m)
         self.regEq("T", t + t_, self.z80.t)
 
-    def regEq(self, n, old, new):
-        self.assertEquals(old, new, "%s should be %d, is %d" % (n, old, new))
+    def regEq(self, n, reg, val):
+        self.assertEquals(reg, val, "%s should be %d, is %d" % (n, val, reg))
 
     def tearDown(self):
         self.mem = None
