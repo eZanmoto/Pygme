@@ -25,8 +25,6 @@ class TestZ80(unittest.TestCase):
         opc = 0x01
         self.validOpc(opc, self.z80.ldBCnn, 2)
         for i in range(0, self.numTests):
-            b = self.z80.b
-            c = self.z80.c
             self.runOp(opc, 3, 12, i * 2, i * 4)
             self.regEq("B", self.z80.b, i * 2)
             self.regEq("C", self.z80.c, i * 4)
