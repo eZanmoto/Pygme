@@ -32,13 +32,14 @@ class TestZ80(unittest.TestCase):
             self.regEq("C", i * 4, self.z80.c)
 
     def test_ldBCnn_maxValue(self):
-        self.z80.ldBCnn(0x00, 0x00)
+        self.z80.ldBCnn(0xff, 0xff)
         with self.assertRaises(ValueError):
-            self.z80.ldBCnn(0xff, 0x00)
+            self.z80.ldBCnn(0x100, 0x00)
         with self.assertRaises(ValueError):
-            self.z80.ldBCnn(0x00, 0xff)
+            self.z80.ldBCnn(0x00, 0x100)
 
     def test_ldBCnn_minValue(self):
+        self.z80.ldBCnn(0, 0)
         with self.assertRaises(ValueError):
             self.z80.ldBCnn(-1, 0)
         with self.assertRaises(ValueError):

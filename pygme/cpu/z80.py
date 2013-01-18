@@ -23,9 +23,9 @@ class Z80:
 
     def ldBCnn(self, b, c):
         """Loads a byte into B and a byte into C."""
-        if b < 0 or b >= 0xff:
+        if b < 0 or b > 0xff:
             raise ValueError("Value overflow for B: 0x%04x(%d)" % (b, b))
-        if c < 0 or c >= 0xff:
+        if c < 0 or c > 0xff:
             raise ValueError("Value overflow for C: 0x%04x(%d)" % (c, c))
         self.b = b
         self.c = c
