@@ -14,6 +14,7 @@ class Z80:
         self.instr = [(self.nop,0),
                       (self.ldBCnn,2),
                       (self.ldMemBCA,0),
+                      (self.incBC,0),
                      ]
 
     def nop(self):
@@ -37,3 +38,11 @@ class Z80:
         self._mem.set8((self.b << 8) + self.c, self.a)
         self.m += 2
         self.t += 8
+
+    def incBC(self):
+        """Increments the contents of BC."""
+        self.c = (self.c + 1) & 0xff
+        if self.c == 0:
+            self.b = (self.b + 1) & 0xff
+        self.m += 1
+        self.t += 4

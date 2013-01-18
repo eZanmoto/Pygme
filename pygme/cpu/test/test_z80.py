@@ -56,6 +56,15 @@ class TestZ80(unittest.TestCase):
             self.runOp(opc, 2, 8)
             self.assertEquals(self.mem.get8(addr), self.z80.a)
 
+    def test_incBC(self):
+        opc = 3
+        self.validOpc(opc, self.z80.incBC, 0)
+        self.assertEquals(self.z80.b, 0)
+        for i in range(0, 0x100):
+            self.assertEquals(self.z80.c, i & 0xff)
+            self.runOp(opc, 1, 4)
+        self.assertEquals(self.z80.b, 1)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
