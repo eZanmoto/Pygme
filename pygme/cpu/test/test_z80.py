@@ -27,7 +27,7 @@ class TestZ80(unittest.TestCase):
         for i in range(0, self.numTests):
             b = self.z80.b
             c = self.z80.c
-            self.runOp(opc, 2, 10, i * 2, i * 4)
+            self.runOp(opc, 3, 12, i * 2, i * 4)
             self.regEq("B", i * 2, self.z80.b)
             self.regEq("C", i * 4, self.z80.c)
 
@@ -52,12 +52,22 @@ class TestZ80(unittest.TestCase):
             self.z80.ldBCnn(i * 2, i * 4)
             addr = (self.z80.b << 8) + self.z80.c
             self.assertEquals(self.mem.get8(addr), 0)
-            self.runOp(opc, 2, 7)
+            self.runOp(opc, 2, 8)
             self.assertEquals(self.mem.get8(addr), self.z80.a)
+
+    def test_incBC(self):
+        opc = 3
+        self.validOpc(opc, self.z80.incBC, 0)
+        self.assertEquals(self.z80.b, 0)
+        for i in range(0, 300):
+            self.assertEquals(self.z80.c, i % 0x100,
+                "C contains 0x%02x, expected 0x%02d" % (self.z80.c, i % 0x100))
+            self.runOp(opc, 1, 4)
+        self.assertEquals(self.z80.b, 1)
 
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc <= len(self.z80.instr),
-            "Opcode out of instruction range")
+            "Opcode (0x%02x) out of instruction range" % opc)
         func_, argc_ = self.z80.instr[opc]
         self.assertEquals(func, func_,
             "Opcode should be 0x%02x(%d)" % (opc, opc))
