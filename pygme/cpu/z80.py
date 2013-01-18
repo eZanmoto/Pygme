@@ -15,6 +15,7 @@ class Z80:
                       (self.ldBCnn, 2),
                       (self.ldMemBCA, 0),
                       (self.incBC, 0),
+                      (self.incB, 0),
                      ]
 
     def nop(self):
@@ -44,5 +45,11 @@ class Z80:
         self.c = (self.c + 1) & 0xff
         if self.c == 0:
             self.b = (self.b + 1) & 0xff
+        self.m += 1
+        self.t += 4
+
+    def incB(self):
+        """Increments the contents of B."""
+        self.b = (self.b + 1) & 0xff
         self.m += 1
         self.t += 4
