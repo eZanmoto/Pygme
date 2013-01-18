@@ -52,6 +52,7 @@ class Z80:
                       (self.ldMemBCA, 0),
                       (self.incBC, 0),
                       (self.incB, 0),
+                      (self.decB, 0),
                      ]
 
     def nop(self):
@@ -88,6 +89,14 @@ class Z80:
         """Increments the contents of B."""
         self.h = self.b & 0xf == 0xf
         self.b = (self.b + 1) & 0xff
+        self.chkZ(self.b)
+        self.m += 1
+        self.t += 4
+
+    def decB(self):
+        """Decrements the contents of B."""
+        self.h = self.b & 0xf != 0
+        self.b = (self.b - 1) & 0xff
         self.chkZ(self.b)
         self.m += 1
         self.t += 4

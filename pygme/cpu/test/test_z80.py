@@ -77,6 +77,19 @@ class TestZ80(unittest.TestCase):
             self.assertEquals(self.z80.c, c)
             self.assertEquals(self.z80.h, (i - 1) & 0xf == 0xf)
 
+    def test_decB(self):
+        opc = 5
+        self.validOpc(opc, self.z80.decB, 0)
+        self.z80.ldBCnn(0x1ff & 0xff, 0)
+        for i in range(0x1ff, 0, -1):
+            self.assertEquals(self.z80.b, i & 0xff)
+            c = self.z80.c
+            self.runOp(opc, 1, 4)
+            self.assertEquals(self.z80.z, (i - 1) & 0xff == 0)
+            self.assertFalse(self.z80.n)
+            self.assertEquals(self.z80.c, c)
+            self.assertEquals(self.z80.h, i & 0xf != 0)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
