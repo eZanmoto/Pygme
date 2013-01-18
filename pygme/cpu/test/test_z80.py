@@ -60,17 +60,23 @@ class TestZ80(unittest.TestCase):
         opc = 3
         self.validOpc(opc, self.z80.incBC, 0)
         self.assertEquals(self.z80.b, 0)
-        for i in range(0, 0x100):
+        for i in range(0, 0x200):
             self.assertEquals(self.z80.c, i & 0xff)
             self.runOp(opc, 1, 4)
-        self.assertEquals(self.z80.b, 1)
+        self.assertEquals(self.z80.b, 2)
 
     def test_incB(self):
         opc = 4
         self.validOpc(opc, self.z80.incB, 0)
-        for i in range(0, 0x100):
-            self.assertEquals(self.z80.b, i & 0xff)
+        for i in range(1, 0x200):
+            b = self.z80.b
+            c = self.z80.c
             self.runOp(opc, 1, 4)
+            self.assertEquals(self.z80.b, i & 0xff)
+            self.assertEquals(self.z80.z, i & 0xff == 0)
+            self.assertFalse(self.z80.n)
+            self.assertEquals(self.z80.c, c)
+            self.assertEquals(self.z80.h, (i - 1) & 0xf == 0xf)
 
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),

@@ -10,6 +10,10 @@ class Z80:
         self.c = 0
         self.m = 0
         self.t = 0
+        self.z = False
+        self.n = False
+        self.h = False
+        self.c = False
         self._mem = mem
         self.instr = [(self.nop, 0),
                       (self.ldBCnn, 2),
@@ -50,6 +54,11 @@ class Z80:
 
     def incB(self):
         """Increments the contents of B."""
+        self.h = self.b & 0xf == 0xf
         self.b = (self.b + 1) & 0xff
+        self.chkZ(self.b)
         self.m += 1
         self.t += 4
+
+    def chkZ(self, v):
+        self.z = v == 0
