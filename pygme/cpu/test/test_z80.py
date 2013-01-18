@@ -66,11 +66,13 @@ class TestZ80(unittest.TestCase):
     def test_incB(self):
         opc = 0x04
         self.validOpc(opc, self.z80.incB, 0)
+        self.z80.n = True
+        self.z80.c = True
         for i in range(1, 0x200):
             c = self.z80.c
             self.runOp(opc, 1, 4)
             self.regEq("B", self.z80.b, i & 0xff)
-            self.regEq("Z", self.z80.z, i & 0xff == 0)
+            self.regEq("Z", self.z80.z, self.z80.b == 0)
             self.regEq("N", self.z80.n, False)
             self.regEq("C", self.z80.c, c)
             self.regEq("H", self.z80.h, (i - 1) & 0xf == 0xf)
@@ -79,14 +81,16 @@ class TestZ80(unittest.TestCase):
         opc = 0x05
         self.validOpc(opc, self.z80.decB, 0)
         self.z80.ldBCnn(0x1ff & 0xff, 0)
+        self.z80.n = False
+        self.z80.c = False
         for i in range(0x1ff, 0, -1):
             self.assertEquals(self.z80.b, i & 0xff)
             c = self.z80.c
             self.runOp(opc, 1, 4)
-            self.assertEquals(self.z80.z, (i - 1) & 0xff == 0)
-            self.assertFalse(self.z80.n)
-            self.assertEquals(self.z80.c, c)
-            self.assertEquals(self.z80.h, i & 0xf != 0)
+            self.regEq("Z", self.z80.z, self.z80.b == 0)
+            self.regEq("N", self.z80.n, True)
+            self.regEq("C", self.z80.c, c)
+            self.regEq("H", self.z80.h, i & 0xf != 0)
 
     def test_ldBn(self):
         opc = 0x06

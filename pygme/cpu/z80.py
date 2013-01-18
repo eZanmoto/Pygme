@@ -86,6 +86,7 @@ class Z80:
 
     def incB(self):
         """Increments the contents of B."""
+        self.n = False
         self.h = self.b & 0xf == 0xf
         self.b = (self.b + 1) & 0xff
         self.chkZ(self.b)
@@ -94,6 +95,7 @@ class Z80:
 
     def decB(self):
         """Decrements the contents of B."""
+        self.n = True
         self.h = self.b & 0xf != 0
         self.b = (self.b - 1) & 0xff
         self.chkZ(self.b)
