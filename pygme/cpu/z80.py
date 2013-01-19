@@ -55,6 +55,7 @@ class Z80:
                       (self.decB, 0),
                       (self.ldBn, 1),
                       (self.rlcA, 0),
+                      (self.ldMemnnSP, 2),
                      ]
 
     def nop(self):
@@ -120,6 +121,9 @@ class Z80:
         self.c = bit7
         self.m += 1
         self.t += 4
+
+    def ldMemnnSP(self, n, m):
+        raise NotImplementedError("'LD (nn), SP has not been implemented")
 
     def chkRegByte(self, r, b):
         if b < 0 or b > 0xff:
