@@ -155,7 +155,8 @@ class TestZ80(unittest.TestCase):
         self.regEq("T", t + t_, self.z80.t)
 
     def regEq(self, n, reg, val):
-        self.assertEquals(reg, val, "%s should be %d, is %d" % (n, val, reg))
+        self.assertEquals(reg, val, "%s should be 0x%02x(%d), is 0x%02x(%d)"
+                % (n, val, val, reg, reg))
 
     def tearDown(self):
         self.mem = None
