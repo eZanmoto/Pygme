@@ -20,13 +20,13 @@ class TestZ80(unittest.TestCase):
         opc = 0x00
         self.validOpc(opc, self.z80.nop, 0)
         for _ in range(0, self.numTests):
-            self.runOp(opc, 1, 4)
+            self.timeOp(opc, 1, 4)
 
     def test_ldBCnn(self):
         opc = 0x01
         self.validOpc(opc, self.z80.ldBCnn, 2)
         for i in range(0, self.numTests):
-            self.runOp(opc, 3, 12, i * 2, i * 4)
+            self.timeOp(opc, 3, 12, i * 2, i * 4)
             self.regEq("B", self.z80.b, i * 2)
             self.regEq("C", self.z80.c, i * 4)
 
@@ -52,7 +52,7 @@ class TestZ80(unittest.TestCase):
             self.z80.ldBCnn(i * 2, i * 4)
             addr = (self.z80.b << 8) + self.z80.c
             self.assertEquals(self.mem.get8(addr), 0)
-            self.runOp(opc, 2, 8)
+            self.timeOp(opc, 2, 8)
             self.assertEquals(self.mem.get8(addr), self.z80.a)
 
     def test_incBC(self):
@@ -61,7 +61,7 @@ class TestZ80(unittest.TestCase):
         self.regEq("B", self.z80.b, 0)
         for i in range(0, 0x200):
             self.regEq("C", self.z80.c, i & 0xff)
-            self.runOp(opc, 1, 4)
+            self.timeOp(opc, 1, 4)
         self.regEq("B", self.z80.b, 2)
 
     def test_incB(self):
@@ -71,7 +71,7 @@ class TestZ80(unittest.TestCase):
         self.z80.c = True
         for i in range(1, 0x200):
             c = self.z80.c
-            self.runOp(opc, 1, 4)
+            self.timeOp(opc, 1, 4)
             self.regEq("B", self.z80.b, i & 0xff)
             self.regEq("Z", self.z80.z, self.z80.b == 0)
             self.regEq("N", self.z80.n, False)
@@ -87,7 +87,7 @@ class TestZ80(unittest.TestCase):
         for i in range(0x1ff, 0, -1):
             self.assertEquals(self.z80.b, i & 0xff)
             c = self.z80.c
-            self.runOp(opc, 1, 4)
+            self.timeOp(opc, 1, 4)
             self.regEq("Z", self.z80.z, self.z80.b == 0)
             self.regEq("N", self.z80.n, True)
             self.regEq("C", self.z80.c, c)
@@ -97,7 +97,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x06
         self.validOpc(opc, self.z80.ldBn, 1)
         for i in range(0, self.numTests):
-            self.runOp(opc, 1, 4, i)
+            self.timeOp(opc, 1, 4, i)
             self.regEq("B", self.z80.b, i)
 
     def test_ldBn_maxValue(self):
@@ -120,7 +120,7 @@ class TestZ80(unittest.TestCase):
             (i >> 7) & i
             self.regEq("A", self.z80.a, (1 << (i % 8)) & 0xff)
             c = (self.z80.a >> 7) & 1
-            self.runOp(opc, 1, 4)
+            self.timeOp(opc, 1, 4)
             self.regEq("Z", self.z80.z, self.z80.a == 0)
             self.regEq("N", self.z80.n, False)
             self.regEq("H", self.z80.h, False)
@@ -135,9 +135,14 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(argc, argc_,
             "Instruction should take %d args, got %d" % (argc, argc_))
 
-    def runOp(self, opc, m_, t_, a=None, b=None):
+    def timeOp(self, opc, m_, t_, a=None, b=None):
         m = self.z80.m
         t = self.z80.t
+        self.runOp(opc, a, b)
+        self.regEq("M", m + m_, self.z80.m)
+        self.regEq("T", t + t_, self.z80.t)
+
+    def runOp(self, opc, a=None, b=None):
         op, n = self.z80.instr[opc]
         if n == 0:
             self.assertIsNone(a, "Expect 0 instructions, got 'a'")
@@ -151,8 +156,6 @@ class TestZ80(unittest.TestCase):
             else:
                 self.assertIsNotNone(b, "Expect %d instructions, need 'b'" % n)
                 op(a, b)
-        self.regEq("M", m + m_, self.z80.m)
-        self.regEq("T", t + t_, self.z80.t)
 
     def regEq(self, n, reg, val):
         self.assertEquals(reg, val, "%s should be 0x%02x(%d), is 0x%02x(%d)"
