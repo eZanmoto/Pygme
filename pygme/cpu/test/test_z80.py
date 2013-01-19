@@ -9,6 +9,7 @@ from pygme.memory import array
 
 class TestZ80(unittest.TestCase):
 
+    # The default number of times each test should be run
     numTests = 10
 
     def setUp(self):
