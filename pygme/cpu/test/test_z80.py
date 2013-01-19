@@ -110,6 +110,22 @@ class TestZ80(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.z80.ldBn(-1)
 
+    def test_rlcA(self):
+        opc = 0x07
+        self.validOpc(opc, self.z80.rlcA, 0)
+        self.z80.a = 1
+        self.z80.n = True
+        self.z80.h = True
+        for i in range(0, self.numTests):
+            (i >> 7) & i
+            self.regEq("A", self.z80.a, (1 << (i % 8)) & 0xff)
+            c = (self.z80.a >> 7) & 1
+            self.runOp(opc, 1, 4)
+            self.regEq("Z", self.z80.z, self.z80.a == 0)
+            self.regEq("N", self.z80.n, False)
+            self.regEq("H", self.z80.h, False)
+            self.regEq("C", self.z80.c, c)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")

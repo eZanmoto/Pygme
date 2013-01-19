@@ -54,6 +54,7 @@ class Z80:
                       (self.incB, 0),
                       (self.decB, 0),
                       (self.ldBn, 1),
+                      (self.rlcA, 0),
                      ]
 
     def nop(self):
@@ -106,6 +107,17 @@ class Z80:
         """Loads a byte into B."""
         self.chkRegByte("B", b)
         self.b = b
+        self.m += 1
+        self.t += 4
+
+    def rlcA(self):
+        """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
+        bit7 = (self.a >> 7) & 1
+        self.a = ((self.a << 1) & 0xff) | bit7
+        self.chkZ(self.a)
+        self.n = False
+        self.h = False
+        self.c = bit7
         self.m += 1
         self.t += 4
 
