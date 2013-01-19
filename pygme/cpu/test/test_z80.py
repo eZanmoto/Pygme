@@ -10,7 +10,7 @@ from pygme.memory import array
 class TestZ80(unittest.TestCase):
 
     # The default number of times each test should be run
-    numTests = 10
+    NUM_TESTS = 10
 
     def setUp(self):
         self.mem = array.Array(1 << 16)
@@ -19,13 +19,13 @@ class TestZ80(unittest.TestCase):
     def test_nop(self):
         opc = 0x00
         self.validOpc(opc, self.z80.nop, 0)
-        for _ in range(0, self.numTests):
+        for _ in range(0, self.NUM_TESTS):
             self.timeOp(opc, 1, 4)
 
     def test_ldBCnn(self):
         opc = 0x01
         self.validOpc(opc, self.z80.ldBCnn, 2)
-        for i in range(0, self.numTests):
+        for i in range(0, self.NUM_TESTS):
             self.timeOp(opc, 3, 12, i * 2, i * 4)
             self.regEq("B", self.z80.b, i * 2)
             self.regEq("C", self.z80.c, i * 4)
@@ -47,7 +47,7 @@ class TestZ80(unittest.TestCase):
     def test_ldMemBCA(self):
         opc = 0x02
         self.validOpc(opc, self.z80.ldMemBCA, 0)
-        for i in range(0, self.numTests):
+        for i in range(0, self.NUM_TESTS):
             self.z80.a = i
             self.z80.ldBCnn(i * 2, i * 4)
             addr = (self.z80.b << 8) + self.z80.c
@@ -96,7 +96,7 @@ class TestZ80(unittest.TestCase):
     def test_ldBn(self):
         opc = 0x06
         self.validOpc(opc, self.z80.ldBn, 1)
-        for i in range(0, self.numTests):
+        for i in range(0, self.NUM_TESTS):
             self.timeOp(opc, 1, 4, i)
             self.regEq("B", self.z80.b, i)
 
@@ -116,7 +116,7 @@ class TestZ80(unittest.TestCase):
         self.z80.a = 1
         self.z80.n = True
         self.z80.h = True
-        for i in range(0, self.numTests):
+        for i in range(0, self.NUM_TESTS):
             (i >> 7) & i
             self.regEq("A", self.z80.a, (1 << (i % 8)) & 0xff)
             c = (self.z80.a >> 7) & 1
