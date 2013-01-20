@@ -66,6 +66,7 @@ class Z80:
                       (self.addHLBC, 0),
                       (self.ldAMemBC, 0),
                       (self.decBC, 0),
+                      (self.incC, 0),
                      ]
 
     def nop(self):
@@ -164,6 +165,15 @@ class Z80:
             self.c = 0xff
         else:
             self.c = (self.c - 1) & 0xff
+        self.m += 1
+        self.t += 4
+
+    def incC(self):
+        """Increments the contents of C."""
+        self.f.n = False
+        self.f.h = self.c & 0xf == 0xf
+        self.c = (self.c + 1) & 0xff
+        self.chkZ(self.c)
         self.m += 1
         self.t += 4
 
