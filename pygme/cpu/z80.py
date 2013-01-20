@@ -71,6 +71,7 @@ class Z80:
                       (self.ldCn, 1),
                       (self.rrcA, 0),
                       (self.stop, 0),
+                      (self.ldDEnn, 2),
                      ]
 
     def nop(self):
@@ -210,6 +211,15 @@ class Z80:
 
     def stop(self):
         raise NotImplementedError("'STOP' has not been implemented")
+
+    def ldDEnn(self, d, e):
+        """Loads a byte into D and a byte into E."""
+        self.chkRegByte("D", d)
+        self.chkRegByte("E", e)
+        self.d = d
+        self.e = e
+        self.m += 3
+        self.t += 12
 
     def chkRegByte(self, r, b):
         if b < 0 or b > 0xff:

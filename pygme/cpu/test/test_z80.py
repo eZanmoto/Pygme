@@ -251,6 +251,28 @@ class TestZ80(unittest.TestCase):
         opc = 0x10
         self.validOpc(opc, self.z80.stop, 0)
 
+    def test_ldDEnn(self):
+        opc = 0x11
+        self.validOpc(opc, self.z80.ldDEnn, 2)
+        for i in range(0, self.NUM_TESTS):
+            self.flagsFixed(opc, 3, 12, i * 2, i * 4)
+            self.regEq(self.D, i * 2)
+            self.regEq(self.E, i * 4)
+
+    def test_ldDEnn_maxValue(self):
+        self.z80.ldDEnn(0xff, 0xff)
+        with self.assertRaises(ValueError):
+            self.z80.ldDEnn(0x100, 0x00)
+        with self.assertRaises(ValueError):
+            self.z80.ldDEnn(0x00, 0x100)
+
+    def test_ldDEnn_minValue(self):
+        self.z80.ldDEnn(0, 0)
+        with self.assertRaises(ValueError):
+            self.z80.ldDEnn(-1, 0)
+        with self.assertRaises(ValueError):
+            self.z80.ldDEnn(0, -1)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
