@@ -64,6 +64,7 @@ class Z80:
                       (self.rlcA, 0),
                       (self.ldMemnnSP, 2),
                       (self.addHLBC, 0),
+                      (self.ldAMemBC, 0),
                      ]
 
     def nop(self):
@@ -145,6 +146,12 @@ class Z80:
         self.f.c = result > 0xffff
         self.m += 3
         self.t += 12
+
+    def ldAMemBC(self):
+        """Loads the contents of the memory address specified by BC into A."""
+        self.a = self._mem.get8((self.b << 8) + self.c)
+        self.m += 2
+        self.t += 8
 
     def chkRegByte(self, r, b):
         if b < 0 or b > 0xff:
