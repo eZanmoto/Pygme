@@ -89,6 +89,7 @@ class Z80:
                       (self.decDE, 0),
                       (self.incE, 0),
                       (self.decE, 0),
+                      (self.ldEn, 1),
                      ]
 
     def nop(self):
@@ -334,6 +335,12 @@ class Z80:
         self.f.h.setTo(self.e.val() & 0xf != 0)
         self.e.ld((self.e.val() - 1) & 0xff)
         self.chkZ(self.e)
+        self.m += 1
+        self.t += 4
+
+    def ldEn(self, e):
+        """Loads a byte into E."""
+        self.e.ld(e)
         self.m += 1
         self.t += 4
 
