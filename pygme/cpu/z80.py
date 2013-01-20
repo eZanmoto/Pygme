@@ -91,6 +91,7 @@ class Z80:
                       (self.decE, 0),
                       (self.ldEn, 1),
                       (self.rrA, 0),
+                      (self.jrNZn, 1),
                      ]
 
     def nop(self):
@@ -355,6 +356,14 @@ class Z80:
         self.f.c.setTo(bit0)
         self.m += 1
         self.t += 4
+
+    def jrNZn(self, n):
+        """Decrements/increments PC by the signed 16-bit number n if Z is 0."""
+        if self.f.z.val():
+            self.m += 1
+            self.t += 4
+        else:
+            self.jrn(n)
 
     def chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
