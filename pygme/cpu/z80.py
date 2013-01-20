@@ -90,6 +90,7 @@ class Z80:
                       (self.incE, 0),
                       (self.decE, 0),
                       (self.ldEn, 1),
+                      (self.rrA, 0),
                      ]
 
     def nop(self):
@@ -341,6 +342,17 @@ class Z80:
     def ldEn(self, e):
         """Loads a byte into E."""
         self.e.ld(e)
+        self.m += 1
+        self.t += 4
+
+    def rrA(self):
+        """A is rotated right 1-bit position - bit 0 goes into C and C goes
+        into bit 7."""
+        bit0 = self.a.val() & 1
+        self.a.ld(((self.a.val() >> 1) & 0xff) | (self.f.c.val() << 7))
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(bit0)
         self.m += 1
         self.t += 4
 
