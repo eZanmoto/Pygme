@@ -138,7 +138,6 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n = True
         self.z80.f.h = True
         for i in range(0, self.NUM_TESTS):
-            (i >> 7) & i
             self.regEq(self.A, (1 << (i % 8)) & 0xff)
             c = (self.z80.a >> 7) & 1
             self.timeOp(opc, 1, 4)
