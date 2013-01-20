@@ -77,6 +77,7 @@ class Z80:
                       (self.ldMemDEA, 0),
                       (self.incDE, 0),
                       (self.incD, 0),
+                      (self.decD, 0),
                      ]
 
     def nop(self):
@@ -245,6 +246,15 @@ class Z80:
         self.f.n = False
         self.f.h = self.d & 0xf == 0xf
         self.d = (self.d + 1) & 0xff
+        self.chkZ(self.d)
+        self.m += 1
+        self.t += 4
+
+    def decD(self):
+        """Decrements the contents of D."""
+        self.f.n = True
+        self.f.h = self.d & 0xf != 0
+        self.d = (self.d - 1) & 0xff
         self.chkZ(self.d)
         self.m += 1
         self.t += 4
