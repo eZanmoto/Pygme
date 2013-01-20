@@ -2,7 +2,7 @@
 # Use of this source code is governed by a GPL
 # license that can be found in the LICENSE file.
 
-from pygme.cpu import reg8, reg_flag
+from pygme.cpu import reg8, reg16, reg_flag
 
 class Flags:
 
@@ -54,6 +54,7 @@ class Z80:
         self.e = reg8.Reg8("E")
         self.h = reg8.Reg8("H")
         self.l = reg8.Reg8("L")
+        self.pc = reg16.Reg16("PC")
         self.m = 0
         self.t = 0
         self.f = Flags()
@@ -82,6 +83,7 @@ class Z80:
                       (self.decD, 0),
                       (self.ldDn, 1),
                       (self.rlA, 0),
+                      (self.jrn, 1),
                      ]
 
     def nop(self):
@@ -269,6 +271,14 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(bit7)
+        self.m += 1
+        self.t += 4
+
+    def jrn(self, n):
+        """Decrements/increments the PC by the signed 16-bit number n."""
+        pc = self.pc.val()
+        pc = (pc + n) - 126
+        self.pc.ld(pc & 0xffff)
         self.m += 1
         self.t += 4
 
