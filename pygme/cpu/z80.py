@@ -138,7 +138,7 @@ class Z80:
         self.t += 4
 
     def ldMemnnSP(self, n, m):
-        raise NotImplementedError("'LD (nn), SP has not been implemented")
+        raise NotImplementedError("'LD (nn), SP' has not been implemented")
 
     def addHLBC(self):
         """Adds BC to HL and stores the result in HL."""
