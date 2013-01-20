@@ -86,6 +86,7 @@ class Z80:
                       (self.jrn, 1),
                       (self.addHLDE, 0),
                       (self.ldAMemDE, 0),
+                      (self.decDE, 0),
                      ]
 
     def nop(self):
@@ -302,6 +303,19 @@ class Z80:
         self.a.ld(self._mem.get8((self.d.val() << 8) + self.e.val()))
         self.m += 2
         self.t += 8
+
+    def decDE(self):
+        """Decrements the contents of DE."""
+        if self.d.val() == 0 and self.e.val() == 0:
+            self.d.ld(0xff)
+            self.e.ld(0xff)
+        elif self.e.val() == 0:
+            self.d.ld((self.d.val() - 1) & 0xff)
+            self.e.ld(0xff)
+        else:
+            self.e.ld((self.e.val() - 1) & 0xff)
+        self.m += 1
+        self.t += 4
 
     def chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
