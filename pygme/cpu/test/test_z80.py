@@ -147,22 +147,6 @@ class TestZ80(unittest.TestCase):
             self.flagEq(self.F_H, False)
             self.flagEq(self.F_C, c)
 
-    def test_rlcA(self):
-        opc = 0x07
-        self.validOpc(opc, self.z80.rlcA, 0)
-        self.z80.a = 1
-        self.z80.f.n = True
-        self.z80.f.h = True
-        for i in range(0, self.NUM_TESTS):
-            (i >> 7) & i
-            self.regEq(self.A, (1 << (i % 8)) & 0xff)
-            c = (self.z80.a >> 7) & 1
-            self.timeOp(opc, 1, 4)
-            self.flagEq(self.F_Z, self.z80.a == 0)
-            self.flagEq(self.F_N, False)
-            self.flagEq(self.F_H, False)
-            self.flagEq(self.F_C, c)
-
     def test_ldMemnnSP(self):
         opc = 0x08
         self.validOpc(opc, self.z80.ldMemnnSP, 2)
