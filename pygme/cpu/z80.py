@@ -92,6 +92,7 @@ class Z80:
                       (self.ldEn, 1),
                       (self.rrA, 0),
                       (self.jrNZn, 1),
+                      (self.ldHLnn, 2),
                      ]
 
     def nop(self):
@@ -364,6 +365,13 @@ class Z80:
             self.t += 4
         else:
             self.jrn(n)
+
+    def ldHLnn(self, h, l):
+        """Loads a byte into H and a byte into L."""
+        self.h.ld(h)
+        self.l.ld(l)
+        self.m += 3
+        self.t += 12
 
     def chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
