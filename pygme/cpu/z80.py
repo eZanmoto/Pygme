@@ -48,6 +48,8 @@ class Z80:
         self.a = 0
         self.b = 0
         self.c = 0
+        self.h = 0
+        self.l = 0
         self.m = 0
         self.t = 0
         self.f = Flags()
@@ -61,6 +63,7 @@ class Z80:
                       (self.ldBn, 1),
                       (self.rlcA, 0),
                       (self.ldMemnnSP, 2),
+                      (self.addHLBC, 0),
                      ]
 
     def nop(self):
@@ -129,6 +132,19 @@ class Z80:
 
     def ldMemnnSP(self, n, m):
         raise NotImplementedError("'LD (nn), SP has not been implemented")
+
+    def addHLBC(self):
+        """Adds BC to HL and stores the result in HL."""
+        hl = (self.h << 8) + self.l
+        bc = (self.b << 8) + self.c
+        result = hl + bc
+        self.h = (result >> 8) & 0xff
+        self.l = result & 0xff
+        self.f.n = False
+        self.f.h = (hl & 0xfff) + (bc & 0xfff) > 0xfff
+        self.f.c = result > 0xffff
+        self.m += 3
+        self.t += 12
 
     def chkRegByte(self, r, b):
         if b < 0 or b > 0xff:

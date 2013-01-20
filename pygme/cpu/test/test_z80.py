@@ -157,6 +157,28 @@ class TestZ80(unittest.TestCase):
             self.flagEq(self.F_H, False)
             self.flagEq(self.F_C, c)
 
+    def test_addHLBC(self):
+        opc = 0x09
+        self.validOpc(opc, self.z80.addHLBC, 0)
+        self.z80.h, self.z80.l = 0x13, 0x34
+        self.z80.ldBCnn(0x23, 0x67)
+        z, n = (self.z80.f.z, True)
+        self.timeOp(opc, 3, 12)
+        self.regEq(self.H, 0x36)
+        self.regEq(self.L, 0x9b)
+        self.flagEq(self.F_Z, z)
+        self.flagEq(self.F_N, False)
+        self.flagEq(self.F_H, 0x133 + 0x236 > 0xfff)
+        self.flagEq(self.F_C, 0x1334 + 0x2367 > 0xffff)
+        self.z80.ldBCnn(0xff, 0xff)
+        self.timeOp(opc, 3, 12)
+        self.regEq(self.H, 0x36)
+        self.regEq(self.L, 0x9a)
+        self.flagEq(self.F_Z, z)
+        self.flagEq(self.F_N, False)
+        self.flagEq(self.F_H, 0x336 + 0xfff > 0xfff)
+        self.flagEq(self.F_C, 0x1334 + 0xffff > 0xffff)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
