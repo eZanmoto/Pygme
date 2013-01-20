@@ -76,6 +76,7 @@ class Z80:
                       (self.ldDEnn, 2),
                       (self.ldMemDEA, 0),
                       (self.incDE, 0),
+                      (self.incD, 0),
                      ]
 
     def nop(self):
@@ -236,6 +237,15 @@ class Z80:
         self.e = (self.e + 1) & 0xff
         if self.e == 0:
             self.d = (self.d + 1) & 0xff
+        self.m += 1
+        self.t += 4
+
+    def incD(self):
+        """Increments the contents of D."""
+        self.f.n = False
+        self.f.h = self.d & 0xf == 0xf
+        self.d = (self.d + 1) & 0xff
+        self.chkZ(self.d)
         self.m += 1
         self.t += 4
 
