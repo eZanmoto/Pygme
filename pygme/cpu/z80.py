@@ -78,6 +78,7 @@ class Z80:
                       (self.incDE, 0),
                       (self.incD, 0),
                       (self.decD, 0),
+                      (self.ldDn, 1),
                      ]
 
     def nop(self):
@@ -256,6 +257,13 @@ class Z80:
         self.f.h = self.d & 0xf != 0
         self.d = (self.d - 1) & 0xff
         self.chkZ(self.d)
+        self.m += 1
+        self.t += 4
+
+    def ldDn(self, d):
+        """Loads a byte into D."""
+        self.chkRegByte("D", d)
+        self.d = d
         self.m += 1
         self.t += 4
 
