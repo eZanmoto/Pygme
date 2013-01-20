@@ -2,13 +2,15 @@
 # Use of this source code is governed by a GPL
 # license that can be found in the LICENSE file.
 
+from pygme.cpu import reg8, reg_flag
+
 class Flags:
 
     def __init__(self):
-        self.z = False
-        self.n = False
-        self.c = False
-        self.h = False
+        self.z = reg_flag.RegFlag("Z")
+        self.n = reg_flag.RegFlag("N")
+        self.c = reg_flag.RegFlag("C")
+        self.h = reg_flag.RegFlag("H")
 
 # Instructions that update flags:
 #     LDHL SP, n
@@ -45,13 +47,13 @@ class Flags:
 class Z80:
 
     def __init__(self, mem):
-        self.a = 0
-        self.b = 0
-        self.c = 0
-        self.d = 0
-        self.e = 0
-        self.h = 0
-        self.l = 0
+        self.a = reg8.Reg8("A")
+        self.b = reg8.Reg8("B")
+        self.c = reg8.Reg8("C")
+        self.d = reg8.Reg8("D")
+        self.e = reg8.Reg8("E")
+        self.h = reg8.Reg8("H")
+        self.l = reg8.Reg8("L")
         self.m = 0
         self.t = 0
         self.f = Flags()
@@ -89,59 +91,56 @@ class Z80:
 
     def ldBCnn(self, b, c):
         """Loads a byte into B and a byte into C."""
-        self.chkRegByte("B", b)
-        self.chkRegByte("C", c)
-        self.b = b
-        self.c = c
+        self.b.ld(b)
+        self.c.ld(c)
         self.m += 3
         self.t += 12
 
     def ldMemBCA(self):
         """Loads the contents of A into the memory address specified by BC."""
-        self._mem.set8((self.b << 8) + self.c, self.a)
+        self._mem.set8((self.b.val() << 8) + self.c.val(), self.a.val())
         self.m += 2
         self.t += 8
 
     def incBC(self):
         """Increments the contents of BC."""
-        self.c = (self.c + 1) & 0xff
-        if self.c == 0:
-            self.b = (self.b + 1) & 0xff
+        self.c.ld((self.c.val() + 1) & 0xff)
+        if self.c.val() == 0:
+            self.b.ld((self.b.val() + 1) & 0xff)
         self.m += 1
         self.t += 4
 
     def incB(self):
         """Increments the contents of B."""
-        self.f.n = False
-        self.f.h = self.b & 0xf == 0xf
-        self.b = (self.b + 1) & 0xff
+        self.f.n.reset()
+        self.f.h.setTo(self.b.val() & 0xf == 0xf)
+        self.b.ld((self.b.val() + 1) & 0xff)
         self.chkZ(self.b)
         self.m += 1
         self.t += 4
 
     def decB(self):
         """Decrements the contents of B."""
-        self.f.n = True
-        self.f.h = self.b & 0xf != 0
-        self.b = (self.b - 1) & 0xff
+        self.f.n.set()
+        self.f.h.setTo(self.b.val() & 0xf != 0)
+        self.b.ld((self.b.val() - 1) & 0xff)
         self.chkZ(self.b)
         self.m += 1
         self.t += 4
 
     def ldBn(self, b):
         """Loads a byte into B."""
-        self.chkRegByte("B", b)
-        self.b = b
+        self.b.ld(b)
         self.m += 1
         self.t += 4
 
     def rlcA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        bit7 = (self.a >> 7) & 1
-        self.a = ((self.a << 1) & 0xff) | bit7
-        self.f.n = False
-        self.f.h = False
-        self.f.c = bit7
+        bit7 = (self.a.val() >> 7) & 1
+        self.a.ld(((self.a.val() << 1) & 0xff) | bit7)
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(bit7)
         self.m += 1
         self.t += 4
 
@@ -150,68 +149,67 @@ class Z80:
 
     def addHLBC(self):
         """Adds BC to HL and stores the result in HL."""
-        hl = (self.h << 8) + self.l
-        bc = (self.b << 8) + self.c
+        hl = (self.h.val() << 8) + self.l.val()
+        bc = (self.b.val() << 8) + self.c.val()
         result = hl + bc
-        self.h = (result >> 8) & 0xff
-        self.l = result & 0xff
-        self.f.n = False
-        self.f.h = (hl & 0xfff) + (bc & 0xfff) > 0xfff
-        self.f.c = result > 0xffff
+        self.h.ld((result >> 8) & 0xff)
+        self.l.ld(result & 0xff)
+        self.f.n.reset()
+        self.f.h.setTo((hl & 0xfff) + (bc & 0xfff) > 0xfff)
+        self.f.c.setTo(result > 0xffff)
         self.m += 3
         self.t += 12
 
     def ldAMemBC(self):
         """Loads the contents of the memory address specified by BC into A."""
-        self.a = self._mem.get8((self.b << 8) + self.c)
+        self.a.ld(self._mem.get8((self.b.val() << 8) + self.c.val()))
         self.m += 2
         self.t += 8
 
     def decBC(self):
         """Decrements the contents of BC."""
-        if self.b == 0 and self.c == 0:
-            self.b = 0xff
-            self.c = 0xff
-        elif self.c == 0:
-            self.b = (self.b - 1) & 0xff
-            self.c = 0xff
+        if self.b.val() == 0 and self.c.val() == 0:
+            self.b.ld(0xff)
+            self.c.ld(0xff)
+        elif self.c.val() == 0:
+            self.b.ld((self.b.val() - 1) & 0xff)
+            self.c.ld(0xff)
         else:
-            self.c = (self.c - 1) & 0xff
+            self.c.ld((self.c.val() - 1) & 0xff)
         self.m += 1
         self.t += 4
 
     def incC(self):
         """Increments the contents of C."""
-        self.f.n = False
-        self.f.h = self.c & 0xf == 0xf
-        self.c = (self.c + 1) & 0xff
+        self.f.n.reset()
+        self.f.h.setTo(self.c.val() & 0xf == 0xf)
+        self.c.ld((self.c.val() + 1) & 0xff)
         self.chkZ(self.c)
         self.m += 1
         self.t += 4
 
     def decC(self):
         """Decrements the contents of C."""
-        self.f.n = True
-        self.f.h = self.c & 0xf != 0
-        self.c = (self.c - 1) & 0xff
+        self.f.n.set()
+        self.f.h.setTo(self.c.val() & 0xf != 0)
+        self.c.ld((self.c.val() - 1) & 0xff)
         self.chkZ(self.c)
         self.m += 1
         self.t += 4
 
     def ldCn(self, c):
         """Loads a byte into C."""
-        self.chkRegByte("C", c)
-        self.c = c
+        self.c.ld(c)
         self.m += 1
         self.t += 4
 
     def rrcA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        bit0 = self.a & 1
-        self.a = ((self.a >> 1) & 0xff) | (bit0 << 7)
-        self.f.n = False
-        self.f.h = False
-        self.f.c = bit0
+        bit0 = self.a.val() & 1
+        self.a.ld(((self.a.val() >> 1) & 0xff) | (bit0 << 7))
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(bit0)
         self.m += 1
         self.t += 4
 
@@ -220,66 +218,59 @@ class Z80:
 
     def ldDEnn(self, d, e):
         """Loads a byte into D and a byte into E."""
-        self.chkRegByte("D", d)
-        self.chkRegByte("E", e)
-        self.d = d
-        self.e = e
+        self.d.ld(d)
+        self.e.ld(e)
         self.m += 3
         self.t += 12
 
     def ldMemDEA(self):
         """Loads the contents of A into the memory address specified by DE."""
-        self._mem.set8((self.d << 8) + self.e, self.a)
+        self._mem.set8((self.d.val() << 8) + self.e.val(), self.a.val())
         self.m += 2
         self.t += 8
 
     def incDE(self):
         """Increments the contents of DE."""
-        self.e = (self.e + 1) & 0xff
-        if self.e == 0:
-            self.d = (self.d + 1) & 0xff
+        self.e.ld((self.e.val() + 1) & 0xff)
+        if self.e.val() == 0:
+            self.d.ld((self.d.val() + 1) & 0xff)
         self.m += 1
         self.t += 4
 
     def incD(self):
         """Increments the contents of D."""
-        self.f.n = False
-        self.f.h = self.d & 0xf == 0xf
-        self.d = (self.d + 1) & 0xff
+        self.f.n.reset()
+        self.f.h.setTo(self.d.val() & 0xf == 0xf)
+        self.d.ld((self.d.val() + 1) & 0xff)
         self.chkZ(self.d)
         self.m += 1
         self.t += 4
 
     def decD(self):
         """Decrements the contents of D."""
-        self.f.n = True
-        self.f.h = self.d & 0xf != 0
-        self.d = (self.d - 1) & 0xff
+        self.f.n.set()
+        self.f.h.setTo(self.d.val() & 0xf != 0)
+        self.d.ld((self.d.val() - 1) & 0xff)
         self.chkZ(self.d)
         self.m += 1
         self.t += 4
 
     def ldDn(self, d):
         """Loads a byte into D."""
-        self.chkRegByte("D", d)
-        self.d = d
+        self.d.ld(d)
         self.m += 1
         self.t += 4
 
     def rlA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        bit7 = (self.a >> 7) & 1
-        self.a = ((self.a << 1) & 0xff) | self.f.c
-        self.f.n = False
-        self.f.h = False
-        self.f.c = bit7
+        bit7 = (self.a.val() >> 7) & 1
+        self.a.ld(((self.a.val() << 1) & 0xff) | self.f.c.val())
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(bit7)
         self.m += 1
         self.t += 4
 
-    def chkRegByte(self, r, b):
-        if b < 0 or b > 0xff:
-            raise ValueError("Value overflow for %s: 0x%x(%d)" % (r, b, b))
-
-    def chkZ(self, v):
-        self.f.z = v == 0
+    def chkZ(self, reg):
+        self.f.z.setTo(reg.val() == 0)
