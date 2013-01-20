@@ -107,6 +107,12 @@ class TestZ80(unittest.TestCase):
         for i in range(0x1ff, 0, -1):
             self.regEq(self.B, i & 0xff)
             self.incOp8(opc, self.B, -1, 1, 4)
+        self.z80.ldBCnn(1, 0)
+        self.incOp8(opc, self.B, -1, 1, 4)
+        self.regEq(self.B, 0)
+        self.z80.ldBCnn(0, 0)
+        self.incOp8(opc, self.B, -1, 1, 4)
+        self.regEq(self.B, 0xff)
 
     def test_ldBn(self):
         opc = 0x06
