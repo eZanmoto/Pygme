@@ -94,6 +94,7 @@ class Z80:
                       (self.jrNZn, 1),
                       (self.ldHLnn, 2),
                       (self.ldiMemHLA, 0),
+                      (self.incHL, 0),
                      ]
 
     def nop(self):
@@ -382,6 +383,14 @@ class Z80:
             self.h.ld((self.h.val() + 1) & 0xff)
         self.m += 2
         self.t += 8
+
+    def incHL(self):
+        """Increments the contents of HL."""
+        self.l.ld((self.l.val() + 1) & 0xff)
+        if self.l.val() == 0:
+            self.h.ld((self.h.val() + 1) & 0xff)
+        self.m += 1
+        self.t += 4
 
     def chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
