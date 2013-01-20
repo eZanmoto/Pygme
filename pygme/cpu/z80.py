@@ -2,6 +2,14 @@
 # Use of this source code is governed by a GPL
 # license that can be found in the LICENSE file.
 
+class Flags:
+
+    def __init__(self):
+        self.z = False
+        self.n = False
+        self.c = False
+        self.h = False
+
 # Instructions that update flags:
 #     LDHL SP, n
 #     ADD  A, n
@@ -42,10 +50,7 @@ class Z80:
         self.c = 0
         self.m = 0
         self.t = 0
-        self.z = False
-        self.n = False
-        self.h = False
-        self.c = False
+        self.f = Flags()
         self._mem = mem
         self.instr = [(self.nop, 0),
                       (self.ldBCnn, 2),
@@ -88,8 +93,8 @@ class Z80:
 
     def incB(self):
         """Increments the contents of B."""
-        self.n = False
-        self.h = self.b & 0xf == 0xf
+        self.f.n = False
+        self.f.h = self.b & 0xf == 0xf
         self.b = (self.b + 1) & 0xff
         self.chkZ(self.b)
         self.m += 1
@@ -97,8 +102,8 @@ class Z80:
 
     def decB(self):
         """Decrements the contents of B."""
-        self.n = True
-        self.h = self.b & 0xf != 0
+        self.f.n = True
+        self.f.h = self.b & 0xf != 0
         self.b = (self.b - 1) & 0xff
         self.chkZ(self.b)
         self.m += 1
@@ -116,9 +121,9 @@ class Z80:
         bit7 = (self.a >> 7) & 1
         self.a = ((self.a << 1) & 0xff) | bit7
         self.chkZ(self.a)
-        self.n = False
-        self.h = False
-        self.c = bit7
+        self.f.n = False
+        self.f.h = False
+        self.f.c = bit7
         self.m += 1
         self.t += 4
 
@@ -130,4 +135,4 @@ class Z80:
             raise ValueError("Value overflow for %s: 0x%x(%d)" % (r, b, b))
 
     def chkZ(self, v):
-        self.z = v == 0
+        self.f.z = v == 0

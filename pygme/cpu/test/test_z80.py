@@ -67,31 +67,31 @@ class TestZ80(unittest.TestCase):
     def test_incB(self):
         opc = 0x04
         self.validOpc(opc, self.z80.incB, 0)
-        self.z80.n = True
-        self.z80.c = True
+        self.z80.f.n = True
+        self.z80.f.c = True
         for i in range(1, 0x200):
-            c = self.z80.c
+            c = self.z80.f.c
             self.timeOp(opc, 1, 4)
             self.regEq("B", self.z80.b, i & 0xff)
-            self.regEq("Z", self.z80.z, self.z80.b == 0)
-            self.regEq("N", self.z80.n, False)
-            self.regEq("C", self.z80.c, c)
-            self.regEq("H", self.z80.h, (i - 1) & 0xf == 0xf)
+            self.regEq("Z", self.z80.f.z, self.z80.b == 0)
+            self.regEq("N", self.z80.f.n, False)
+            self.regEq("C", self.z80.f.c, c)
+            self.regEq("H", self.z80.f.h, (i - 1) & 0xf == 0xf)
 
     def test_decB(self):
         opc = 0x05
         self.validOpc(opc, self.z80.decB, 0)
         self.z80.ldBCnn(0x1ff & 0xff, 0)
-        self.z80.n = False
-        self.z80.c = False
+        self.z80.f.n = False
+        self.z80.f.c = False
         for i in range(0x1ff, 0, -1):
             self.assertEquals(self.z80.b, i & 0xff)
             c = self.z80.c
             self.timeOp(opc, 1, 4)
-            self.regEq("Z", self.z80.z, self.z80.b == 0)
-            self.regEq("N", self.z80.n, True)
-            self.regEq("C", self.z80.c, c)
-            self.regEq("H", self.z80.h, i & 0xf != 0)
+            self.regEq("Z", self.z80.f.z, self.z80.b == 0)
+            self.regEq("N", self.z80.f.n, True)
+            self.regEq("C", self.z80.f.c, c)
+            self.regEq("H", self.z80.f.h, i & 0xf != 0)
 
     def test_ldBn(self):
         opc = 0x06
@@ -114,17 +114,17 @@ class TestZ80(unittest.TestCase):
         opc = 0x07
         self.validOpc(opc, self.z80.rlcA, 0)
         self.z80.a = 1
-        self.z80.n = True
-        self.z80.h = True
+        self.z80.f.n = True
+        self.z80.f.h = True
         for i in range(0, self.NUM_TESTS):
             (i >> 7) & i
             self.regEq("A", self.z80.a, (1 << (i % 8)) & 0xff)
             c = (self.z80.a >> 7) & 1
             self.timeOp(opc, 1, 4)
-            self.regEq("Z", self.z80.z, self.z80.a == 0)
-            self.regEq("N", self.z80.n, False)
-            self.regEq("H", self.z80.h, False)
-            self.regEq("C", self.z80.c, c)
+            self.regEq("Z", self.z80.f.z, self.z80.a == 0)
+            self.regEq("N", self.z80.f.n, False)
+            self.regEq("H", self.z80.f.h, False)
+            self.regEq("C", self.z80.f.c, c)
 
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
