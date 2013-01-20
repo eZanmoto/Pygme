@@ -84,6 +84,8 @@ class Z80:
                       (self.ldDn, 1),
                       (self.rlA, 0),
                       (self.jrn, 1),
+                      (self.addHLDE, 0),
+                      (self.ldAMemDE, 0),
                      ]
 
     def nop(self):
@@ -281,6 +283,25 @@ class Z80:
         self.pc.ld(pc & 0xffff)
         self.m += 1
         self.t += 4
+
+    def addHLDE(self):
+        """Adds DE to HL and stores the result in HL."""
+        hl = (self.h.val() << 8) + self.l.val()
+        de = (self.d.val() << 8) + self.e.val()
+        result = hl + de
+        self.h.ld((result >> 8) & 0xff)
+        self.l.ld(result & 0xff)
+        self.f.n.reset()
+        self.f.h.setTo((hl & 0xfff) + (de & 0xfff) > 0xfff)
+        self.f.c.setTo(result > 0xffff)
+        self.m += 3
+        self.t += 12
+
+    def ldAMemDE(self):
+        """Loads the contents of the memory address specified by DE into A."""
+        self.a.ld(self._mem.get8((self.d.val() << 8) + self.e.val()))
+        self.m += 2
+        self.t += 8
 
     def chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)

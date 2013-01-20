@@ -347,6 +347,45 @@ class TestZ80(unittest.TestCase):
         self.flagsFixed(opc, 1, 4, 0xff)
         self.regEq(self.z80.pc, 129)
 
+    def test_addHLDE(self):
+        opc = 0x19
+        self.validOpc(opc, self.z80.addHLDE, 0)
+        self.z80.h.ld(0x13)
+        self.z80.l.ld(0x34)
+        self.z80.d.ld(0x23)
+        self.z80.e.ld(0x67)
+        z = self.z80.f.z.val()
+        self.z80.f.n.set()
+        self.timeOp(opc, 3, 12)
+        self.regEq(self.z80.h, 0x36)
+        self.regEq(self.z80.l, 0x9b)
+        self.flagEq(self.z80.f.z, z)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x133 + 0x236 > 0xfff)
+        self.flagEq(self.z80.f.c, 0x1334 + 0x2367 > 0xffff)
+        self.z80.d.ld(0xff)
+        self.z80.e.ld(0xff)
+        self.timeOp(opc, 3, 12)
+        self.regEq(self.z80.h, 0x36)
+        self.regEq(self.z80.l, 0x9a)
+        self.flagEq(self.z80.f.z, z)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x336 + 0xfff > 0xfff)
+        self.flagEq(self.z80.f.c, 0x1334 + 0xffff > 0xffff)
+
+    def test_ldAMemDE(self):
+        opc = 0x1a
+        self.validOpc(opc, self.z80.ldAMemDE, 0)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.d.ld(i * 2)
+            self.z80.e.ld(i * 4)
+            addr = (self.z80.d.val() << 8) + self.z80.e.val()
+            val = (i * 3) & 0xff
+            self.mem.set8(addr, val)
+            self.z80.a.ld(0)
+            self.flagsFixed(opc, 2, 8)
+            self.regEq(self.z80.a, val)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
