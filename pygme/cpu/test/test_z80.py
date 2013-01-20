@@ -12,9 +12,34 @@ class TestZ80(unittest.TestCase):
     # The default number of times each test should be run
     NUM_TESTS = 10
 
+    # Registers
+    A   = 0
+    B   = 1
+    C   = 2
+    D   = 3
+    E   = 4
+    H   = 5
+    L   = 6
+    F_Z = 7
+    F_N = 8
+    F_H = 9
+    F_C = 10
+
     def setUp(self):
         self.mem = array.Array(1 << 16)
         self.z80 = z80.Z80(self.mem)
+        self.regNames = {self.A:   "A",
+                         self.B:   "B",
+                         self.C:   "C",
+                         self.D:   "D",
+                         self.E:   "E",
+                         self.H:   "H",
+                         self.L:   "L",
+                         self.F_Z: "F.Z",
+                         self.F_N: "F.N",
+                         self.F_H: "F.H",
+                         self.F_C: "F.C",
+                        }
 
     def test_nop(self):
         opc = 0x00
@@ -27,8 +52,8 @@ class TestZ80(unittest.TestCase):
         self.validOpc(opc, self.z80.ldBCnn, 2)
         for i in range(0, self.NUM_TESTS):
             self.flagsFixed(opc, 3, 12, i * 2, i * 4)
-            self.regEq("B", self.z80.b, i * 2)
-            self.regEq("C", self.z80.c, i * 4)
+            self.regEq(self.B, i * 2)
+            self.regEq(self.C, i * 4)
 
     def test_ldBCnn_maxValue(self):
         self.z80.ldBCnn(0xff, 0xff)
@@ -58,47 +83,33 @@ class TestZ80(unittest.TestCase):
     def test_incBC(self):
         opc = 0x03
         self.validOpc(opc, self.z80.incBC, 0)
-        self.regEq("B", self.z80.b, 0)
+        self.regEq(self.B, 0)
         for i in range(0, 0x200):
-            self.regEq("C", self.z80.c, i & 0xff)
+            self.regEq(self.C, i & 0xff)
             self.flagsFixed(opc, 1, 4)
-        self.regEq("B", self.z80.b, 2)
+        self.regEq(self.B, 2)
 
     def test_incB(self):
         opc = 0x04
         self.validOpc(opc, self.z80.incB, 0)
-        self.z80.f.n = True
-        self.z80.f.c = True
         for i in range(1, 0x200):
-            c = self.z80.f.c
-            self.timeOp(opc, 1, 4)
-            self.regEq("B", self.z80.b, i & 0xff)
-            self.regEq("Z", self.z80.f.z, self.z80.b == 0)
-            self.regEq("N", self.z80.f.n, False)
-            self.regEq("C", self.z80.f.c, c)
-            self.regEq("H", self.z80.f.h, (i - 1) & 0xf == 0xf)
+            self.incOp8(opc, self.B, 1, 1, 4)
+            self.regEq(self.B, i & 0xff)
 
     def test_decB(self):
         opc = 0x05
         self.validOpc(opc, self.z80.decB, 0)
         self.z80.ldBCnn(0x1ff & 0xff, 0)
-        self.z80.f.n = False
-        self.z80.f.c = False
         for i in range(0x1ff, 0, -1):
-            self.assertEquals(self.z80.b, i & 0xff)
-            c = self.z80.c
-            self.timeOp(opc, 1, 4)
-            self.regEq("Z", self.z80.f.z, self.z80.b == 0)
-            self.regEq("N", self.z80.f.n, True)
-            self.regEq("C", self.z80.f.c, c)
-            self.regEq("H", self.z80.f.h, i & 0xf != 0)
+            self.regEq(self.B, i & 0xff)
+            self.incOp8(opc, self.B, -1, 1, 4)
 
     def test_ldBn(self):
         opc = 0x06
         self.validOpc(opc, self.z80.ldBn, 1)
         for i in range(0, self.NUM_TESTS):
             self.flagsFixed(opc, 1, 4, i)
-            self.regEq("B", self.z80.b, i)
+            self.regEq(self.B, i)
 
     def test_ldBn_maxValue(self):
         self.z80.ldBn(0xff)
@@ -118,13 +129,13 @@ class TestZ80(unittest.TestCase):
         self.z80.f.h = True
         for i in range(0, self.NUM_TESTS):
             (i >> 7) & i
-            self.regEq("A", self.z80.a, (1 << (i % 8)) & 0xff)
+            self.regEq(self.A, (1 << (i % 8)) & 0xff)
             c = (self.z80.a >> 7) & 1
             self.timeOp(opc, 1, 4)
-            self.regEq("Z", self.z80.f.z, self.z80.a == 0)
-            self.regEq("N", self.z80.f.n, False)
-            self.regEq("H", self.z80.f.h, False)
-            self.regEq("C", self.z80.f.c, c)
+            self.flagEq(self.F_Z, self.z80.a == 0)
+            self.flagEq(self.F_N, False)
+            self.flagEq(self.F_H, False)
+            self.flagEq(self.F_C, c)
 
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
@@ -134,6 +145,20 @@ class TestZ80(unittest.TestCase):
             "Opcode should be 0x%02x(%d)" % (opc, opc))
         self.assertEquals(argc, argc_,
             "Instruction should take %d args, got %d" % (argc, argc_))
+
+    def incOp8(self, opc, reg, inc, m_, t_, a=None, b=None):
+        if inc == 0:
+            raise ValueError("Can't increase register by 0")
+        else:
+            pos = inc > 0
+        val = self.regVal(reg)
+        self.z80.n = pos
+        c = self.z80.f.c
+        self.timeOp(opc, m_, t_, a, b)
+        self.flagEq(self.F_Z, self.regVal(reg) == 0)
+        self.flagEq(self.F_N, not pos)
+        self.flagEq(self.F_C, c)
+        self.flagEq(self.F_H, val & 0xf == 0xf if pos else val & 0xf != 0x0)
 
     def flagsFixed(self, opc, m_, t_, a=None, b=None):
         """Flags are unaffected by running instruction opc with a and b"""
@@ -167,9 +192,51 @@ class TestZ80(unittest.TestCase):
                 self.assertIsNotNone(b, "Expect %d instructions, need 'b'" % n)
                 op(a, b)
 
-    def regEq(self, n, reg, val):
-        self.assertEquals(reg, val, "%s should be 0x%02x(%d), is 0x%02x(%d)"
-                % (n, val, val, reg, reg))
+    def flagEq(self, flag, val):
+        flagVal = self.flagVal(flag)
+        self.assertEquals(flagVal, val, "Flag %s is 0x%d, should be 0x%d" %
+            (self.regNames[flag], flagVal, val))
+
+    def flagVal(self, flag):
+        if flag == self.F_Z:
+            return self.z80.f.z
+        elif flag == self.F_N:
+            return self.z80.f.n
+        elif flag == self.F_H:
+            return self.z80.f.h
+        elif flag == self.F_C:
+            return self.z80.f.c
+        else:
+            raise KeyError("%d does not represent any register flag", flag)
+
+    def regEq(self, n, reg, val=None):
+        if val == None:
+            regVal = self.regVal(n)
+            self.assertEquals(regVal, reg,
+                    "Register %s is 0x%02x(%d), should be 0x%02x(%d)"
+                    % (self.regNames[n], regVal, regVal, reg, reg))
+        else:
+            self.assertEquals(reg, val,
+                    "%s should be 0x%02x(%d), is 0x%02x(%d)"
+                    % (n, val, val, reg, reg))
+
+    def regVal(self, reg):
+        if reg == self.A:
+            return self.z80.a
+        if reg == self.B:
+            return self.z80.b
+        if reg == self.C:
+            return self.z80.c
+        if reg == self.D:
+            return self.z80.d
+        if reg == self.E:
+            return self.z80.e
+        if reg == self.H:
+            return self.z80.h
+        if reg == self.L:
+            return self.z80.l
+        else:
+            raise KeyError("%d does not represent any register", reg)
 
     def tearDown(self):
         self.mem = None
