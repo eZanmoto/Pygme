@@ -87,6 +87,7 @@ class Z80:
                       (self.addHLDE, 0),
                       (self.ldAMemDE, 0),
                       (self.decDE, 0),
+                      (self.incE, 0),
                      ]
 
     def nop(self):
@@ -314,6 +315,15 @@ class Z80:
             self.e.ld(0xff)
         else:
             self.e.ld((self.e.val() - 1) & 0xff)
+        self.m += 1
+        self.t += 4
+
+    def incE(self):
+        """Increments the contents of E."""
+        self.f.n.reset()
+        self.f.h.setTo(self.e.val() & 0xf == 0xf)
+        self.e.ld((self.e.val() + 1) & 0xff)
+        self.chkZ(self.e)
         self.m += 1
         self.t += 4
 
