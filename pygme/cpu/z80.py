@@ -48,6 +48,8 @@ class Z80:
         self.a = 0
         self.b = 0
         self.c = 0
+        self.d = 0
+        self.e = 0
         self.h = 0
         self.l = 0
         self.m = 0
@@ -73,6 +75,7 @@ class Z80:
                       (self.stop, 0),
                       (self.ldDEnn, 2),
                       (self.ldMemDEA, 0),
+                      (self.incDE, 0),
                      ]
 
     def nop(self):
@@ -227,6 +230,14 @@ class Z80:
         self._mem.set8((self.d << 8) + self.e, self.a)
         self.m += 2
         self.t += 8
+
+    def incDE(self):
+        """Increments the contents of DE."""
+        self.e = (self.e + 1) & 0xff
+        if self.e == 0:
+            self.d = (self.d + 1) & 0xff
+        self.m += 1
+        self.t += 4
 
     def chkRegByte(self, r, b):
         if b < 0 or b > 0xff:
