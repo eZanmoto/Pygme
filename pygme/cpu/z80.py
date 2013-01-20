@@ -70,6 +70,7 @@ class Z80:
                       (self.decC, 0),
                       (self.ldCn, 1),
                       (self.rrcA, 0),
+                      (self.stop, 0),
                      ]
 
     def nop(self):
@@ -206,6 +207,9 @@ class Z80:
         self.f.c = bit0
         self.m += 1
         self.t += 4
+
+    def stop(self):
+        raise NotImplementedError("'STOP' has not been implemented")
 
     def chkRegByte(self, r, b):
         if b < 0 or b > 0xff:
