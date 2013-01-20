@@ -20,10 +20,12 @@ class TestZ80(unittest.TestCase):
     E   = 4
     H   = 5
     L   = 6
-    F_Z = 7
-    F_N = 8
-    F_H = 9
-    F_C = 10
+    M   = 7
+    T   = 8
+    F_Z = 9
+    F_N = 10
+    F_H = 11
+    F_C = 12
 
     def setUp(self):
         self.mem = array.Array(1 << 16)
@@ -35,6 +37,8 @@ class TestZ80(unittest.TestCase):
                          self.E:   "E",
                          self.H:   "H",
                          self.L:   "L",
+                         self.M:   "M",
+                         self.T:   "T",
                          self.F_Z: "F.Z",
                          self.F_N: "F.N",
                          self.F_H: "F.H",
@@ -137,6 +141,22 @@ class TestZ80(unittest.TestCase):
             self.flagEq(self.F_H, False)
             self.flagEq(self.F_C, c)
 
+    def test_rlcA(self):
+        opc = 0x07
+        self.validOpc(opc, self.z80.rlcA, 0)
+        self.z80.a = 1
+        self.z80.f.n = True
+        self.z80.f.h = True
+        for i in range(0, self.NUM_TESTS):
+            (i >> 7) & i
+            self.regEq(self.A, (1 << (i % 8)) & 0xff)
+            c = (self.z80.a >> 7) & 1
+            self.timeOp(opc, 1, 4)
+            self.flagEq(self.F_Z, self.z80.a == 0)
+            self.flagEq(self.F_N, False)
+            self.flagEq(self.F_H, False)
+            self.flagEq(self.F_C, c)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
@@ -165,17 +185,17 @@ class TestZ80(unittest.TestCase):
         f = self.z80.f
         z, n, h, c = (f.z, f.n, f.h, f.c)
         self.timeOp(opc, m_, t_, a, b)
-        self.regEq("Z", f.z, z)
-        self.regEq("N", f.n, n)
-        self.regEq("H", f.h, h)
-        self.regEq("C", f.c, c)
+        self.flagEq(self.F_Z, z)
+        self.flagEq(self.F_N, n)
+        self.flagEq(self.F_H, h)
+        self.flagEq(self.F_C, c)
 
     def timeOp(self, opc, m_, t_, a=None, b=None):
         m = self.z80.m
         t = self.z80.t
         self.runOp(opc, a, b)
-        self.regEq("M", m + m_, self.z80.m)
-        self.regEq("T", t + t_, self.z80.t)
+        self.regEq(self.M, self.z80.m)
+        self.regEq(self.T, self.z80.t)
 
     def runOp(self, opc, a=None, b=None):
         op, n = self.z80.instr[opc]
@@ -207,18 +227,13 @@ class TestZ80(unittest.TestCase):
         elif flag == self.F_C:
             return self.z80.f.c
         else:
-            raise KeyError("%d does not represent any register flag", flag)
+            raise KeyError("%d does not represent any register flag" % flag)
 
-    def regEq(self, n, reg, val=None):
-        if val == None:
-            regVal = self.regVal(n)
-            self.assertEquals(regVal, reg,
-                    "Register %s is 0x%02x(%d), should be 0x%02x(%d)"
-                    % (self.regNames[n], regVal, regVal, reg, reg))
-        else:
-            self.assertEquals(reg, val,
-                    "%s should be 0x%02x(%d), is 0x%02x(%d)"
-                    % (n, val, val, reg, reg))
+    def regEq(self, reg, val):
+        regVal = self.regVal(reg)
+        self.assertEquals(regVal, val,
+                "Register %s is 0x%02x(%d), should be 0x%02x(%d)"
+                % (self.regNames[reg], regVal, regVal, val, val))
 
     def regVal(self, reg):
         if reg == self.A:
@@ -235,8 +250,12 @@ class TestZ80(unittest.TestCase):
             return self.z80.h
         if reg == self.L:
             return self.z80.l
+        if reg == self.M:
+            return self.z80.m
+        if reg == self.T:
+            return self.z80.t
         else:
-            raise KeyError("%d does not represent any register", reg)
+            raise KeyError("%d does not represent any register" % reg)
 
     def tearDown(self):
         self.mem = None
