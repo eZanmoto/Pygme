@@ -157,6 +157,10 @@ class TestZ80(unittest.TestCase):
             self.flagEq(self.F_H, False)
             self.flagEq(self.F_C, c)
 
+    def test_ldMemnnSP(self):
+        opc = 0x08
+        self.validOpc(opc, self.z80.ldMemnnSP, 2)
+
     def test_addHLBC(self):
         opc = 0x09
         self.validOpc(opc, self.z80.addHLBC, 0)
