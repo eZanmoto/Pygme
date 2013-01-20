@@ -72,6 +72,7 @@ class Z80:
                       (self.rrcA, 0),
                       (self.stop, 0),
                       (self.ldDEnn, 2),
+                      (self.ldMemDEA, 0),
                      ]
 
     def nop(self):
@@ -220,6 +221,12 @@ class Z80:
         self.e = e
         self.m += 3
         self.t += 12
+
+    def ldMemDEA(self):
+        """Loads the contents of A into the memory address specified by DE."""
+        self._mem.set8((self.d << 8) + self.e, self.a)
+        self.m += 2
+        self.t += 8
 
     def chkRegByte(self, r, b):
         if b < 0 or b > 0xff:

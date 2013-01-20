@@ -273,6 +273,17 @@ class TestZ80(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.z80.ldDEnn(0, -1)
 
+    def test_ldMemDEA(self):
+        opc = 0x12
+        self.validOpc(opc, self.z80.ldMemDEA, 0)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.a = i
+            self.z80.ldDEnn(i * 2, i * 4)
+            addr = (self.z80.d << 8) + self.z80.e
+            self.assertEquals(self.mem.get8(addr), 0)
+            self.flagsFixed(opc, 2, 8)
+            self.assertEquals(self.mem.get8(addr), self.z80.a)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
