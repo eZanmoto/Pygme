@@ -93,6 +93,7 @@ class Z80:
                       (self.rrA, 0),
                       (self.jrNZn, 1),
                       (self.ldHLnn, 2),
+                      (self.ldiMemHLA, 0),
                      ]
 
     def nop(self):
@@ -372,6 +373,15 @@ class Z80:
         self.l.ld(l)
         self.m += 3
         self.t += 12
+
+    def ldiMemHLA(self):
+        """Loads A into the memory address in HL and increments HL."""
+        self._mem.set8((self.h.val() << 8) + self.l.val(), self.a.val())
+        self.l.ld((self.l.val() + 1) & 0xff)
+        if self.l.val() == 0:
+            self.h.ld((self.h.val() + 1) & 0xff)
+        self.m += 2
+        self.t += 8
 
     def chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
