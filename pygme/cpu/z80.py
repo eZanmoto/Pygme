@@ -65,6 +65,7 @@ class Z80:
                       (self.ldMemnnSP, 2),
                       (self.addHLBC, 0),
                       (self.ldAMemBC, 0),
+                      (self.decBC, 0),
                      ]
 
     def nop(self):
@@ -152,6 +153,19 @@ class Z80:
         self.a = self._mem.get8((self.b << 8) + self.c)
         self.m += 2
         self.t += 8
+
+    def decBC(self):
+        """Decrements the contents of BC."""
+        if self.b == 0 and self.c == 0:
+            self.b = 0xff
+            self.c = 0xff
+        elif self.c == 0:
+            self.b = (self.b - 1) & 0xff
+            self.c = 0xff
+        else:
+            self.c = (self.c - 1) & 0xff
+        self.m += 1
+        self.t += 4
 
     def chkRegByte(self, r, b):
         if b < 0 or b > 0xff:
