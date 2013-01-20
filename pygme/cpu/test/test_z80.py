@@ -139,12 +139,16 @@ class TestZ80(unittest.TestCase):
         self.z80.f.h = True
         for i in range(0, self.NUM_TESTS):
             self.regEq(self.A, (1 << (i % 8)) & 0xff)
-            c = (self.z80.a >> 7) & 1
+            z, c = (self.z80.f.z, (self.z80.a >> 7) & 1)
             self.timeOp(opc, 1, 4)
-            self.flagEq(self.F_Z, self.z80.a == 0)
+            self.flagEq(self.F_Z, z)
             self.flagEq(self.F_N, False)
             self.flagEq(self.F_H, False)
             self.flagEq(self.F_C, c)
+        self.z80.a = 0
+        self.z80.f.z = False
+        self.timeOp(opc, 1, 4)
+        self.flagEq(self.F_Z, False)
 
     def test_ldMemnnSP(self):
         opc = 0x08
@@ -236,9 +240,9 @@ class TestZ80(unittest.TestCase):
         self.z80.f.h = True
         for i in range(0, self.NUM_TESTS):
             self.regEq(self.A, (0x80 >> (i % 8)) & 0xff)
-            c = self.z80.a & 1
+            z, c = (self.z80.f.z, self.z80.a & 1)
             self.timeOp(opc, 1, 4)
-            self.flagEq(self.F_Z, self.z80.a == 0)
+            self.flagEq(self.F_Z, z)
             self.flagEq(self.F_N, False)
             self.flagEq(self.F_H, False)
             self.flagEq(self.F_C, c)
@@ -246,6 +250,10 @@ class TestZ80(unittest.TestCase):
         self.timeOp(opc, 1, 4)
         self.regEq(self.A, 0x80)
         self.flagEq(self.F_C, 1)
+        self.z80.a = 0
+        self.z80.f.z = False
+        self.timeOp(opc, 1, 4)
+        self.flagEq(self.F_Z, False)
 
     def test_stop(self):
         opc = 0x10

@@ -138,7 +138,6 @@ class Z80:
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
         bit7 = (self.a >> 7) & 1
         self.a = ((self.a << 1) & 0xff) | bit7
-        self.chkZ(self.a)
         self.f.n = False
         self.f.h = False
         self.f.c = bit7
@@ -209,7 +208,6 @@ class Z80:
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
         bit0 = self.a & 1
         self.a = ((self.a >> 1) & 0xff) | (bit0 << 7)
-        self.chkZ(self.a)
         self.f.n = False
         self.f.h = False
         self.f.c = bit0
