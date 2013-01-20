@@ -20,13 +20,13 @@ class TestZ80(unittest.TestCase):
         opc = 0x00
         self.validOpc(opc, self.z80.nop, 0)
         for _ in range(0, self.NUM_TESTS):
-            self.timeOp(opc, 1, 4)
+            self.flagsFixed(opc, 1, 4)
 
     def test_ldBCnn(self):
         opc = 0x01
         self.validOpc(opc, self.z80.ldBCnn, 2)
         for i in range(0, self.NUM_TESTS):
-            self.timeOp(opc, 3, 12, i * 2, i * 4)
+            self.flagsFixed(opc, 3, 12, i * 2, i * 4)
             self.regEq("B", self.z80.b, i * 2)
             self.regEq("C", self.z80.c, i * 4)
 
@@ -52,7 +52,7 @@ class TestZ80(unittest.TestCase):
             self.z80.ldBCnn(i * 2, i * 4)
             addr = (self.z80.b << 8) + self.z80.c
             self.assertEquals(self.mem.get8(addr), 0)
-            self.timeOp(opc, 2, 8)
+            self.flagsFixed(opc, 2, 8)
             self.assertEquals(self.mem.get8(addr), self.z80.a)
 
     def test_incBC(self):
@@ -61,7 +61,7 @@ class TestZ80(unittest.TestCase):
         self.regEq("B", self.z80.b, 0)
         for i in range(0, 0x200):
             self.regEq("C", self.z80.c, i & 0xff)
-            self.timeOp(opc, 1, 4)
+            self.flagsFixed(opc, 1, 4)
         self.regEq("B", self.z80.b, 2)
 
     def test_incB(self):
@@ -97,7 +97,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x06
         self.validOpc(opc, self.z80.ldBn, 1)
         for i in range(0, self.NUM_TESTS):
-            self.timeOp(opc, 1, 4, i)
+            self.flagsFixed(opc, 1, 4, i)
             self.regEq("B", self.z80.b, i)
 
     def test_ldBn_maxValue(self):
@@ -134,6 +134,16 @@ class TestZ80(unittest.TestCase):
             "Opcode should be 0x%02x(%d)" % (opc, opc))
         self.assertEquals(argc, argc_,
             "Instruction should take %d args, got %d" % (argc, argc_))
+
+    def flagsFixed(self, opc, m_, t_, a=None, b=None):
+        """Flags are unaffected by running instruction opc with a and b"""
+        f = self.z80.f
+        z, n, h, c = (f.z, f.n, f.h, f.c)
+        self.timeOp(opc, m_, t_, a, b)
+        self.regEq("Z", f.z, z)
+        self.regEq("N", f.n, n)
+        self.regEq("H", f.h, h)
+        self.regEq("C", f.c, c)
 
     def timeOp(self, opc, m_, t_, a=None, b=None):
         m = self.z80.m
