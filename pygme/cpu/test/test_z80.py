@@ -412,6 +412,19 @@ class TestZ80(unittest.TestCase):
             self.incOp8(opc, self.z80.e, 1, 1, 4)
             self.regEq(self.z80.e, i & 0xff)
 
+    def test_decE(self):
+        opc = 0x1d
+        self.validOpc(opc, self.z80.decE, 0)
+        self.z80.ldDEnn(0, 0x1ff & 0xff)
+        for i in range(0x1ff, 0, -1):
+            self.regEq(self.z80.e, i & 0xff)
+            self.incOp8(opc, self.z80.e, -1, 1, 4)
+        self.z80.ldDEnn(0, 1)
+        self.incOp8(opc, self.z80.e, -1, 1, 4)
+        self.regEq(self.z80.e, 0)
+        self.z80.ldDEnn(0, 0)
+        self.incOp8(opc, self.z80.e, -1, 1, 4)
+        self.regEq(self.z80.e, 0xff)
 
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
