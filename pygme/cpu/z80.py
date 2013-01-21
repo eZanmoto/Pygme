@@ -124,12 +124,7 @@ class Z80:
 
     def decB(self):
         """Decrements the contents of B."""
-        self.f.n.set()
-        self.f.h.setTo(self.b.val() & 0xf != 0)
-        self.b.ld((self.b.val() - 1) & 0xff)
-        self.chkZ(self.b)
-        self.m += 1
-        self.t += 4
+        self.dec8(self.b)
 
     def ldBn(self, b):
         """Loads a byte into B."""
@@ -188,12 +183,7 @@ class Z80:
 
     def decC(self):
         """Decrements the contents of C."""
-        self.f.n.set()
-        self.f.h.setTo(self.c.val() & 0xf != 0)
-        self.c.ld((self.c.val() - 1) & 0xff)
-        self.chkZ(self.c)
-        self.m += 1
-        self.t += 4
+        self.dec8(self.c)
 
     def ldCn(self, c):
         """Loads a byte into C."""
@@ -235,12 +225,7 @@ class Z80:
 
     def decD(self):
         """Decrements the contents of D."""
-        self.f.n.set()
-        self.f.h.setTo(self.d.val() & 0xf != 0)
-        self.d.ld((self.d.val() - 1) & 0xff)
-        self.chkZ(self.d)
-        self.m += 1
-        self.t += 4
+        self.dec8(self.d)
 
     def ldDn(self, d):
         """Loads a byte into D."""
@@ -305,12 +290,7 @@ class Z80:
 
     def decE(self):
         """Decrements the contents of E."""
-        self.f.n.set()
-        self.f.h.setTo(self.e.val() & 0xf != 0)
-        self.e.ld((self.e.val() - 1) & 0xff)
-        self.chkZ(self.e)
-        self.m += 1
-        self.t += 4
+        self.dec8(self.e)
 
     def ldEn(self, e):
         """Loads a byte into E."""
@@ -363,6 +343,14 @@ class Z80:
         self.f.n.reset()
         self.f.h.setTo(reg.val() & 0xf == 0xf)
         reg.ld((reg.val() + 1) & 0xff)
+        self.chkZ(reg)
+        self.m += 1
+        self.t += 4
+
+    def dec8(self, reg):
+        self.f.n.set()
+        self.f.h.setTo(reg.val() & 0xf != 0)
+        reg.ld((reg.val() - 1) & 0xff)
         self.chkZ(reg)
         self.m += 1
         self.t += 4
