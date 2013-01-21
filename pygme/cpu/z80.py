@@ -97,6 +97,7 @@ class Z80:
                       (self.incHL, 0),
                       (self.incH, 0),
                       (self.decH, 0),
+                      (self.ldHn, 1),
                      ]
 
     def nop(self):
@@ -325,6 +326,12 @@ class Z80:
     def decH(self):
         """Decrements the contents of H."""
         self._dec8(self.h)
+
+    def ldHn(self, h):
+        """Loads a byte into H."""
+        self.h.ld(h)
+        self.m += 1
+        self.t += 4
 
     def _inc8(self, reg):
         self.f.n.reset()
