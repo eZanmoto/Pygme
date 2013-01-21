@@ -117,11 +117,7 @@ class Z80:
 
     def incBC(self):
         """Increments the contents of BC."""
-        self.c.ld((self.c.val() + 1) & 0xff)
-        if self.c.val() == 0:
-            self.b.ld((self.b.val() + 1) & 0xff)
-        self.m += 1
-        self.t += 4
+        self.inc16(self.b, self.c)
 
     def incB(self):
         """Increments the contents of B."""
@@ -234,11 +230,7 @@ class Z80:
 
     def incDE(self):
         """Increments the contents of DE."""
-        self.e.ld((self.e.val() + 1) & 0xff)
-        if self.e.val() == 0:
-            self.d.ld((self.d.val() + 1) & 0xff)
-        self.m += 1
-        self.t += 4
+        self.inc16(self.d, self.e)
 
     def incD(self):
         """Increments the contents of D."""
@@ -364,17 +356,20 @@ class Z80:
 
     def incHL(self):
         """Increments the contents of HL."""
-        self.l.ld((self.l.val() + 1) & 0xff)
-        if self.l.val() == 0:
-            self.h.ld((self.h.val() + 1) & 0xff)
-        self.m += 1
-        self.t += 4
+        self.inc16(self.h, self.l)
 
     def inc8(self, reg):
         self.f.n.reset()
         self.f.h.setTo(reg.val() & 0xf == 0xf)
         reg.ld((reg.val() + 1) & 0xff)
         self.chkZ(reg)
+        self.m += 1
+        self.t += 4
+
+    def inc16(self, highOrdReg, lowOrdReg):
+        lowOrdReg.ld((lowOrdReg.val() + 1) & 0xff)
+        if lowOrdReg.val() == 0:
+            highOrdReg.ld((highOrdReg.val() + 1) & 0xff)
         self.m += 1
         self.t += 4
 
