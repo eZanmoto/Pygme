@@ -111,9 +111,7 @@ class Z80:
 
     def ldMemBCA(self):
         """Loads the contents of A into the memory address specified by BC."""
-        self._mem.set8((self.b.val() << 8) + self.c.val(), self.a.val())
-        self.m += 2
-        self.t += 8
+        self.ldMemRA(self.b, self.c)
 
     def incBC(self):
         """Increments the contents of BC."""
@@ -224,9 +222,7 @@ class Z80:
 
     def ldMemDEA(self):
         """Loads the contents of A into the memory address specified by DE."""
-        self._mem.set8((self.d.val() << 8) + self.e.val(), self.a.val())
-        self.m += 2
-        self.t += 8
+        self.ldMemRA(self.d, self.e)
 
     def incDE(self):
         """Increments the contents of DE."""
@@ -349,10 +345,10 @@ class Z80:
 
     def ldiMemHLA(self):
         """Loads A into the memory address in HL and increments HL."""
-        self._mem.set8((self.h.val() << 8) + self.l.val(), self.a.val())
+        self.ldMemRA(self.h, self.l)
         self.incHL()
-        self.m += 1
-        self.t += 4
+        self.m -= 1
+        self.t -= 4
 
     def incHL(self):
         """Increments the contents of HL."""
@@ -372,6 +368,11 @@ class Z80:
             highOrdReg.ld((highOrdReg.val() + 1) & 0xff)
         self.m += 1
         self.t += 4
+
+    def ldMemRA(self, highOrdReg, lowOrdReg):
+        self._mem.set8((highOrdReg.val() << 8) + lowOrdReg.val(), self.a.val())
+        self.m += 2
+        self.t += 8
 
     def chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
