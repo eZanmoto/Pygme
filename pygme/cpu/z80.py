@@ -151,9 +151,7 @@ class Z80:
 
     def ldAMemBC(self):
         """Loads the contents of the memory address specified by BC into A."""
-        self.a.ld(self._mem.get8((self.b.val() << 8) + self.c.val()))
-        self.m += 2
-        self.t += 8
+        self._ldAMemRR(self.b, self.c)
 
     def decBC(self):
         """Decrements the contents of BC."""
@@ -233,9 +231,7 @@ class Z80:
 
     def ldAMemDE(self):
         """Loads the contents of the memory address specified by DE into A."""
-        self.a.ld(self._mem.get8((self.d.val() << 8) + self.e.val()))
-        self.m += 2
-        self.t += 8
+        self._ldAMemRR(self.d, self.e)
 
     def decDE(self):
         """Decrements the contents of DE."""
@@ -364,6 +360,11 @@ class Z80:
         self.f.c.setTo(result > 0xffff)
         self.m += 3
         self.t += 12
+
+    def _ldAMemRR(self, hiOrdReg, loOrdReg):
+        self.a.ld(self._mem.get8((hiOrdReg.val() << 8) + loOrdReg.val()))
+        self.m += 2
+        self.t += 8
 
     def _dec16(self, highOrdReg, lowOrdReg):
         if highOrdReg.val() == 0 and lowOrdReg.val() == 0:
