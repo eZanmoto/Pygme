@@ -166,16 +166,7 @@ class Z80:
 
     def decBC(self):
         """Decrements the contents of BC."""
-        if self.b.val() == 0 and self.c.val() == 0:
-            self.b.ld(0xff)
-            self.c.ld(0xff)
-        elif self.c.val() == 0:
-            self.b.ld((self.b.val() - 1) & 0xff)
-            self.c.ld(0xff)
-        else:
-            self.c.ld((self.c.val() - 1) & 0xff)
-        self.m += 1
-        self.t += 4
+        self._dec16(self.b, self.c)
 
     def incC(self):
         """Increments the contents of C."""
@@ -273,16 +264,7 @@ class Z80:
 
     def decDE(self):
         """Decrements the contents of DE."""
-        if self.d.val() == 0 and self.e.val() == 0:
-            self.d.ld(0xff)
-            self.e.ld(0xff)
-        elif self.e.val() == 0:
-            self.d.ld((self.d.val() - 1) & 0xff)
-            self.e.ld(0xff)
-        else:
-            self.e.ld((self.e.val() - 1) & 0xff)
-        self.m += 1
-        self.t += 4
+        self._dec16(self.d, self.e)
 
     def incE(self):
         """Increments the contents of E."""
@@ -359,6 +341,18 @@ class Z80:
         lowOrdReg.ld((lowOrdReg.val() + 1) & 0xff)
         if lowOrdReg.val() == 0:
             highOrdReg.ld((highOrdReg.val() + 1) & 0xff)
+        self.m += 1
+        self.t += 4
+
+    def _dec16(self, highOrdReg, lowOrdReg):
+        if highOrdReg.val() == 0 and lowOrdReg.val() == 0:
+            highOrdReg.ld(0xff)
+            lowOrdReg.ld(0xff)
+        elif lowOrdReg.val() == 0:
+            highOrdReg.ld((highOrdReg.val() - 1) & 0xff)
+            lowOrdReg.ld(0xff)
+        else:
+            lowOrdReg.ld((lowOrdReg.val() - 1) & 0xff)
         self.m += 1
         self.t += 4
 
