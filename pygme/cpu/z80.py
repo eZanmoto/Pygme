@@ -147,16 +147,7 @@ class Z80:
 
     def addHLBC(self):
         """Adds BC to HL and stores the result in HL."""
-        hl = (self.h.val() << 8) + self.l.val()
-        bc = (self.b.val() << 8) + self.c.val()
-        result = hl + bc
-        self.h.ld((result >> 8) & 0xff)
-        self.l.ld(result & 0xff)
-        self.f.n.reset()
-        self.f.h.setTo((hl & 0xfff) + (bc & 0xfff) > 0xfff)
-        self.f.c.setTo(result > 0xffff)
-        self.m += 3
-        self.t += 12
+        self._addHLRR(self.b, self.c)
 
     def ldAMemBC(self):
         """Loads the contents of the memory address specified by BC into A."""
@@ -238,16 +229,7 @@ class Z80:
 
     def addHLDE(self):
         """Adds DE to HL and stores the result in HL."""
-        hl = (self.h.val() << 8) + self.l.val()
-        de = (self.d.val() << 8) + self.e.val()
-        result = hl + de
-        self.h.ld((result >> 8) & 0xff)
-        self.l.ld(result & 0xff)
-        self.f.n.reset()
-        self.f.h.setTo((hl & 0xfff) + (de & 0xfff) > 0xfff)
-        self.f.c.setTo(result > 0xffff)
-        self.m += 3
-        self.t += 12
+        self._addHLRR(self.d, self.e)
 
     def ldAMemDE(self):
         """Loads the contents of the memory address specified by DE into A."""
@@ -330,16 +312,7 @@ class Z80:
 
     def addHLHL(self):
         """Adds HL to HL and stores the result in HL."""
-        hl = (self.h.val() << 8) + self.l.val()
-        hl = (self.h.val() << 8) + self.l.val()
-        result = hl + hl
-        self.h.ld((result >> 8) & 0xff)
-        self.l.ld(result & 0xff)
-        self.f.n.reset()
-        self.f.h.setTo((hl & 0xfff) + (hl & 0xfff) > 0xfff)
-        self.f.c.setTo(result > 0xffff)
-        self.m += 3
-        self.t += 12
+        self._addHLRR(self.h, self.l)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
@@ -379,6 +352,18 @@ class Z80:
         reg.ld(val)
         self.m += 1
         self.t += 4
+
+    def _addHLRR(self, hiOrdReg, loOrdReg):
+        hl = (self.h.val() << 8) + self.l.val()
+        rr = (hiOrdReg.val() << 8) + loOrdReg.val()
+        result = hl + rr
+        self.h.ld((result >> 8) & 0xff)
+        self.l.ld(result & 0xff)
+        self.f.n.reset()
+        self.f.h.setTo((hl & 0xfff) + (rr & 0xfff) > 0xfff)
+        self.f.c.setTo(result > 0xffff)
+        self.m += 3
+        self.t += 12
 
     def _dec16(self, highOrdReg, lowOrdReg):
         if highOrdReg.val() == 0 and lowOrdReg.val() == 0:
