@@ -106,6 +106,7 @@ class Z80:
                       (self.incL, 0),
                       (self.decL, 0),
                       (self.ldLn, 1),
+                      (self.cpl, 0),
                      ]
 
     def nop(self):
@@ -337,6 +338,14 @@ class Z80:
     def ldLn(self, l):
         """Loads a byte into L."""
         self._ldRn(self.l, l)
+
+    def cpl(self):
+        """Complements the A register."""
+        self.a.ld(0xff - self.a.val())
+        self.f.n.set()
+        self.f.h.set()
+        self.m += 1
+        self.t += 4
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
