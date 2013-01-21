@@ -99,6 +99,7 @@ class Z80:
                       (self.decH, 0),
                       (self.ldHn, 1),
                       (self.daa, 0),
+                      (self.jrZn, 1),
                      ]
 
     def nop(self):
@@ -336,6 +337,14 @@ class Z80:
 
     def daa(self):
         raise NotImplementedError("'DAA' has not been implemented")
+
+    def jrZn(self, n):
+        """Decrements/increments PC by the signed 16-bit number n if Z is 1."""
+        if self.f.z.val():
+            self.jrn(n)
+        else:
+            self.m += 1
+            self.t += 4
 
     def _inc8(self, reg):
         self.f.n.reset()
