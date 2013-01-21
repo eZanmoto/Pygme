@@ -98,6 +98,7 @@ class Z80:
                       (self.incH, 0),
                       (self.decH, 0),
                       (self.ldHn, 1),
+                      (self.daa, 0),
                      ]
 
     def nop(self):
@@ -332,6 +333,9 @@ class Z80:
         self.h.ld(h)
         self.m += 1
         self.t += 4
+
+    def daa(self):
+        raise NotImplementedError("'DAA' has not been implemented")
 
     def _inc8(self, reg):
         self.f.n.reset()
