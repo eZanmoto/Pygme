@@ -378,11 +378,9 @@ class Z80:
     def ldiMemHLA(self):
         """Loads A into the memory address in HL and increments HL."""
         self._mem.set8((self.h.val() << 8) + self.l.val(), self.a.val())
-        self.l.ld((self.l.val() + 1) & 0xff)
-        if self.l.val() == 0:
-            self.h.ld((self.h.val() + 1) & 0xff)
-        self.m += 2
-        self.t += 8
+        self.incHL()
+        self.m += 1
+        self.t += 4
 
     def incHL(self):
         """Increments the contents of HL."""
