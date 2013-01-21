@@ -101,6 +101,7 @@ class Z80:
                       (self.daa, 0),
                       (self.jrZn, 1),
                       (self.addHLHL, 0),
+                      (self.ldiAMemHL, 0),
                      ]
 
     def nop(self):
@@ -310,6 +311,13 @@ class Z80:
         """Adds HL to HL and stores the result in HL."""
         self._addHLRR(self.h, self.l)
 
+    def ldiAMemHL(self):
+        """Loads byte at memory address in HL into A and increments HL."""
+        self._ldAMemRR(self.h, self.l)
+        self.incHL()
+        self.m -= 1
+        self.t -= 4
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -366,15 +374,15 @@ class Z80:
         self.m += 2
         self.t += 8
 
-    def _decRR(self, hiOrdReg, loOrdReg):
-        if hiOrdReg.val() == 0 and loOrdReg.val() == 0:
+    def _decRR(self, hiOrdReg, lowOrdReg):
+        if hiOrdReg.val() == 0 and lowOrdReg.val() == 0:
             hiOrdReg.ld(0xff)
-            loOrdReg.ld(0xff)
-        elif loOrdReg.val() == 0:
+            lowOrdReg.ld(0xff)
+        elif lowOrdReg.val() == 0:
             hiOrdReg.ld((hiOrdReg.val() - 1) & 0xff)
-            loOrdReg.ld(0xff)
+            lowOrdReg.ld(0xff)
         else:
-            loOrdReg.ld((loOrdReg.val() - 1) & 0xff)
+            lowOrdReg.ld((lowOrdReg.val() - 1) & 0xff)
         self.m += 1
         self.t += 4
 

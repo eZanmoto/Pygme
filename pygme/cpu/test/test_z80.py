@@ -588,6 +588,30 @@ class TestZ80(unittest.TestCase):
         self.flagEq(self.z80.f.h, 0xfff + 0xfff > 0xfff)
         self.flagEq(self.z80.f.c, 0xffff + 0xffff > 0xffff)
 
+    def test_ldiAMemHL(self):
+        opc = 0x2a
+        self.validOpc(opc, self.z80.ldiAMemHL, 0)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.h.ld(i * 2)
+            self.z80.l.ld(i * 4)
+            addr = (self.z80.h.val() << 8) + self.z80.l.val()
+            val = (i * 3) & 0xff
+            self.mem.set8(addr, val)
+            self.z80.a.ld(0)
+            self.flagsFixed(opc, 2, 8)
+            self.regEq(self.z80.a, val)
+            if i * 4 == 0xff:
+                self.regEq(self.z80.h, i * 2 + 1)
+                self.regEq(self.z80.l, 0)
+            else:
+                self.regEq(self.z80.h, i * 2)
+                self.regEq(self.z80.l, i * 4 + 1)
+        self.z80.h.ld(0x00)
+        self.z80.l.ld(0xff)
+        self.flagsFixed(opc, 2, 8)
+        self.regEq(self.z80.h, 0x01)
+        self.regEq(self.z80.l, 0x00)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
