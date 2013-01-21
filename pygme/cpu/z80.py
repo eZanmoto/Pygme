@@ -95,6 +95,7 @@ class Z80:
                       (self.ldHLnn, 2),
                       (self.ldiMemHLA, 0),
                       (self.incHL, 0),
+                      (self.incH, 0),
                      ]
 
     def nop(self):
@@ -353,6 +354,10 @@ class Z80:
     def incHL(self):
         """Increments the contents of HL."""
         self.inc16(self.h, self.l)
+
+    def incH(self):
+        """Increments the contents of H."""
+        self.inc8(self.h)
 
     def inc8(self, reg):
         self.f.n.reset()
