@@ -110,7 +110,7 @@ class Z80:
 
     def ldBCnn(self, b, c):
         """Loads a byte into B and a byte into C."""
-        self._ld16(self.b, b, self.c, c)
+        self._ldRRnn(self.b, b, self.c, c)
 
     def ldMemBCA(self):
         """Loads the contents of A into the memory address specified by BC."""
@@ -195,7 +195,7 @@ class Z80:
 
     def ldDEnn(self, d, e):
         """Loads a byte into D and a byte into E."""
-        self._ld16(self.d, d, self.e, e)
+        self._ldRRnn(self.d, d, self.e, e)
 
     def ldMemDEA(self):
         """Loads the contents of A into the memory address specified by DE."""
@@ -292,7 +292,7 @@ class Z80:
 
     def ldHLnn(self, h, l):
         """Loads a byte into H and a byte into L."""
-        self._ld16(self.h, h, self.l, l)
+        self._ldRRnn(self.h, h, self.l, l)
 
     def ldiMemHLA(self):
         """Loads A into the memory address in HL and increments HL."""
@@ -341,6 +341,12 @@ class Z80:
         self.m += 3
         self.t += 12
 
+    def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
+        self._ld8(hiOrdReg, hiOrdVal)
+        self._ld8(loOrdReg, loOrdVal)
+        self.m += 1
+        self.t += 4
+
     def _ldMemRRA(self, hiOrdReg, loOrdReg):
         self._mem.set8((hiOrdReg.val() << 8) + loOrdReg.val(), self.a.val())
         self.m += 2
@@ -348,12 +354,6 @@ class Z80:
 
     def _ld8(self, reg, val):
         reg.ld(val)
-        self.m += 1
-        self.t += 4
-
-    def _ld16(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
-        self._ld8(hiOrdReg, hiOrdVal)
-        self._ld8(loOrdReg, loOrdVal)
         self.m += 1
         self.t += 4
 
