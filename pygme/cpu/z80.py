@@ -112,19 +112,19 @@ class Z80:
 
     def ldMemBCA(self):
         """Loads the contents of A into the memory address specified by BC."""
-        self.ldMemRA(self.b, self.c)
+        self._ldMemRA(self.b, self.c)
 
     def incBC(self):
         """Increments the contents of BC."""
-        self.inc16(self.b, self.c)
+        self._inc16(self.b, self.c)
 
     def incB(self):
         """Increments the contents of B."""
-        self.inc8(self.b)
+        self._inc8(self.b)
 
     def decB(self):
         """Decrements the contents of B."""
-        self.dec8(self.b)
+        self._dec8(self.b)
 
     def ldBn(self, b):
         """Loads a byte into B."""
@@ -179,11 +179,11 @@ class Z80:
 
     def incC(self):
         """Increments the contents of C."""
-        self.inc8(self.c)
+        self._inc8(self.c)
 
     def decC(self):
         """Decrements the contents of C."""
-        self.dec8(self.c)
+        self._dec8(self.c)
 
     def ldCn(self, c):
         """Loads a byte into C."""
@@ -213,19 +213,19 @@ class Z80:
 
     def ldMemDEA(self):
         """Loads the contents of A into the memory address specified by DE."""
-        self.ldMemRA(self.d, self.e)
+        self._ldMemRA(self.d, self.e)
 
     def incDE(self):
         """Increments the contents of DE."""
-        self.inc16(self.d, self.e)
+        self._inc16(self.d, self.e)
 
     def incD(self):
         """Increments the contents of D."""
-        self.inc8(self.d)
+        self._inc8(self.d)
 
     def decD(self):
         """Decrements the contents of D."""
-        self.dec8(self.d)
+        self._dec8(self.d)
 
     def ldDn(self, d):
         """Loads a byte into D."""
@@ -286,11 +286,11 @@ class Z80:
 
     def incE(self):
         """Increments the contents of E."""
-        self.inc8(self.e)
+        self._inc8(self.e)
 
     def decE(self):
         """Decrements the contents of E."""
-        self.dec8(self.e)
+        self._dec8(self.e)
 
     def ldEn(self, e):
         """Loads a byte into E."""
@@ -326,46 +326,46 @@ class Z80:
 
     def ldiMemHLA(self):
         """Loads A into the memory address in HL and increments HL."""
-        self.ldMemRA(self.h, self.l)
+        self._ldMemRA(self.h, self.l)
         self.incHL()
         self.m -= 1
         self.t -= 4
 
     def incHL(self):
         """Increments the contents of HL."""
-        self.inc16(self.h, self.l)
+        self._inc16(self.h, self.l)
 
     def incH(self):
         """Increments the contents of H."""
-        self.inc8(self.h)
+        self._inc8(self.h)
 
-    def inc8(self, reg):
+    def _inc8(self, reg):
         self.f.n.reset()
         self.f.h.setTo(reg.val() & 0xf == 0xf)
         reg.ld((reg.val() + 1) & 0xff)
-        self.chkZ(reg)
+        self._chkZ(reg)
         self.m += 1
         self.t += 4
 
-    def dec8(self, reg):
+    def _dec8(self, reg):
         self.f.n.set()
         self.f.h.setTo(reg.val() & 0xf != 0)
         reg.ld((reg.val() - 1) & 0xff)
-        self.chkZ(reg)
+        self._chkZ(reg)
         self.m += 1
         self.t += 4
 
-    def inc16(self, highOrdReg, lowOrdReg):
+    def _inc16(self, highOrdReg, lowOrdReg):
         lowOrdReg.ld((lowOrdReg.val() + 1) & 0xff)
         if lowOrdReg.val() == 0:
             highOrdReg.ld((highOrdReg.val() + 1) & 0xff)
         self.m += 1
         self.t += 4
 
-    def ldMemRA(self, highOrdReg, lowOrdReg):
+    def _ldMemRA(self, highOrdReg, lowOrdReg):
         self._mem.set8((highOrdReg.val() << 8) + lowOrdReg.val(), self.a.val())
         self.m += 2
         self.t += 8
 
-    def chkZ(self, reg):
+    def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
