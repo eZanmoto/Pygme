@@ -125,12 +125,7 @@ class Z80:
 
     def incB(self):
         """Increments the contents of B."""
-        self.f.n.reset()
-        self.f.h.setTo(self.b.val() & 0xf == 0xf)
-        self.b.ld((self.b.val() + 1) & 0xff)
-        self.chkZ(self.b)
-        self.m += 1
-        self.t += 4
+        self.inc8(self.b)
 
     def decB(self):
         """Decrements the contents of B."""
@@ -194,12 +189,7 @@ class Z80:
 
     def incC(self):
         """Increments the contents of C."""
-        self.f.n.reset()
-        self.f.h.setTo(self.c.val() & 0xf == 0xf)
-        self.c.ld((self.c.val() + 1) & 0xff)
-        self.chkZ(self.c)
-        self.m += 1
-        self.t += 4
+        self.inc8(self.c)
 
     def decC(self):
         """Decrements the contents of C."""
@@ -252,12 +242,7 @@ class Z80:
 
     def incD(self):
         """Increments the contents of D."""
-        self.f.n.reset()
-        self.f.h.setTo(self.d.val() & 0xf == 0xf)
-        self.d.ld((self.d.val() + 1) & 0xff)
-        self.chkZ(self.d)
-        self.m += 1
-        self.t += 4
+        self.inc8(self.d)
 
     def decD(self):
         """Decrements the contents of D."""
@@ -327,12 +312,7 @@ class Z80:
 
     def incE(self):
         """Increments the contents of E."""
-        self.f.n.reset()
-        self.f.h.setTo(self.e.val() & 0xf == 0xf)
-        self.e.ld((self.e.val() + 1) & 0xff)
-        self.chkZ(self.e)
-        self.m += 1
-        self.t += 4
+        self.inc8(self.e)
 
     def decE(self):
         """Decrements the contents of E."""
@@ -387,6 +367,14 @@ class Z80:
         self.l.ld((self.l.val() + 1) & 0xff)
         if self.l.val() == 0:
             self.h.ld((self.h.val() + 1) & 0xff)
+        self.m += 1
+        self.t += 4
+
+    def inc8(self, reg):
+        self.f.n.reset()
+        self.f.h.setTo(reg.val() & 0xf == 0xf)
+        reg.ld((reg.val() + 1) & 0xff)
+        self.chkZ(reg)
         self.m += 1
         self.t += 4
 
