@@ -105,6 +105,7 @@ class Z80:
                       (self.decHL, 0),
                       (self.incL, 0),
                       (self.decL, 0),
+                      (self.ldLn, 1),
                      ]
 
     def nop(self):
@@ -332,6 +333,10 @@ class Z80:
     def decL(self):
         """Decrements the contents of L."""
         self._decR(self.l)
+
+    def ldLn(self, l):
+        """Loads a byte into L."""
+        self._ldRn(self.l, l)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
