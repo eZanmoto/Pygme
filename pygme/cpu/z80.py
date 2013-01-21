@@ -130,7 +130,7 @@ class Z80:
 
     def ldBn(self, b):
         """Loads a byte into B."""
-        self._ld8(self.b, b)
+        self._ldRn(self.b, b)
 
     def rlcA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
@@ -178,7 +178,7 @@ class Z80:
 
     def ldCn(self, c):
         """Loads a byte into C."""
-        self._ld8(self.c, c)
+        self._ldRn(self.c, c)
 
     def rrcA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
@@ -215,7 +215,7 @@ class Z80:
 
     def ldDn(self, d):
         """Loads a byte into D."""
-        self._ld8(self.d, d)
+        self._ldRn(self.d, d)
 
     def rlA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
@@ -269,7 +269,7 @@ class Z80:
 
     def ldEn(self, e):
         """Loads a byte into E."""
-        self._ld8(self.e, e)
+        self._ldRn(self.e, e)
 
     def rrA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and C goes
@@ -315,7 +315,7 @@ class Z80:
 
     def ldHn(self, h):
         """Loads a byte into H."""
-        self._ld8(self.h, h)
+        self._ldRn(self.h, h)
 
     def daa(self):
         raise NotImplementedError("'DAA' has not been implemented")
@@ -342,8 +342,8 @@ class Z80:
         self.t += 12
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
-        self._ld8(hiOrdReg, hiOrdVal)
-        self._ld8(loOrdReg, loOrdVal)
+        self._ldRn(hiOrdReg, hiOrdVal)
+        self._ldRn(loOrdReg, loOrdVal)
         self.m += 1
         self.t += 4
 
@@ -375,7 +375,7 @@ class Z80:
         self.m += 1
         self.t += 4
 
-    def _ld8(self, reg, val):
+    def _ldRn(self, reg, val):
         reg.ld(val)
         self.m += 1
         self.t += 4
