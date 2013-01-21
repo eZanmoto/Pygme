@@ -612,6 +612,22 @@ class TestZ80(unittest.TestCase):
         self.regEq(self.z80.h, 0x01)
         self.regEq(self.z80.l, 0x00)
 
+    def test_decHL(self):
+        opc = 0x2b
+        self.validOpc(opc, self.z80.decHL, 0)
+        self.z80.ldHLnn(0x01, 0x00)
+        self.flagsFixed(opc, 1, 4)
+        self.regEq(self.z80.h, 0x00)
+        self.regEq(self.z80.l, 0xff)
+        self.z80.ldHLnn(0x00, 0x01)
+        self.flagsFixed(opc, 1, 4)
+        self.regEq(self.z80.h, 0x00)
+        self.regEq(self.z80.l, 0x00)
+        self.z80.ldHLnn(0x00, 0x00)
+        self.flagsFixed(opc, 1, 4)
+        self.regEq(self.z80.h, 0xff)
+        self.regEq(self.z80.l, 0xff)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")

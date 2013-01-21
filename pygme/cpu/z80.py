@@ -102,6 +102,7 @@ class Z80:
                       (self.jrZn, 1),
                       (self.addHLHL, 0),
                       (self.ldiAMemHL, 0),
+                      (self.decHL, 0),
                      ]
 
     def nop(self):
@@ -317,6 +318,10 @@ class Z80:
         self.incHL()
         self.m -= 1
         self.t -= 4
+
+    def decHL(self):
+        """Decrements the contents of HL."""
+        self._decRR(self.h, self.l)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
