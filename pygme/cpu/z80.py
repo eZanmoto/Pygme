@@ -114,6 +114,7 @@ class Z80:
                       (self.incSP, 0),
                       (self.incMemHL, 0),
                       (self.decMemHL, 0),
+                      (self.ldMemHLn, 1),
                      ]
 
     def nop(self):
@@ -400,6 +401,13 @@ class Z80:
         self._mem.set8(addr, (val - 1) & 0xff)
         self.f.h.setTo(val & 0xf != 0)
         self.f.z.setTo(self._mem.get8(addr) == 0)
+        self.m += 3
+        self.t += 12
+
+    def ldMemHLn(self, hl):
+        """Loads a byte into the memory address specified by HL."""
+        addr = (self.h.val() << 8) + self.l.val()
+        self._mem.set8(addr, hl)
         self.m += 3
         self.t += 12
 

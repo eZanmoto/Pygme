@@ -771,6 +771,13 @@ class TestZ80(unittest.TestCase):
             self.flagEq(self.z80.f.c, c)
             self.flagEq(self.z80.f.h, i & 0xf != 0x0)
 
+    def test_ldMemHLn(self):
+        opc = 0x36
+        self.validOpc(opc, self.z80.ldMemHLn, 1)
+        for i in range(0, self.NUM_TESTS):
+            self.flagsFixed(opc, 3, 12, i)
+            addr = (self.z80.h.val() << 8) + self.z80.l.val()
+            self.assertEquals(self.mem.get8(addr), i)
 
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
