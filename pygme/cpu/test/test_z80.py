@@ -656,7 +656,7 @@ class TestZ80(unittest.TestCase):
             self.flagsFixed(opc, 1, 4, i)
             self.regEq(self.z80.l, i)
 
-    def test_CPL(self):
+    def test_cpl(self):
         opc = 0x2f
         self.validOpc(opc, self.z80.cpl, 0)
         z, c = (self.z80.f.z.val(), self.z80.f.c.val())
