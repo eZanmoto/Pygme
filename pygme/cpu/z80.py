@@ -107,6 +107,7 @@ class Z80:
                       (self.decL, 0),
                       (self.ldLn, 1),
                       (self.cpl, 0),
+                      (self.jrNCn, 1),
                      ]
 
     def nop(self):
@@ -346,6 +347,14 @@ class Z80:
         self.f.h.set()
         self.m += 1
         self.t += 4
+
+    def jrNCn(self, n):
+        """Decrements/increments PC by the signed 16-bit number n if C is 0."""
+        if self.f.c.val():
+            self.m += 1
+            self.t += 4
+        else:
+            self.jrn(n)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
