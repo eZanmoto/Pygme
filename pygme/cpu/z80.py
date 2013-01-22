@@ -111,6 +111,7 @@ class Z80:
                       (self.jrNCn, 1),
                       (self.ldSPnn, 2),
                       (self.lddMemHLA, 0),
+                      (self.incSP, 0),
                      ]
 
     def nop(self):
@@ -371,6 +372,12 @@ class Z80:
         self.decHL()
         self.m -= 1
         self.t -= 4
+
+    def incSP(self):
+        """Increments the contents of SP."""
+        self.sp.ld((self.sp.val() + 1) & 0xffff)
+        self.m += 1
+        self.t += 4
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
