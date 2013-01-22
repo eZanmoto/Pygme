@@ -725,7 +725,8 @@ class TestZ80(unittest.TestCase):
     def _test_ldd(self, opc, hiReg, loReg, param, value):
         hiReg.ld((param >> 8) & 0xff)
         loReg.ld(param & 0xff)
-        self.assertEquals(self.mem.get8(param), 0)
+        self.z80.a.ld(0xa5)
+        self.mem.set8(param, 0)
         self.flagsFixed(opc, 2, 8)
         self.assertEquals(self.mem.get8(param), self.z80.a.val())
         self.regEq(hiReg, (value >> 8) & 0xff)
