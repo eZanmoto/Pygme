@@ -740,6 +740,20 @@ class TestZ80(unittest.TestCase):
             self.regEq(self.z80.sp, (init + i) & 0xffff)
             self.flagsFixed(opc, 1, 4)
 
+    def test_incMemHL(self):
+        opc = 0x34
+        self.validOpc(opc, self.z80.incMemHL, 0)
+        for i in range(1, 0x200):
+            self.z80.n = True
+            c = self.z80.f.c.val()
+            self.timeOp(opc, 3, 12)
+            val = self.mem.get8((self.z80.h.val() << 8) + self.z80.l.val())
+            self.assertEquals(val, i & 0xff)
+            self.flagEq(self.z80.f.z, i & 0xff == 0)
+            self.flagEq(self.z80.f.n, False)
+            self.flagEq(self.z80.f.c, c)
+            self.flagEq(self.z80.f.h, (i - 1) & 0xf == 0xf)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")

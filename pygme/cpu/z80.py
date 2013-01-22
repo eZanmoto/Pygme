@@ -112,6 +112,7 @@ class Z80:
                       (self.ldSPnn, 2),
                       (self.lddMemHLA, 0),
                       (self.incSP, 0),
+                      (self.incMemHL, 0),
                      ]
 
     def nop(self):
@@ -378,6 +379,17 @@ class Z80:
         self.sp.ld((self.sp.val() + 1) & 0xffff)
         self.m += 1
         self.t += 4
+
+    def incMemHL(self):
+        """Increments the contents of the memory address specified by HL."""
+        self.f.n.reset()
+        addr = (self.h.val() << 8) + self.l.val()
+        val = self._mem.get8(addr)
+        self._mem.set8(addr, (val + 1) & 0xff)
+        self.f.h.setTo(val & 0xf  == 0xf)
+        self.f.z.setTo(self._mem.get8(addr) == 0)
+        self.m += 3
+        self.t += 12
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
