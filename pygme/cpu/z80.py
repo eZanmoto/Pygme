@@ -385,7 +385,7 @@ class Z80:
     def incMemHL(self):
         """Increments the contents of the memory address specified by HL."""
         self.f.n.reset()
-        addr = (self.h.val() << 8) + self.l.val()
+        addr = self._hl()
         val = self._mem.get8(addr)
         self._mem.set8(addr, (val + 1) & 0xff)
         self.f.h.setTo(val & 0xf  == 0xf)
@@ -396,7 +396,7 @@ class Z80:
     def decMemHL(self):
         """Decrements the contents of the memory address specified by HL."""
         self.f.n.set()
-        addr = (self.h.val() << 8) + self.l.val()
+        addr = self._hl()
         val = self._mem.get8(addr)
         self._mem.set8(addr, (val - 1) & 0xff)
         self.f.h.setTo(val & 0xf != 0)
@@ -406,8 +406,7 @@ class Z80:
 
     def ldMemHLn(self, hl):
         """Loads a byte into the memory address specified by HL."""
-        addr = (self.h.val() << 8) + self.l.val()
-        self._mem.set8(addr, hl)
+        self._mem.set8(self._hl(), hl)
         self.m += 3
         self.t += 12
 
@@ -481,3 +480,6 @@ class Z80:
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
+
+    def _hl(self):
+        return (self.h.val() << 8) + self.l.val()
