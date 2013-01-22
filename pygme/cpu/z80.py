@@ -118,6 +118,7 @@ class Z80:
                       (self.scf, 0),
                       (self.jrCn, 1),
                       (self.addHLSP, 0),
+                      (self.lddAMemHL, 0),
                      ]
 
     def nop(self):
@@ -432,6 +433,13 @@ class Z80:
         self.f.c.setTo(result > 0xffff)
         self.m += 3
         self.t += 12
+
+    def lddAMemHL(self):
+        """Loads the value at memory address in HL into A and decrements HL."""
+        self._ldAMemRR(self.h, self.l)
+        self.decHL()
+        self.m -= 1
+        self.t -= 4
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
