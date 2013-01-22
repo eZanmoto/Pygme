@@ -55,6 +55,7 @@ class Z80:
         self.h = reg8.Reg8("H")
         self.l = reg8.Reg8("L")
         self.pc = reg16.Reg16("PC")
+        self.sp = reg16.Reg16("SP")
         self.m = 0
         self.t = 0
         self.f = Flags()
@@ -108,6 +109,7 @@ class Z80:
                       (self.ldLn, 1),
                       (self.cpl, 0),
                       (self.jrNCn, 1),
+                      (self.ldSPnn, 2),
                      ]
 
     def nop(self):
@@ -355,6 +357,12 @@ class Z80:
             self.t += 4
         else:
             self.jrn(n)
+
+    def ldSPnn(self, h, l):
+        """Loads a byte into S and a byte into P."""
+        self.sp.ld((h << 8) + l)
+        self.m += 3
+        self.t += 12
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
