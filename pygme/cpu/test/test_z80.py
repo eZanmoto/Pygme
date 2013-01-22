@@ -810,6 +810,30 @@ class TestZ80(unittest.TestCase):
         self.flagsFixed(opc, 1, 4, 0xff)
         self.regEq(self.z80.pc, 0)
 
+    def test_addHLSP(self):
+        opc = 0x39
+        self.validOpc(opc, self.z80.addHLSP, 0)
+        self.z80.h.ld(0x13)
+        self.z80.l.ld(0x34)
+        self.z80.sp.ld(0x2367)
+        z = self.z80.f.z.val()
+        self.z80.f.n.set()
+        self.timeOp(opc, 3, 12)
+        self.regEq(self.z80.h, 0x36)
+        self.regEq(self.z80.l, 0x9b)
+        self.flagEq(self.z80.f.z, z)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x133 + 0x236 > 0xfff)
+        self.flagEq(self.z80.f.c, 0x1334 + 0x2367 > 0xffff)
+        self.z80.sp.ld(0xffff)
+        self.timeOp(opc, 3, 12)
+        self.regEq(self.z80.h, 0x36)
+        self.regEq(self.z80.l, 0x9a)
+        self.flagEq(self.z80.f.z, z)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x336 + 0xfff > 0xfff)
+        self.flagEq(self.z80.f.c, 0x1334 + 0xffff > 0xffff)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")

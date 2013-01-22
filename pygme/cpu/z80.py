@@ -117,6 +117,7 @@ class Z80:
                       (self.ldMemHLn, 1),
                       (self.scf, 0),
                       (self.jrCn, 1),
+                      (self.addHLSP, 0),
                      ]
 
     def nop(self):
@@ -419,6 +420,18 @@ class Z80:
         self.f.c.set()
         self.m += 1
         self.t += 4
+
+    def addHLSP(self):
+        """Adds SP to HL and stores the result in HL."""
+        hl = (self.h.val() << 8) + self.l.val()
+        result = hl + self.sp.val()
+        self.h.ld((result >> 8) & 0xff)
+        self.l.ld(result & 0xff)
+        self.f.n.reset()
+        self.f.h.setTo((hl & 0xfff) + (self.sp.val() & 0xfff) > 0xfff)
+        self.f.c.setTo(result > 0xffff)
+        self.m += 3
+        self.t += 12
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
