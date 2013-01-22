@@ -907,6 +907,11 @@ class TestZ80(unittest.TestCase):
             self.flagEq(self.z80.f.h, False)
             self.flagEq(self.z80.f.c, i % 2 == 0)
 
+    def test_ldBB(self):
+        opc = 0x40
+        self.validOpc(opc, self.z80.ldBB, 0)
+        self._test_ldRR(opc, self.z80.b, self.z80.b)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
@@ -970,6 +975,13 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(reg.val(), val,
                 "Register %s is 0x%02x(%d), should be 0x%02x(%d)"
                 % (reg.name(), reg.val(), reg.val(), val, val))
+
+    def _test_ldRR(self, opc, dstReg, srcReg):
+        for i in range(0, self.NUM_TESTS):
+            val = i * 2
+            srcReg.ld(val)
+            self.flagsFixed(opc, 1, 4)
+            self.regEq(dstReg, val)
 
     def tearDown(self):
         self.mem = None

@@ -124,6 +124,7 @@ class Z80:
                       (self.decA, 0),
                       (self.ldAn, 1),
                       (self.ccf, 0),
+                      (self.ldBB, 0),
                      ]
 
     def nop(self):
@@ -480,6 +481,10 @@ class Z80:
         self.m += 1
         self.t += 4
 
+    def ldBB(self):
+        """Loads the contents of B into B."""
+        self._ldRR(self.b, self.b)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -547,6 +552,9 @@ class Z80:
             lowOrdReg.ld((lowOrdReg.val() - 1) & 0xff)
         self.m += 1
         self.t += 4
+
+    def _ldRR(self, dstReg, srcReg):
+        self._ldRn(dstReg, srcReg.val())
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
