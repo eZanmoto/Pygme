@@ -123,6 +123,7 @@ class Z80:
                       (self.incA, 0),
                       (self.decA, 0),
                       (self.ldAn, 1),
+                      (self.ccf, 0),
                      ]
 
     def nop(self):
@@ -462,6 +463,14 @@ class Z80:
     def ldAn(self, a):
         """Loads a byte into A."""
         self._ldRn(self.a, a)
+
+    def ccf(self):
+        """Complements the C flag."""
+        self.f.h.reset()
+        self.f.n.reset()
+        self.f.c.setTo(not self.f.c.val())
+        self.m += 1
+        self.t += 4
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
