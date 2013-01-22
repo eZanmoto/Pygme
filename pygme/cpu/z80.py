@@ -125,6 +125,11 @@ class Z80:
                       (self.ldAn, 1),
                       (self.ccf, 0),
                       (self.ldBB, 0),
+                      (self.ldBC, 0),
+                      (self.ldBD, 0),
+                      (self.ldBE, 0),
+                      (self.ldBH, 0),
+                      (self.ldBL, 0),
                      ]
 
     def nop(self):
@@ -484,6 +489,26 @@ class Z80:
     def ldBB(self):
         """Loads the contents of B into B."""
         self._ldRR(self.b, self.b)
+
+    def ldBC(self):
+        """Loads the contents of C into B."""
+        self._ldRR(self.b, self.c)
+
+    def ldBD(self):
+        """Loads the contents of D into B."""
+        self._ldRR(self.b, self.d)
+
+    def ldBE(self):
+        """Loads the contents of E into B."""
+        self._ldRR(self.b, self.e)
+
+    def ldBH(self):
+        """Loads the contents of H into B."""
+        self._ldRR(self.b, self.h)
+
+    def ldBL(self):
+        """Loads the contents of L into B."""
+        self._ldRR(self.b, self.l)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)

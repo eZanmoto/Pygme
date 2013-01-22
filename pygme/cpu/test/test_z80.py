@@ -912,6 +912,31 @@ class TestZ80(unittest.TestCase):
         self.validOpc(opc, self.z80.ldBB, 0)
         self._test_ldRR(opc, self.z80.b, self.z80.b)
 
+    def test_ldBC(self):
+        opc = 0x41
+        self.validOpc(opc, self.z80.ldBC, 0)
+        self._test_ldRR(opc, self.z80.b, self.z80.c)
+
+    def test_ldBD(self):
+        opc = 0x42
+        self.validOpc(opc, self.z80.ldBD, 0)
+        self._test_ldRR(opc, self.z80.b, self.z80.d)
+
+    def test_ldBE(self):
+        opc = 0x43
+        self.validOpc(opc, self.z80.ldBE, 0)
+        self._test_ldRR(opc, self.z80.b, self.z80.e)
+
+    def test_ldBH(self):
+        opc = 0x44
+        self.validOpc(opc, self.z80.ldBH, 0)
+        self._test_ldRR(opc, self.z80.b, self.z80.h)
+
+    def test_ldBL(self):
+        opc = 0x45
+        self.validOpc(opc, self.z80.ldBL, 0)
+        self._test_ldRR(opc, self.z80.b, self.z80.l)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
