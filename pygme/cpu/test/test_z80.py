@@ -866,6 +866,13 @@ class TestZ80(unittest.TestCase):
         self.flagsFixed(opc, 1, 4)
         self.regEq(self.z80.sp, 0xffff)
 
+    def test_incA(self):
+        opc = 0x3c
+        self.validOpc(opc, self.z80.incA, 0)
+        for i in range(1, 0x200):
+            self.incOp8(opc, self.z80.a, 1, 1, 4)
+            self.regEq(self.z80.a, i & 0xff)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
