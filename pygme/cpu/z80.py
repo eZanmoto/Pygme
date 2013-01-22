@@ -116,6 +116,7 @@ class Z80:
                       (self.decMemHL, 0),
                       (self.ldMemHLn, 1),
                       (self.scf, 0),
+                      (self.jrCn, 1),
                      ]
 
     def nop(self):
@@ -486,6 +487,14 @@ class Z80:
             lowOrdReg.ld((lowOrdReg.val() - 1) & 0xff)
         self.m += 1
         self.t += 4
+
+    def jrCn(self, n):
+        """Decrements/increments PC by the signed 16-bit number n if C is 1."""
+        if self.f.c.val():
+            self.jrn(n)
+        else:
+            self.m += 1
+            self.t += 4
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
