@@ -115,6 +115,7 @@ class Z80:
                       (self.incMemHL, 0),
                       (self.decMemHL, 0),
                       (self.ldMemHLn, 1),
+                      (self.scf, 0),
                      ]
 
     def nop(self):
@@ -409,6 +410,14 @@ class Z80:
         self._mem.set8(self._hl(), hl)
         self.m += 3
         self.t += 12
+
+    def scf(self):
+        """Sets the carry flag."""
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.set()
+        self.m += 1
+        self.t += 4
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
