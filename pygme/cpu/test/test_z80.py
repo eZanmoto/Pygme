@@ -873,6 +873,20 @@ class TestZ80(unittest.TestCase):
             self.incOp8(opc, self.z80.a, 1, 1, 4)
             self.regEq(self.z80.a, i & 0xff)
 
+    def test_decA(self):
+        opc = 0x3d
+        self.validOpc(opc, self.z80.decA, 0)
+        self.z80.a.ld(0x1ff & 0xff)
+        for i in range(0x1ff, 0, -1):
+            self.regEq(self.z80.a, i & 0xff)
+            self.incOp8(opc, self.z80.a, -1, 1, 4)
+        self.z80.a.ld(1)
+        self.incOp8(opc, self.z80.a, -1, 1, 4)
+        self.regEq(self.z80.a, 0)
+        self.z80.a.ld(0)
+        self.incOp8(opc, self.z80.a, -1, 1, 4)
+        self.regEq(self.z80.a, 0xff)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")

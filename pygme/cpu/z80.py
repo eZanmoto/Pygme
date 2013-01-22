@@ -121,6 +121,7 @@ class Z80:
                       (self.lddAMemHL, 0),
                       (self.decSP, 0),
                       (self.incA, 0),
+                      (self.decA, 0),
                      ]
 
     def nop(self):
@@ -452,6 +453,10 @@ class Z80:
     def incA(self):
         """Increments the contents of A."""
         self._incR(self.a)
+
+    def decA(self):
+        """Decrements the contents of A."""
+        self._decR(self.a)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
