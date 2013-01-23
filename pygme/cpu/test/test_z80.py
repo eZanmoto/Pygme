@@ -926,9 +926,7 @@ class TestZ80(unittest.TestCase):
         self._test_ldRR(0x45, self.z80.ldBL, 0, self.z80.b, self.z80.l)
 
     def test_ldBMemHL(self):
-        opc = 0x46
-        self.validOpc(opc, self.z80.ldBMemHL, 0)
-        self._test_ldRMemHL(opc, self.z80.b)
+        self._test_ldRMemHL(0x46, self.z80.ldBMemHL, 0, self.z80.b)
 
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
@@ -1002,7 +1000,8 @@ class TestZ80(unittest.TestCase):
             self.flagsFixed(opc, 1, 4)
             self.regEq(dstReg, val)
 
-    def _test_ldRMemHL(self, opc, reg):
+    def _test_ldRMemHL(self, opc, func, argc, reg):
+        self.validOpc(opc, func, 0)
         for i in range(0, self.NUM_TESTS):
             self.z80.h.ld(i * 4)
             self.z80.l.ld(i * 2)
