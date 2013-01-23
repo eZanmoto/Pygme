@@ -130,6 +130,7 @@ class Z80:
                       (self.ldBE, 0),
                       (self.ldBH, 0),
                       (self.ldBL, 0),
+                      (self.ldBMemHL, 0),
                      ]
 
     def nop(self):
@@ -510,6 +511,10 @@ class Z80:
         """Loads the contents of L into B."""
         self._ldRR(self.b, self.l)
 
+    def ldBMemHL(self):
+        """Loads the value at memory address in HL into B."""
+        self._ldRMemHL(self.b)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -580,6 +585,11 @@ class Z80:
 
     def _ldRR(self, dstReg, srcReg):
         self._ldRn(dstReg, srcReg.val())
+
+    def _ldRMemHL(self, reg):
+        self._ldRn(reg, self._mem.get8(self._hl()))
+        self.m += 1
+        self.t += 4
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)

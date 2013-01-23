@@ -937,6 +937,11 @@ class TestZ80(unittest.TestCase):
         self.validOpc(opc, self.z80.ldBL, 0)
         self._test_ldRR(opc, self.z80.b, self.z80.l)
 
+    def test_ldBMemHL(self):
+        opc = 0x46
+        self.validOpc(opc, self.z80.ldBMemHL, 0)
+        self._test_ldRMemHL(opc, self.z80.b)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
@@ -1007,6 +1012,16 @@ class TestZ80(unittest.TestCase):
             srcReg.ld(val)
             self.flagsFixed(opc, 1, 4)
             self.regEq(dstReg, val)
+
+    def _test_ldRMemHL(self, opc, reg):
+        for i in range(0, self.NUM_TESTS):
+            self.z80.h.ld(i * 4)
+            self.z80.l.ld(i * 2)
+            addr = (self.z80.h.val() << 8) + self.z80.l.val()
+            val = (i * 7) & 0xff
+            self.mem.set8(addr, val)
+            self.flagsFixed(opc, 2, 8)
+            self.regEq(reg, val)
 
     def tearDown(self):
         self.mem = None
