@@ -195,6 +195,7 @@ class Z80:
                       (self.addAH, 0),
                       (self.addAL, 0),
                       (self.addAMemHL, 0),
+                      (self.addAA, 0),
                      ]
 
     def nop(self):
@@ -841,6 +842,10 @@ class Z80:
         self._chkZ(self.a)
         self.m += 2
         self.t += 8
+
+    def addAA(self):
+        """Adds A and A and stores the result in A."""
+        self._addAR(self.a)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)

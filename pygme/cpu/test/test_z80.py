@@ -1154,6 +1154,32 @@ class TestZ80(unittest.TestCase):
         self.flagEq(self.z80.f.h, 0xf + 0x1 > 0xf)
         self.flagEq(self.z80.f.c, 0x71 + 0x8f > 0xff)
 
+    def test_addAA(self):
+        opc = 0x87
+        self.validOpc(opc, self.z80.addAA, 0)
+        self.z80.a.ld(0x47)
+        self.z80.f.n.set()
+        self.timeOp(opc, 1, 4)
+        self.regEq(self.z80.a, 0x8e)
+        self.flagEq(self.z80.f.z, False)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x7 + 0x7 > 0xf)
+        self.flagEq(self.z80.f.c, 0x47 + 0x47 > 0xff)
+        self.z80.a.ld(0xff)
+        self.timeOp(opc, 1, 4)
+        self.regEq(self.z80.a, 0xfe)
+        self.flagEq(self.z80.f.z, False)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0xf + 0xf > 0xf)
+        self.flagEq(self.z80.f.c, 0xff + 0xff > 0xff)
+        self.z80.a.ld(0x80)
+        self.timeOp(opc, 1, 4)
+        self.regEq(self.z80.a, 0x00)
+        self.flagEq(self.z80.f.z, True)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x0 + 0x0 > 0xf)
+        self.flagEq(self.z80.f.c, 0x80 + 0x80 > 0xff)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
