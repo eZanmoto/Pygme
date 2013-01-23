@@ -188,6 +188,7 @@ class Z80:
                       (self.ldAL, 0),
                       (self.ldAMemHL, 0),
                       (self.ldAA, 0),
+                      (self.addAB, 0),
                      ]
 
     def nop(self):
@@ -799,6 +800,10 @@ class Z80:
         """Loads the contents of A into A."""
         self._ldRR(self.a, self.a)
 
+    def addAB(self):
+        """Adds A and B and stores the result in A."""
+        self._addAR(self.b)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -879,6 +884,17 @@ class Z80:
         self._mem.set8(self._hl(), reg.val())
         self.m += 2
         self.t += 8
+
+    def _addAR(self, reg):
+        a = self.a.val()
+        r = reg.val()
+        self.f.n.reset()
+        self.f.h.setTo((a & 0xf) + (r & 0xf) > 0xf)
+        self.f.c.setTo(a + r > 0xff)
+        self.a.ld((a + r) & 0xff)
+        self._chkZ(self.a)
+        self.m += 1
+        self.t += 4
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
