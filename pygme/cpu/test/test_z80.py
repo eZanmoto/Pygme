@@ -908,34 +908,22 @@ class TestZ80(unittest.TestCase):
             self.flagEq(self.z80.f.c, i % 2 == 0)
 
     def test_ldBB(self):
-        opc = 0x40
-        self.validOpc(opc, self.z80.ldBB, 0)
-        self._test_ldRR(opc, self.z80.b, self.z80.b)
+        self._test_ldRR(0x40, self.z80.ldBB, 0, self.z80.b, self.z80.b)
 
     def test_ldBC(self):
-        opc = 0x41
-        self.validOpc(opc, self.z80.ldBC, 0)
-        self._test_ldRR(opc, self.z80.b, self.z80.c)
+        self._test_ldRR(0x41, self.z80.ldBC, 0, self.z80.b, self.z80.c)
 
     def test_ldBD(self):
-        opc = 0x42
-        self.validOpc(opc, self.z80.ldBD, 0)
-        self._test_ldRR(opc, self.z80.b, self.z80.d)
+        self._test_ldRR(0x42, self.z80.ldBD, 0, self.z80.b, self.z80.d)
 
     def test_ldBE(self):
-        opc = 0x43
-        self.validOpc(opc, self.z80.ldBE, 0)
-        self._test_ldRR(opc, self.z80.b, self.z80.e)
+        self._test_ldRR(0x43, self.z80.ldBE, 0, self.z80.b, self.z80.e)
 
     def test_ldBH(self):
-        opc = 0x44
-        self.validOpc(opc, self.z80.ldBH, 0)
-        self._test_ldRR(opc, self.z80.b, self.z80.h)
+        self._test_ldRR(0x44, self.z80.ldBH, 0, self.z80.b, self.z80.h)
 
     def test_ldBL(self):
-        opc = 0x45
-        self.validOpc(opc, self.z80.ldBL, 0)
-        self._test_ldRR(opc, self.z80.b, self.z80.l)
+        self._test_ldRR(0x45, self.z80.ldBL, 0, self.z80.b, self.z80.l)
 
     def test_ldBMemHL(self):
         opc = 0x46
@@ -1006,7 +994,8 @@ class TestZ80(unittest.TestCase):
                 "Register %s is 0x%02x(%d), should be 0x%02x(%d)"
                 % (reg.name(), reg.val(), reg.val(), val, val))
 
-    def _test_ldRR(self, opc, dstReg, srcReg):
+    def _test_ldRR(self, opc, func, argc, dstReg, srcReg):
+        self.validOpc(opc, func, argc)
         for i in range(0, self.NUM_TESTS):
             val = i * 2
             srcReg.ld(val)
