@@ -189,6 +189,11 @@ class Z80:
                       (self.ldAMemHL, 0),
                       (self.ldAA, 0),
                       (self.addAB, 0),
+                      (self.addAC, 0),
+                      (self.addAD, 0),
+                      (self.addAE, 0),
+                      (self.addAH, 0),
+                      (self.addAL, 0),
                      ]
 
     def nop(self):
@@ -803,6 +808,26 @@ class Z80:
     def addAB(self):
         """Adds A and B and stores the result in A."""
         self._addAR(self.b)
+
+    def addAC(self):
+        """Adds A and C and stores the result in A."""
+        self._addAR(self.c)
+
+    def addAD(self):
+        """Adds A and D and stores the result in A."""
+        self._addAR(self.d)
+
+    def addAE(self):
+        """Adds A and E and stores the result in A."""
+        self._addAR(self.e)
+
+    def addAH(self):
+        """Adds A and H and stores the result in A."""
+        self._addAR(self.h)
+
+    def addAL(self):
+        """Adds A and L and stores the result in A."""
+        self._addAR(self.l)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
