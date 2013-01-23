@@ -561,7 +561,7 @@ class Z80:
         self._ldRR(self.b, self.a)
 
     def ldCB(self):
-        """Loads the contents of C into B."""
+        """Loads the contents of B into C."""
         self._ldRR(self.c, self.b)
 
     def ldCC(self):
@@ -593,7 +593,7 @@ class Z80:
         self._ldRR(self.c, self.a)
 
     def ldDB(self):
-        """Loads the contents of D into B."""
+        """Loads the contents of B into D."""
         self._ldRR(self.d, self.b)
 
     def ldDC(self):
@@ -625,7 +625,7 @@ class Z80:
         self._ldRR(self.d, self.a)
 
     def ldEB(self):
-        """Loads the contents of E into B."""
+        """Loads the contents of B into E."""
         self._ldRR(self.e, self.b)
 
     def ldEC(self):
@@ -657,7 +657,7 @@ class Z80:
         self._ldRR(self.e, self.a)
 
     def ldHB(self):
-        """Loads the contents of H into B."""
+        """Loads the contents of B into H."""
         self._ldRR(self.h, self.b)
 
     def ldHC(self):
@@ -689,7 +689,7 @@ class Z80:
         self._ldRR(self.h, self.a)
 
     def ldLB(self):
-        """Loads the contents of L into B."""
+        """Loads the contents of B into L."""
         self._ldRR(self.l, self.b)
 
     def ldLC(self):
