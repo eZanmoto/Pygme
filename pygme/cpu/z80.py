@@ -164,6 +164,14 @@ class Z80:
                       (self.ldHL, 0),
                       (self.ldHMemHL, 0),
                       (self.ldHA, 0),
+                      (self.ldLB, 0),
+                      (self.ldLC, 0),
+                      (self.ldLD, 0),
+                      (self.ldLE, 0),
+                      (self.ldLH, 0),
+                      (self.ldLL, 0),
+                      (self.ldLMemHL, 0),
+                      (self.ldLA, 0),
                      ]
 
     def nop(self):
@@ -679,6 +687,38 @@ class Z80:
     def ldHA(self):
         """Loads the contents of A into H."""
         self._ldRR(self.h, self.a)
+
+    def ldLB(self):
+        """Loads the contents of L into B."""
+        self._ldRR(self.l, self.b)
+
+    def ldLC(self):
+        """Loads the contents of C into L."""
+        self._ldRR(self.l, self.c)
+
+    def ldLD(self):
+        """Loads the contents of D into L."""
+        self._ldRR(self.l, self.d)
+
+    def ldLE(self):
+        """Loads the contents of E into L."""
+        self._ldRR(self.l, self.e)
+
+    def ldLH(self):
+        """Loads the contents of H into L."""
+        self._ldRR(self.l, self.h)
+
+    def ldLL(self):
+        """Loads the contents of L into L."""
+        self._ldRR(self.l, self.l)
+
+    def ldLMemHL(self):
+        """Loads the value at memory address in HL into L."""
+        self._ldRMemHL(self.l)
+
+    def ldLA(self):
+        """Loads the contents of A into L."""
+        self._ldRR(self.l, self.a)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
