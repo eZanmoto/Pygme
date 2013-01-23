@@ -196,6 +196,12 @@ class Z80:
                       (self.addAL, 0),
                       (self.addAMemHL, 0),
                       (self.addAA, 0),
+                      (self.adcAB, 0),
+                      (self.adcAC, 0),
+                      (self.adcAD, 0),
+                      (self.adcAE, 0),
+                      (self.adcAH, 0),
+                      (self.adcAL, 0),
                      ]
 
     def nop(self):
@@ -844,8 +850,32 @@ class Z80:
         self.t += 8
 
     def addAA(self):
-        """Adds A and A and stores the result in A."""
+        """Adds A, C and A and stores the result in A."""
         self._addAR(self.a)
+
+    def adcAB(self):
+        """Adds A, C and B and stores the result in A."""
+        self._adcAR(self.b)
+
+    def adcAC(self):
+        """Adds A, C and C and stores the result in A."""
+        self._adcAR(self.c)
+
+    def adcAD(self):
+        """Adds A, C and D and stores the result in A."""
+        self._adcAR(self.d)
+
+    def adcAE(self):
+        """Adds A, C and E and stores the result in A."""
+        self._adcAR(self.e)
+
+    def adcAH(self):
+        """Adds A, C and H and stores the result in A."""
+        self._adcAR(self.h)
+
+    def adcAL(self):
+        """Adds A, C and L and stores the result in A."""
+        self._adcAR(self.l)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
@@ -935,6 +965,18 @@ class Z80:
         self.f.h.setTo((a & 0xf) + (r & 0xf) > 0xf)
         self.f.c.setTo(a + r > 0xff)
         self.a.ld((a + r) & 0xff)
+        self._chkZ(self.a)
+        self.m += 1
+        self.t += 4
+
+    def _adcAR(self, reg):
+        a = self.a.val()
+        r = reg.val()
+        c = 1 if self.f.c.val() else 0
+        self.f.n.reset()
+        self.f.h.setTo((a & 0xf) + (r & 0xf) + c > 0xf)
+        self.f.c.setTo(a + r + c > 0xff)
+        self.a.ld((a + r + c) & 0xff)
         self._chkZ(self.a)
         self.m += 1
         self.t += 4

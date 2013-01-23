@@ -1180,6 +1180,24 @@ class TestZ80(unittest.TestCase):
         self.flagEq(self.z80.f.h, 0x0 + 0x0 > 0xf)
         self.flagEq(self.z80.f.c, 0x80 + 0x80 > 0xff)
 
+    def test_adcAB(self):
+        self._test_adcAR(0x88, self.z80.adcAB, self.z80.b)
+
+    def test_adcAC(self):
+        self._test_adcAR(0x89, self.z80.adcAC, self.z80.c)
+
+    def test_adcAD(self):
+        self._test_adcAR(0x8a, self.z80.adcAD, self.z80.d)
+
+    def test_adcAE(self):
+        self._test_adcAR(0x8b, self.z80.adcAE, self.z80.e)
+
+    def test_adcAH(self):
+        self._test_adcAR(0x8c, self.z80.adcAH, self.z80.h)
+
+    def test_adcAL(self):
+        self._test_adcAR(0x8d, self.z80.adcAL, self.z80.l)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
@@ -1299,6 +1317,32 @@ class TestZ80(unittest.TestCase):
         self.flagEq(self.z80.f.n, False)
         self.flagEq(self.z80.f.h, 0xf + 0x1 > 0xf)
         self.flagEq(self.z80.f.c, 0x71 + 0x8f > 0xff)
+
+    def _test_adcAR(self, opc, func, reg):
+        self.validOpc(opc, func, 0)
+        self.z80.a.ld(0x73)
+        reg.ld(0xff)
+        self.z80.f.n.set()
+        self.timeOp(opc, 1, 4)
+        self.regEq(self.z80.a, 0x72)
+        self.flagEq(self.z80.f.z, False)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x3 + 0xf > 0xf)
+        self.flagEq(self.z80.f.c, True)
+        reg.ld(0x01)
+        self.timeOp(opc, 1, 4)
+        self.regEq(self.z80.a, 0x74)
+        self.flagEq(self.z80.f.z, False)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x2 + 0x1 + 0x01 > 0xf)
+        self.flagEq(self.z80.f.c, False)
+        reg.ld(0x8c)
+        self.timeOp(opc, 1, 4)
+        self.regEq(self.z80.a, 0x00)
+        self.flagEq(self.z80.f.z, True)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x4 + 0xc > 0xf)
+        self.flagEq(self.z80.f.c, 0x74 + 0x8c > 0xff)
 
     def tearDown(self):
         self.mem = None
