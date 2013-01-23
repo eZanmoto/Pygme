@@ -908,200 +908,200 @@ class TestZ80(unittest.TestCase):
             self.flagEq(self.z80.f.c, i % 2 == 0)
 
     def test_ldBB(self):
-        self._test_ldRR(0x40, self.z80.ldBB, 0, self.z80.b, self.z80.b)
+        self._test_ldRR(0x40, self.z80.ldBB, self.z80.b, self.z80.b)
 
     def test_ldBC(self):
-        self._test_ldRR(0x41, self.z80.ldBC, 0, self.z80.b, self.z80.c)
+        self._test_ldRR(0x41, self.z80.ldBC, self.z80.b, self.z80.c)
 
     def test_ldBD(self):
-        self._test_ldRR(0x42, self.z80.ldBD, 0, self.z80.b, self.z80.d)
+        self._test_ldRR(0x42, self.z80.ldBD, self.z80.b, self.z80.d)
 
     def test_ldBE(self):
-        self._test_ldRR(0x43, self.z80.ldBE, 0, self.z80.b, self.z80.e)
+        self._test_ldRR(0x43, self.z80.ldBE, self.z80.b, self.z80.e)
 
     def test_ldBH(self):
-        self._test_ldRR(0x44, self.z80.ldBH, 0, self.z80.b, self.z80.h)
+        self._test_ldRR(0x44, self.z80.ldBH, self.z80.b, self.z80.h)
 
     def test_ldBL(self):
-        self._test_ldRR(0x45, self.z80.ldBL, 0, self.z80.b, self.z80.l)
+        self._test_ldRR(0x45, self.z80.ldBL, self.z80.b, self.z80.l)
 
     def test_ldBMemHL(self):
-        self._test_ldRMemHL(0x46, self.z80.ldBMemHL, 0, self.z80.b)
+        self._test_ldRMemHL(0x46, self.z80.ldBMemHL, self.z80.b)
 
     def test_ldBA(self):
-        self._test_ldRR(0x47, self.z80.ldBA, 0, self.z80.b, self.z80.a)
+        self._test_ldRR(0x47, self.z80.ldBA, self.z80.b, self.z80.a)
 
     def test_ldCB(self):
-        self._test_ldRR(0x48, self.z80.ldCB, 0, self.z80.c, self.z80.b)
+        self._test_ldRR(0x48, self.z80.ldCB, self.z80.c, self.z80.b)
 
     def test_ldCC(self):
-        self._test_ldRR(0x49, self.z80.ldCC, 0, self.z80.c, self.z80.c)
+        self._test_ldRR(0x49, self.z80.ldCC, self.z80.c, self.z80.c)
 
     def test_ldCD(self):
-        self._test_ldRR(0x4a, self.z80.ldCD, 0, self.z80.c, self.z80.d)
+        self._test_ldRR(0x4a, self.z80.ldCD, self.z80.c, self.z80.d)
 
     def test_ldCE(self):
-        self._test_ldRR(0x4b, self.z80.ldCE, 0, self.z80.c, self.z80.e)
+        self._test_ldRR(0x4b, self.z80.ldCE, self.z80.c, self.z80.e)
 
     def test_ldCH(self):
-        self._test_ldRR(0x4c, self.z80.ldCH, 0, self.z80.c, self.z80.h)
+        self._test_ldRR(0x4c, self.z80.ldCH, self.z80.c, self.z80.h)
 
     def test_ldCL(self):
-        self._test_ldRR(0x4d, self.z80.ldCL, 0, self.z80.c, self.z80.l)
+        self._test_ldRR(0x4d, self.z80.ldCL, self.z80.c, self.z80.l)
 
     def test_ldCMemHL(self):
-        self._test_ldRMemHL(0x4e, self.z80.ldCMemHL, 0, self.z80.c)
+        self._test_ldRMemHL(0x4e, self.z80.ldCMemHL, self.z80.c)
 
     def test_ldCA(self):
-        self._test_ldRR(0x4f, self.z80.ldCA, 0, self.z80.c, self.z80.a)
+        self._test_ldRR(0x4f, self.z80.ldCA, self.z80.c, self.z80.a)
 
     def test_ldDB(self):
-        self._test_ldRR(0x50, self.z80.ldDB, 0, self.z80.d, self.z80.b)
+        self._test_ldRR(0x50, self.z80.ldDB, self.z80.d, self.z80.b)
 
     def test_ldDC(self):
-        self._test_ldRR(0x51, self.z80.ldDC, 0, self.z80.d, self.z80.c)
+        self._test_ldRR(0x51, self.z80.ldDC, self.z80.d, self.z80.c)
 
     def test_ldDD(self):
-        self._test_ldRR(0x52, self.z80.ldDD, 0, self.z80.d, self.z80.d)
+        self._test_ldRR(0x52, self.z80.ldDD, self.z80.d, self.z80.d)
 
     def test_ldDE(self):
-        self._test_ldRR(0x53, self.z80.ldDE, 0, self.z80.d, self.z80.e)
+        self._test_ldRR(0x53, self.z80.ldDE, self.z80.d, self.z80.e)
 
     def test_ldDH(self):
-        self._test_ldRR(0x54, self.z80.ldDH, 0, self.z80.d, self.z80.h)
+        self._test_ldRR(0x54, self.z80.ldDH, self.z80.d, self.z80.h)
 
     def test_ldDL(self):
-        self._test_ldRR(0x55, self.z80.ldDL, 0, self.z80.d, self.z80.l)
+        self._test_ldRR(0x55, self.z80.ldDL, self.z80.d, self.z80.l)
 
     def test_ldDMemHL(self):
-        self._test_ldRMemHL(0x56, self.z80.ldDMemHL, 0, self.z80.d)
+        self._test_ldRMemHL(0x56, self.z80.ldDMemHL, self.z80.d)
 
     def test_ldDA(self):
-        self._test_ldRR(0x57, self.z80.ldDA, 0, self.z80.d, self.z80.a)
+        self._test_ldRR(0x57, self.z80.ldDA, self.z80.d, self.z80.a)
 
     def test_ldEB(self):
-        self._test_ldRR(0x58, self.z80.ldEB, 0, self.z80.e, self.z80.b)
+        self._test_ldRR(0x58, self.z80.ldEB, self.z80.e, self.z80.b)
 
     def test_ldEC(self):
-        self._test_ldRR(0x59, self.z80.ldEC, 0, self.z80.e, self.z80.c)
+        self._test_ldRR(0x59, self.z80.ldEC, self.z80.e, self.z80.c)
 
     def test_ldED(self):
-        self._test_ldRR(0x5a, self.z80.ldED, 0, self.z80.e, self.z80.d)
+        self._test_ldRR(0x5a, self.z80.ldED, self.z80.e, self.z80.d)
 
     def test_ldEE(self):
-        self._test_ldRR(0x5b, self.z80.ldEE, 0, self.z80.e, self.z80.e)
+        self._test_ldRR(0x5b, self.z80.ldEE, self.z80.e, self.z80.e)
 
     def test_ldEH(self):
-        self._test_ldRR(0x5c, self.z80.ldEH, 0, self.z80.e, self.z80.h)
+        self._test_ldRR(0x5c, self.z80.ldEH, self.z80.e, self.z80.h)
 
     def test_ldEL(self):
-        self._test_ldRR(0x5d, self.z80.ldEL, 0, self.z80.e, self.z80.l)
+        self._test_ldRR(0x5d, self.z80.ldEL, self.z80.e, self.z80.l)
 
     def test_ldEMemHL(self):
-        self._test_ldRMemHL(0x5e, self.z80.ldEMemHL, 0, self.z80.e)
+        self._test_ldRMemHL(0x5e, self.z80.ldEMemHL, self.z80.e)
 
     def test_ldEA(self):
-        self._test_ldRR(0x5f, self.z80.ldEA, 0, self.z80.e, self.z80.a)
+        self._test_ldRR(0x5f, self.z80.ldEA, self.z80.e, self.z80.a)
 
     def test_ldHB(self):
-        self._test_ldRR(0x60, self.z80.ldHB, 0, self.z80.h, self.z80.b)
+        self._test_ldRR(0x60, self.z80.ldHB, self.z80.h, self.z80.b)
 
     def test_ldHC(self):
-        self._test_ldRR(0x61, self.z80.ldHC, 0, self.z80.h, self.z80.c)
+        self._test_ldRR(0x61, self.z80.ldHC, self.z80.h, self.z80.c)
 
     def test_ldHD(self):
-        self._test_ldRR(0x62, self.z80.ldHD, 0, self.z80.h, self.z80.d)
+        self._test_ldRR(0x62, self.z80.ldHD, self.z80.h, self.z80.d)
 
     def test_ldHE(self):
-        self._test_ldRR(0x63, self.z80.ldHE, 0, self.z80.h, self.z80.e)
+        self._test_ldRR(0x63, self.z80.ldHE, self.z80.h, self.z80.e)
 
     def test_ldHH(self):
-        self._test_ldRR(0x64, self.z80.ldHH, 0, self.z80.h, self.z80.h)
+        self._test_ldRR(0x64, self.z80.ldHH, self.z80.h, self.z80.h)
 
     def test_ldHL(self):
-        self._test_ldRR(0x65, self.z80.ldHL, 0, self.z80.h, self.z80.l)
+        self._test_ldRR(0x65, self.z80.ldHL, self.z80.h, self.z80.l)
 
     def test_ldHMemHL(self):
-        self._test_ldRMemHL(0x66, self.z80.ldHMemHL, 0, self.z80.h)
+        self._test_ldRMemHL(0x66, self.z80.ldHMemHL, self.z80.h)
 
     def test_ldHA(self):
-        self._test_ldRR(0x67, self.z80.ldHA, 0, self.z80.h, self.z80.a)
+        self._test_ldRR(0x67, self.z80.ldHA, self.z80.h, self.z80.a)
 
     def test_ldLB(self):
-        self._test_ldRR(0x68, self.z80.ldLB, 0, self.z80.l, self.z80.b)
+        self._test_ldRR(0x68, self.z80.ldLB, self.z80.l, self.z80.b)
 
     def test_ldLC(self):
-        self._test_ldRR(0x69, self.z80.ldLC, 0, self.z80.l, self.z80.c)
+        self._test_ldRR(0x69, self.z80.ldLC, self.z80.l, self.z80.c)
 
     def test_ldLD(self):
-        self._test_ldRR(0x6a, self.z80.ldLD, 0, self.z80.l, self.z80.d)
+        self._test_ldRR(0x6a, self.z80.ldLD, self.z80.l, self.z80.d)
 
     def test_ldLE(self):
-        self._test_ldRR(0x6b, self.z80.ldLE, 0, self.z80.l, self.z80.e)
+        self._test_ldRR(0x6b, self.z80.ldLE, self.z80.l, self.z80.e)
 
     def test_ldLH(self):
-        self._test_ldRR(0x6c, self.z80.ldLH, 0, self.z80.l, self.z80.h)
+        self._test_ldRR(0x6c, self.z80.ldLH, self.z80.l, self.z80.h)
 
     def test_ldLL(self):
-        self._test_ldRR(0x6d, self.z80.ldLL, 0, self.z80.l, self.z80.l)
+        self._test_ldRR(0x6d, self.z80.ldLL, self.z80.l, self.z80.l)
 
     def test_ldLMemHL(self):
-        self._test_ldRMemHL(0x6e, self.z80.ldLMemHL, 0, self.z80.l)
+        self._test_ldRMemHL(0x6e, self.z80.ldLMemHL, self.z80.l)
 
     def test_ldLA(self):
-        self._test_ldRR(0x6f, self.z80.ldLA, 0, self.z80.l, self.z80.a)
+        self._test_ldRR(0x6f, self.z80.ldLA, self.z80.l, self.z80.a)
 
     def test_ldLA(self):
-        self._test_ldRR(0x6f, self.z80.ldLA, 0, self.z80.l, self.z80.a)
+        self._test_ldRR(0x6f, self.z80.ldLA, self.z80.l, self.z80.a)
 
     def test_ldMemHLB(self):
-        self._test_ldMemHLR(0x70, self.z80.ldMemHLB, 0, self.z80.b)
+        self._test_ldMemHLR(0x70, self.z80.ldMemHLB, self.z80.b)
 
     def test_ldMemHLC(self):
-        self._test_ldMemHLR(0x71, self.z80.ldMemHLC, 0, self.z80.c)
+        self._test_ldMemHLR(0x71, self.z80.ldMemHLC, self.z80.c)
 
     def test_ldMemHLD(self):
-        self._test_ldMemHLR(0x72, self.z80.ldMemHLD, 0, self.z80.d)
+        self._test_ldMemHLR(0x72, self.z80.ldMemHLD, self.z80.d)
 
     def test_ldMemHLE(self):
-        self._test_ldMemHLR(0x73, self.z80.ldMemHLE, 0, self.z80.e)
+        self._test_ldMemHLR(0x73, self.z80.ldMemHLE, self.z80.e)
 
     def test_ldMemHLH(self):
-        self._test_ldMemHLR(0x74, self.z80.ldMemHLH, 0, self.z80.h)
+        self._test_ldMemHLR(0x74, self.z80.ldMemHLH, self.z80.h)
 
     def test_ldMemHLL(self):
-        self._test_ldMemHLR(0x75, self.z80.ldMemHLL, 0, self.z80.l)
+        self._test_ldMemHLR(0x75, self.z80.ldMemHLL, self.z80.l)
 
     def test_halt(self):
         opc = 0x76
         self.validOpc(opc, self.z80.halt, 0)
 
     def test_ldMemHLA(self):
-        self._test_ldMemHLR(0x77, self.z80.ldMemHLA, 0, self.z80.a)
+        self._test_ldMemHLR(0x77, self.z80.ldMemHLA, self.z80.a)
 
     def test_ldAB(self):
-        self._test_ldRR(0x78, self.z80.ldAB, 0, self.z80.a, self.z80.b)
+        self._test_ldRR(0x78, self.z80.ldAB, self.z80.a, self.z80.b)
 
     def test_ldAC(self):
-        self._test_ldRR(0x79, self.z80.ldAC, 0, self.z80.a, self.z80.c)
+        self._test_ldRR(0x79, self.z80.ldAC, self.z80.a, self.z80.c)
 
     def test_ldAD(self):
-        self._test_ldRR(0x7a, self.z80.ldAD, 0, self.z80.a, self.z80.d)
+        self._test_ldRR(0x7a, self.z80.ldAD, self.z80.a, self.z80.d)
 
     def test_ldAE(self):
-        self._test_ldRR(0x7b, self.z80.ldAE, 0, self.z80.a, self.z80.e)
+        self._test_ldRR(0x7b, self.z80.ldAE, self.z80.a, self.z80.e)
 
     def test_ldAH(self):
-        self._test_ldRR(0x7c, self.z80.ldAH, 0, self.z80.a, self.z80.h)
+        self._test_ldRR(0x7c, self.z80.ldAH, self.z80.a, self.z80.h)
 
     def test_ldAL(self):
-        self._test_ldRR(0x7d, self.z80.ldAL, 0, self.z80.a, self.z80.l)
+        self._test_ldRR(0x7d, self.z80.ldAL, self.z80.a, self.z80.l)
 
     def test_ldAMemHL(self):
-        self._test_ldRMemHL(0x7e, self.z80.ldAMemHL, 0, self.z80.a)
+        self._test_ldRMemHL(0x7e, self.z80.ldAMemHL, self.z80.a)
 
     def test_ldAA(self):
-        self._test_ldRR(0x7f, self.z80.ldAA, 0, self.z80.a, self.z80.a)
+        self._test_ldRR(0x7f, self.z80.ldAA, self.z80.a, self.z80.a)
 
     def test_addAB(self):
         self._test_addAR(0x80, self.z80.addAB, self.z80.b)
@@ -1170,15 +1170,15 @@ class TestZ80(unittest.TestCase):
                 "Register %s is 0x%02x(%d), should be 0x%02x(%d)"
                 % (reg.name(), reg.val(), reg.val(), val, val))
 
-    def _test_ldRR(self, opc, func, argc, dstReg, srcReg):
-        self.validOpc(opc, func, argc)
+    def _test_ldRR(self, opc, func, dstReg, srcReg):
+        self.validOpc(opc, func, 0)
         for i in range(0, self.NUM_TESTS):
             val = i * 2
             srcReg.ld(val)
             self.flagsFixed(opc, 1, 4)
             self.regEq(dstReg, val)
 
-    def _test_ldRMemHL(self, opc, func, argc, reg):
+    def _test_ldRMemHL(self, opc, func, reg):
         self.validOpc(opc, func, 0)
         for i in range(0, self.NUM_TESTS):
             self.z80.h.ld(i * 4)
@@ -1189,7 +1189,7 @@ class TestZ80(unittest.TestCase):
             self.flagsFixed(opc, 2, 8)
             self.regEq(reg, val)
 
-    def _test_ldMemHLR(self, opc, func, argc, reg):
+    def _test_ldMemHLR(self, opc, func, reg):
         self.validOpc(opc, func, 0)
         for i in range(0, self.NUM_TESTS):
             val = (i * 7) & 0xff
