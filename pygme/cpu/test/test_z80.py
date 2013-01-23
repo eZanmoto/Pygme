@@ -1051,6 +1051,27 @@ class TestZ80(unittest.TestCase):
     def test_ldLA(self):
         self._test_ldRR(0x6f, self.z80.ldLA, 0, self.z80.l, self.z80.a)
 
+    def test_ldLA(self):
+        self._test_ldRR(0x6f, self.z80.ldLA, 0, self.z80.l, self.z80.a)
+
+    def test_ldMemHLB(self):
+        self._test_ldMemHLR(0x70, self.z80.ldMemHLB, 0, self.z80.b)
+
+    def test_ldMemHLC(self):
+        self._test_ldMemHLR(0x71, self.z80.ldMemHLC, 0, self.z80.c)
+
+    def test_ldMemHLD(self):
+        self._test_ldMemHLR(0x72, self.z80.ldMemHLD, 0, self.z80.d)
+
+    def test_ldMemHLE(self):
+        self._test_ldMemHLR(0x73, self.z80.ldMemHLE, 0, self.z80.e)
+
+    def test_ldMemHLH(self):
+        self._test_ldMemHLR(0x74, self.z80.ldMemHLH, 0, self.z80.h)
+
+    def test_ldMemHLL(self):
+        self._test_ldMemHLR(0x75, self.z80.ldMemHLL, 0, self.z80.l)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
@@ -1133,6 +1154,17 @@ class TestZ80(unittest.TestCase):
             self.mem.set8(addr, val)
             self.flagsFixed(opc, 2, 8)
             self.regEq(reg, val)
+
+    def _test_ldMemHLR(self, opc, func, argc, reg):
+        self.validOpc(opc, func, 0)
+        for i in range(0, self.NUM_TESTS):
+            val = (i * 7) & 0xff
+            self.z80.h.ld(val if reg == self.z80.h else i * 4)
+            self.z80.l.ld(val if reg == self.z80.l else i * 2)
+            addr = (self.z80.h.val() << 8) + self.z80.l.val()
+            reg.ld(val)
+            self.flagsFixed(opc, 2, 8)
+            self.assertEquals(self.mem.get8(addr), reg.val())
 
     def tearDown(self):
         self.mem = None

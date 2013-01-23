@@ -172,6 +172,12 @@ class Z80:
                       (self.ldLL, 0),
                       (self.ldLMemHL, 0),
                       (self.ldLA, 0),
+                      (self.ldMemHLB, 0),
+                      (self.ldMemHLC, 0),
+                      (self.ldMemHLD, 0),
+                      (self.ldMemHLE, 0),
+                      (self.ldMemHLH, 0),
+                      (self.ldMemHLL, 0),
                      ]
 
     def nop(self):
@@ -720,6 +726,30 @@ class Z80:
         """Loads the contents of A into L."""
         self._ldRR(self.l, self.a)
 
+    def ldMemHLB(self):
+        """Loads B into the memory address in HL."""
+        self._ldMemHLR(self.b)
+
+    def ldMemHLC(self):
+        """Loads C into the memory address in HL."""
+        self._ldMemHLR(self.c)
+
+    def ldMemHLD(self):
+        """Loads D into the memory address in HL."""
+        self._ldMemHLR(self.d)
+
+    def ldMemHLE(self):
+        """Loads E into the memory address in HL."""
+        self._ldMemHLR(self.e)
+
+    def ldMemHLH(self):
+        """Loads H into the memory address in HL."""
+        self._ldMemHLR(self.h)
+
+    def ldMemHLL(self):
+        """Loads L into the memory address in HL."""
+        self._ldMemHLR(self.l)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -795,6 +825,11 @@ class Z80:
         self._ldRn(reg, self._mem.get8(self._hl()))
         self.m += 1
         self.t += 4
+
+    def _ldMemHLR(self, reg):
+        self._mem.set8(self._hl(), reg.val())
+        self.m += 2
+        self.t += 8
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
