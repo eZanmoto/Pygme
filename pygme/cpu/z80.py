@@ -342,7 +342,7 @@ class Z80:
 
     def ldiAMemHL(self):
         """Loads byte at memory address in HL into A and increments HL."""
-        self._ldAMemRR(self.h, self.l)
+        self._ldRMemHL(self.a)
         self.incHL()
         self.m -= 1
         self.t -= 4
@@ -456,7 +456,7 @@ class Z80:
 
     def lddAMemHL(self):
         """Loads the value at memory address in HL into A and decrements HL."""
-        self._ldAMemRR(self.h, self.l)
+        self._ldRMemHL(self.a)
         self.decHL()
         self.m -= 1
         self.t -= 4
