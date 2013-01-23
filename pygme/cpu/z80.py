@@ -194,6 +194,7 @@ class Z80:
                       (self.addAE, 0),
                       (self.addAH, 0),
                       (self.addAL, 0),
+                      (self.addAMemHL, 0),
                      ]
 
     def nop(self):
@@ -828,6 +829,18 @@ class Z80:
     def addAL(self):
         """Adds A and L and stores the result in A."""
         self._addAR(self.l)
+
+    def addAMemHL(self):
+        """Adds A and value stored at address in HL and stores result in A."""
+        a = self.a.val()
+        v = self._mem.get8(self._hl())
+        self.f.n.reset()
+        self.f.h.setTo((a & 0xf) + (v & 0xf) > 0xf)
+        self.f.c.setTo(a + v > 0xff)
+        self.a.ld((a + v) & 0xff)
+        self._chkZ(self.a)
+        self.m += 2
+        self.t += 8
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)

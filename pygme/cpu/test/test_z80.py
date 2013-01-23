@@ -1121,6 +1121,39 @@ class TestZ80(unittest.TestCase):
     def test_addAL(self):
         self._test_addAR(0x85, self.z80.addAL, self.z80.l)
 
+    def test_addAMemHL(self):
+        opc = 0x86
+        self.validOpc(opc, self.z80.addAMemHL, 0)
+        self.z80.a.ld(0x2b)
+        addr = 0xdead
+        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.mem.set8(addr, 0x47)
+        self.z80.f.n.set()
+        self.timeOp(opc, 2, 8)
+        self.regEq(self.z80.a, 0x72)
+        self.flagEq(self.z80.f.z, False)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0xa + 0x7 > 0xf)
+        self.flagEq(self.z80.f.c, 0x2a + 0x47 > 0xff)
+        addr = 0xbeef
+        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.mem.set8(addr, 0xff)
+        self.timeOp(opc, 2, 8)
+        self.regEq(self.z80.a, 0x71)
+        self.flagEq(self.z80.f.z, False)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0x2 + 0xf > 0xf)
+        self.flagEq(self.z80.f.c, 0x72 + 0xff > 0xff)
+        addr = 0xffff
+        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.mem.set8(addr, 0x8f)
+        self.timeOp(opc, 2, 8)
+        self.regEq(self.z80.a, 0x00)
+        self.flagEq(self.z80.f.z, True)
+        self.flagEq(self.z80.f.n, False)
+        self.flagEq(self.z80.f.h, 0xf + 0x1 > 0xf)
+        self.flagEq(self.z80.f.c, 0x71 + 0x8f > 0xff)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
