@@ -131,6 +131,7 @@ class Z80:
                       (self.ldBH, 0),
                       (self.ldBL, 0),
                       (self.ldBMemHL, 0),
+                      (self.ldBA, 0),
                      ]
 
     def nop(self):
@@ -514,6 +515,10 @@ class Z80:
     def ldBMemHL(self):
         """Loads the value at memory address in HL into B."""
         self._ldRMemHL(self.b)
+
+    def ldBA(self):
+        """Loads the contents of A into B."""
+        self._ldRR(self.b, self.a)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
