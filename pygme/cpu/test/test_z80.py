@@ -1076,6 +1076,9 @@ class TestZ80(unittest.TestCase):
         opc = 0x76
         self.validOpc(opc, self.z80.halt, 0)
 
+    def test_ldMemHLA(self):
+        self._test_ldMemHLR(0x77, self.z80.ldMemHLA, 0, self.z80.a)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")

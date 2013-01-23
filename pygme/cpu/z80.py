@@ -179,6 +179,7 @@ class Z80:
                       (self.ldMemHLH, 0),
                       (self.ldMemHLL, 0),
                       (self.halt, 0),
+                      (self.ldMemHLA, 0),
                      ]
 
     def nop(self):
@@ -753,6 +754,10 @@ class Z80:
 
     def halt(self):
         raise NotImplementedError("'HALT' has not been implemented")
+
+    def ldMemHLA(self):
+        """Loads A into the memory address in HL."""
+        self._ldMemHLR(self.a)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
