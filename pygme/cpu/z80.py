@@ -204,6 +204,12 @@ class Z80:
                       (self.adcAL, 0),
                       (self.adcAMemHL, 0),
                       (self.adcAA, 0),
+                      (self.subAB, 0),
+                      (self.subAC, 0),
+                      (self.subAD, 0),
+                      (self.subAE, 0),
+                      (self.subAH, 0),
+                      (self.subAL, 0),
                      ]
 
     def nop(self):
@@ -896,6 +902,30 @@ class Z80:
         """Adds A, C and A and stores the result in A."""
         self._adcAR(self.a)
 
+    def subAB(self):
+        """Subtracts B from A and stores the result in A."""
+        self._subAR(self.b)
+
+    def subAC(self):
+        """Subtracts C from A and stores the result in A."""
+        self._subAR(self.c)
+
+    def subAD(self):
+        """Subtracts D from A and stores the result in A."""
+        self._subAR(self.d)
+
+    def subAE(self):
+        """Subtracts E from A and stores the result in A."""
+        self._subAR(self.e)
+
+    def subAH(self):
+        """Subtracts H from A and stores the result in A."""
+        self._subAR(self.h)
+
+    def subAL(self):
+        """Subtracts L from A and stores the result in A."""
+        self._subAR(self.l)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -996,6 +1026,17 @@ class Z80:
         self.f.h.setTo((a & 0xf) + (r & 0xf) + c > 0xf)
         self.f.c.setTo(a + r + c > 0xff)
         self.a.ld((a + r + c) & 0xff)
+        self._chkZ(self.a)
+        self.m += 1
+        self.t += 4
+
+    def _subAR(self, reg):
+        a = self.a.val()
+        r = reg.val()
+        self.f.n.set()
+        self.f.h.setTo((a & 0xf) < (r & 0xf))
+        self.f.c.setTo(a < r)
+        self.a.ld((a - r) & 0xff)
         self._chkZ(self.a)
         self.m += 1
         self.t += 4
