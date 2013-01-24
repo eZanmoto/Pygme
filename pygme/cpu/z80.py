@@ -929,15 +929,7 @@ class Z80:
 
     def subAMemHL(self):
         """Subtracts value at address in HL from A and stores result in A."""
-        a = self.a.val()
-        v = self._mem.get8(self._hl())
-        self.f.n.set()
-        self.f.h.setTo((a & 0xf) < (v & 0xf))
-        self.f.c.setTo(a < v)
-        self.a.ld((a - v) & 0xff)
-        self._chkZ(self.a)
-        self.m += 2
-        self.t += 8
+        self._subAn(self._mem.get8(self._hl()))
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
@@ -1044,15 +1036,19 @@ class Z80:
         self.t += 4
 
     def _subAR(self, reg):
+        self._subAn(reg.val())
+        self.m -= 1
+        self.t -= 4
+
+    def _subAn(self, v):
         a = self.a.val()
-        r = reg.val()
         self.f.n.set()
-        self.f.h.setTo((a & 0xf) < (r & 0xf))
-        self.f.c.setTo(a < r)
-        self.a.ld((a - r) & 0xff)
+        self.f.h.setTo((a & 0xf) < (v & 0xf))
+        self.f.c.setTo(a < v)
+        self.a.ld((a - v) & 0xff)
         self._chkZ(self.a)
-        self.m += 1
-        self.t += 4
+        self.m += 2
+        self.t += 8
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
