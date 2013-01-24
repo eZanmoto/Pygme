@@ -212,6 +212,7 @@ class Z80:
                       (self.subAL, 0),
                       (self.subAMemHL, 0),
                       (self.subAA, 0),
+                      (self.sbcAB, 0),
                      ]
 
     def nop(self):
@@ -936,6 +937,10 @@ class Z80:
         """Subtracts A from A and stores the result in A."""
         self._subAR(self.a)
 
+    def sbcAB(self):
+        """Subtracts B + C from A and stores the result in A."""
+        self._sbcAR(self.b)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -1051,6 +1056,22 @@ class Z80:
         self.f.h.setTo((a & 0xf) < (v & 0xf))
         self.f.c.setTo(a < v)
         self.a.ld((a - v) & 0xff)
+        self._chkZ(self.a)
+        self.m += 2
+        self.t += 8
+
+    def _sbcAR(self, reg):
+        self._sbcAn(reg.val())
+        self.m -= 1
+        self.t -= 4
+
+    def _sbcAn(self, v):
+        a = self.a.val()
+        c = 1 if self.f.c.val() else 0
+        self.f.n.set()
+        self.f.h.setTo((a & 0xf) < (v & 0xf) + c)
+        self.f.c.setTo(a < v + c)
+        self.a.ld((a - v - c) & 0xff)
         self._chkZ(self.a)
         self.m += 2
         self.t += 8
