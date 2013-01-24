@@ -210,6 +210,7 @@ class Z80:
                       (self.subAE, 0),
                       (self.subAH, 0),
                       (self.subAL, 0),
+                      (self.subAMemHL, 0),
                      ]
 
     def nop(self):
@@ -925,6 +926,18 @@ class Z80:
     def subAL(self):
         """Subtracts L from A and stores the result in A."""
         self._subAR(self.l)
+
+    def subAMemHL(self):
+        """Subtracts value at address in HL from A and stores result in A."""
+        a = self.a.val()
+        v = self._mem.get8(self._hl())
+        self.f.n.set()
+        self.f.h.setTo((a & 0xf) < (v & 0xf))
+        self.f.c.setTo(a < v)
+        self.a.ld((a - v) & 0xff)
+        self._chkZ(self.a)
+        self.m += 2
+        self.t += 8
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
