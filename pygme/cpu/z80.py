@@ -928,13 +928,13 @@ class Z80:
         """Subtracts L from A and stores the result in A."""
         self._subAR(self.l)
 
-    def subAA(self):
-        """Subtracts A from A and stores the result in A."""
-        self._subAR(self.a)
-
     def subAMemHL(self):
         """Subtracts value at address in HL from A and stores result in A."""
         self._subAn(self._mem.get8(self._hl()))
+
+    def subAA(self):
+        """Subtracts A from A and stores the result in A."""
+        self._subAR(self.a)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
