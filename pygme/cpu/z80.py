@@ -49,6 +49,9 @@ class Z80:
     LEFT  = True
     RIGHT = not LEFT
 
+    WITH_CARRY    = True
+    WITHOUT_CARRY = not WITH_CARRY
+
     def __init__(self, mem):
         self.a = reg8.Reg8("A")
         self.b = reg8.Reg8("B")
@@ -254,7 +257,7 @@ class Z80:
 
     def rlcA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rotA(self.LEFT, True)
+        self._rotA(self.LEFT, self.WITH_CARRY)
 
     def ldMemnnSP(self, n, m):
         raise NotImplementedError("'LD (nn), SP' has not been implemented")
@@ -285,7 +288,7 @@ class Z80:
 
     def rrcA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        self._rotA(self.RIGHT, True)
+        self._rotA(self.RIGHT, self.WITH_CARRY)
 
     def stop(self):
         raise NotImplementedError("'STOP' has not been implemented")
@@ -317,7 +320,7 @@ class Z80:
     def rlA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        self._rotA(self.LEFT, False)
+        self._rotA(self.LEFT, self.WITHOUT_CARRY)
 
     def jrn(self, n):
         """Decrements/increments the PC by the signed 16-bit number n."""
@@ -354,7 +357,7 @@ class Z80:
     def rrA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        self._rotA(self.RIGHT, False)
+        self._rotA(self.RIGHT, self.WITHOUT_CARRY)
 
     def jrNZn(self, n):
         """Decrements/increments PC by the signed 16-bit number n if Z is 0."""
@@ -1017,7 +1020,7 @@ class Z80:
         self.t -= 4
 
     def _addAn(self, val):
-        self._arithAn(val, True, False)
+        self._arithAn(val, True, self.WITHOUT_CARRY)
         self.m += 1
         self.t += 4
 
@@ -1027,7 +1030,7 @@ class Z80:
         self.t -= 4
 
     def _adcAn(self, val):
-        self._arithAn(val, True, True)
+        self._arithAn(val, True, self.WITH_CARRY)
         self.m += 1
         self.t += 4
 
@@ -1037,7 +1040,7 @@ class Z80:
         self.t -= 4
 
     def _subAn(self, v):
-        self._arithAn(v, False, False)
+        self._arithAn(v, False, self.WITHOUT_CARRY)
         self.m += 1
         self.t += 4
 
@@ -1047,7 +1050,7 @@ class Z80:
         self.t -= 4
 
     def _sbcAn(self, v):
-        self._arithAn(v, False, True)
+        self._arithAn(v, False, self.WITH_CARRY)
         self.m += 1
         self.t += 4
 
