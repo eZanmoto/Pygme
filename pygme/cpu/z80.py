@@ -49,6 +49,9 @@ class Z80:
     LEFT  = True
     RIGHT = not LEFT
 
+    POSITIVE = True
+    NEGATIVE = not POSITIVE
+
     WITH_CARRY    = True
     WITHOUT_CARRY = not WITH_CARRY
 
@@ -1020,7 +1023,7 @@ class Z80:
         self.t -= 4
 
     def _addAn(self, val):
-        self._arithAn(val, True, self.WITHOUT_CARRY)
+        self._arithAn(val, self.POSITIVE, self.WITHOUT_CARRY)
         self.m += 1
         self.t += 4
 
@@ -1030,7 +1033,7 @@ class Z80:
         self.t -= 4
 
     def _adcAn(self, val):
-        self._arithAn(val, True, self.WITH_CARRY)
+        self._arithAn(val, self.POSITIVE, self.WITH_CARRY)
         self.m += 1
         self.t += 4
 
@@ -1040,7 +1043,7 @@ class Z80:
         self.t -= 4
 
     def _subAn(self, v):
-        self._arithAn(v, False, self.WITHOUT_CARRY)
+        self._arithAn(v, self.NEGATIVE, self.WITHOUT_CARRY)
         self.m += 1
         self.t += 4
 
@@ -1050,7 +1053,7 @@ class Z80:
         self.t -= 4
 
     def _sbcAn(self, v):
-        self._arithAn(v, False, self.WITH_CARRY)
+        self._arithAn(v, self.NEGATIVE, self.WITH_CARRY)
         self.m += 1
         self.t += 4
 
