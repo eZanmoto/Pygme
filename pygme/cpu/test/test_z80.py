@@ -1311,6 +1311,28 @@ class TestZ80(unittest.TestCase):
         self._expectFlags(opc, 2, 8, True, True, 0x0 < 0x0, 0x70 < 0x70)
         self.regEq(self.z80.a, 0x00)
 
+    def test_sbcAA(self):
+        opc = 0x9f
+        self.validOpc(opc, self.z80.sbcAA, 0)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.a.ld(i)
+            self.z80.f.z.reset()
+            self.z80.f.n.reset()
+            self.z80.f.h.set()
+            self.z80.f.c.reset()
+            self._expectFlags(opc, 1, 4, True, True, False, False)
+            self.regEq(self.z80.a, 0x00)
+        self.z80.a.ld(0x00)
+        self.z80.f.z.reset()
+        self.z80.f.n.reset()
+        self.z80.f.h.set()
+        self.z80.f.c.set()
+        self._expectFlags(opc, 1, 4, False, True, True, True)
+        self.regEq(self.z80.a, 0xff)
+        self.z80.f.c.reset()
+        self._expectFlags(opc, 1, 4, True, True, False, False)
+        self.regEq(self.z80.a, 0x00)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
