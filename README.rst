@@ -1,4 +1,4 @@
-Pygme
+Pygme |TravisStatus|
 =====
 
 About
@@ -12,3 +12,5 @@ Testing
 Use the following command to run all tests::
 
     bin/test
+
+.. |TravisStatus| image:: https://api.travis-ci.org/eZanmoto/Pygme.png?branch=master
