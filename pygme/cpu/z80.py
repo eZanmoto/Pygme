@@ -46,6 +46,9 @@ class Flags:
 #     JP   cc, nn
 class Z80:
 
+    LEFT  = True
+    RIGHT = not LEFT
+
     def __init__(self, mem):
         self.a = reg8.Reg8("A")
         self.b = reg8.Reg8("B")
@@ -251,7 +254,7 @@ class Z80:
 
     def rlcA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rotA(True, True)
+        self._rotA(self.LEFT, True)
 
     def ldMemnnSP(self, n, m):
         raise NotImplementedError("'LD (nn), SP' has not been implemented")
@@ -282,7 +285,7 @@ class Z80:
 
     def rrcA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        self._rotA(False, True)
+        self._rotA(self.RIGHT, True)
 
     def stop(self):
         raise NotImplementedError("'STOP' has not been implemented")
@@ -314,7 +317,7 @@ class Z80:
     def rlA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        self._rotA(True, False)
+        self._rotA(self.LEFT, False)
 
     def jrn(self, n):
         """Decrements/increments the PC by the signed 16-bit number n."""
@@ -351,7 +354,7 @@ class Z80:
     def rrA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        self._rotA(False, False)
+        self._rotA(self.RIGHT, False)
 
     def jrNZn(self, n):
         """Decrements/increments PC by the signed 16-bit number n if Z is 0."""
