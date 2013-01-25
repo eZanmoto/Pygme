@@ -1016,15 +1016,10 @@ class Z80:
         self.m += 2
         self.t += 8
 
-    def _decRR(self, hiOrdReg, lowOrdReg):
-        if hiOrdReg.val() == 0 and lowOrdReg.val() == 0:
-            hiOrdReg.ld(0xff)
-            lowOrdReg.ld(0xff)
-        elif lowOrdReg.val() == 0:
+    def _decRR(self, hiOrdReg, loOrdReg):
+        loOrdReg.ld((loOrdReg.val() - 1) & 0xff)
+        if loOrdReg.val() == 0xff:
             hiOrdReg.ld((hiOrdReg.val() - 1) & 0xff)
-            lowOrdReg.ld(0xff)
-        else:
-            lowOrdReg.ld((lowOrdReg.val() - 1) & 0xff)
         self.m += 1
         self.t += 4
 
