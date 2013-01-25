@@ -865,31 +865,31 @@ class Z80:
         self._addAR(self.a)
 
     def adcAB(self):
-        """Adds A, C and B and stores the result in A."""
+        """Adds A, Carry and B and stores the result in A."""
         self._adcAR(self.b)
 
     def adcAC(self):
-        """Adds A, C and C and stores the result in A."""
+        """Adds A, Carry and C and stores the result in A."""
         self._adcAR(self.c)
 
     def adcAD(self):
-        """Adds A, C and D and stores the result in A."""
+        """Adds A, Carry and D and stores the result in A."""
         self._adcAR(self.d)
 
     def adcAE(self):
-        """Adds A, C and E and stores the result in A."""
+        """Adds A, Carry and E and stores the result in A."""
         self._adcAR(self.e)
 
     def adcAH(self):
-        """Adds A, C and H and stores the result in A."""
+        """Adds A, Carry and H and stores the result in A."""
         self._adcAR(self.h)
 
     def adcAL(self):
-        """Adds A, C and L and stores the result in A."""
+        """Adds A, Carry and L and stores the result in A."""
         self._adcAR(self.l)
 
     def adcAMemHL(self):
-        """Adds A, C and value stored at address in HL, stores result in A."""
+        """Adds A, Carry and value at address in HL, stores result in A."""
         a = self.a.val()
         v = self._mem.get8(self._hl())
         c = 1 if self.f.c.val() else 0
@@ -902,7 +902,7 @@ class Z80:
         self.t += 8
 
     def adcAA(self):
-        """Adds A, C and A and stores the result in A."""
+        """Adds A, Carry and A and stores the result in A."""
         self._adcAR(self.a)
 
     def subAB(self):
@@ -938,7 +938,7 @@ class Z80:
         self._subAR(self.a)
 
     def sbcAB(self):
-        """Subtracts B + C from A and stores the result in A."""
+        """Subtracts B + Carry from A and stores the result in A."""
         self._sbcAR(self.b)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
