@@ -985,20 +985,14 @@ class Z80:
         self.t += 4
 
     def _incR(self, reg):
-        self.f.n.reset()
-        self.f.h.setTo(reg.val() & 0xf == 0xf)
-        reg.ld((reg.val() + 1) & 0xff)
-        self._chkZ(reg)
-        self.m += 1
-        self.t += 4
+        c = self.f.c.val()
+        self._arithRn(reg, 1, True, False)
+        self.f.c.setTo(c)
 
     def _decR(self, reg):
-        self.f.n.set()
-        self.f.h.setTo(reg.val() & 0xf == 0)
-        reg.ld((reg.val() - 1) & 0xff)
-        self._chkZ(reg)
-        self.m += 1
-        self.t += 4
+        c = self.f.c.val()
+        self._arithRn(reg, 1, False, False)
+        self.f.c.setTo(c)
 
     def _ldRn(self, reg, val):
         reg.ld(val)
@@ -1048,27 +1042,10 @@ class Z80:
         self.t += 8
 
     def _addAR(self, reg):
-        a = self.a.val()
-        r = reg.val()
-        self.f.n.reset()
-        self.f.h.setTo((a & 0xf) + (r & 0xf) > 0xf)
-        self.f.c.setTo(a + r > 0xff)
-        self.a.ld((a + r) & 0xff)
-        self._chkZ(self.a)
-        self.m += 1
-        self.t += 4
+        self._arithAn(reg.val(), True, False)
 
     def _adcAR(self, reg):
-        a = self.a.val()
-        r = reg.val()
-        c = 1 if self.f.c.val() else 0
-        self.f.n.reset()
-        self.f.h.setTo((a & 0xf) + (r & 0xf) + c > 0xf)
-        self.f.c.setTo(a + r + c > 0xff)
-        self.a.ld((a + r + c) & 0xff)
-        self._chkZ(self.a)
-        self.m += 1
-        self.t += 4
+        self._arithAn(reg.val(), True, True)
 
     def _subAR(self, reg):
         self._subAn(reg.val())
@@ -1076,14 +1053,9 @@ class Z80:
         self.t -= 4
 
     def _subAn(self, v):
-        a = self.a.val()
-        self.f.n.set()
-        self.f.h.setTo((a & 0xf) < (v & 0xf))
-        self.f.c.setTo(a < v)
-        self.a.ld((a - v) & 0xff)
-        self._chkZ(self.a)
-        self.m += 2
-        self.t += 8
+        self._arithAn(v, False, False)
+        self.m += 1
+        self.t += 4
 
     def _sbcAR(self, reg):
         self._sbcAn(reg.val())
@@ -1091,15 +1063,29 @@ class Z80:
         self.t -= 4
 
     def _sbcAn(self, v):
-        a = self.a.val()
-        c = 1 if self.f.c.val() else 0
-        self.f.n.set()
-        self.f.h.setTo((a & 0xf) < (v & 0xf) + c)
-        self.f.c.setTo(a < v + c)
-        self.a.ld((a - v - c) & 0xff)
-        self._chkZ(self.a)
-        self.m += 2
-        self.t += 8
+        self._arithAn(v, False, True)
+        self.m += 1
+        self.t += 4
+
+    def _arithAn(self, v, isPositive, withCarry):
+        self._arithRn(self.a, v, isPositive, withCarry)
+
+    def _arithRn(self, reg, v, isPositive, withCarry):
+        r = reg.val()
+        c = 1 if withCarry and self.f.c.val() else 0
+        if isPositive:
+            r_ = r + v + c
+            h_ = (r & 0xf) + (v & 0xf) + c
+        else:
+            r_ = r - v - c
+            h_ = (r & 0xf) - (v & 0xf) - c
+        self.f.n.setTo(not isPositive)
+        self.f.h.setTo(h_ < 0x0 or h_ > 0xf)
+        self.f.c.setTo(r_ < 0x00 or r_ > 0xff)
+        reg.ld(r_ & 0xff)
+        self._chkZ(reg)
+        self.m += 1
+        self.t += 4
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
