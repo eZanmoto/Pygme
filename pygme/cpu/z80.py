@@ -227,6 +227,7 @@ class Z80:
                       (self.sbcAE, 0),
                       (self.sbcAH, 0),
                       (self.sbcAL, 0),
+                      (self.sbcAMemHL, 0),
                      ]
 
     def nop(self):
@@ -933,6 +934,10 @@ class Z80:
     def sbcAL(self):
         """Subtracts L + Carry from A and stores the result in A."""
         self._sbcAR(self.l)
+
+    def sbcAMemHL(self):
+        """Subtracts value at address in HL + C from A, stores result in A."""
+        self._sbcAn(self._mem.get8(self._hl()))
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
