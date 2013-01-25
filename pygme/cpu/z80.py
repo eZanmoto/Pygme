@@ -251,13 +251,7 @@ class Z80:
 
     def rlcA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        bit7 = (self.a.val() >> 7) & 1
-        self.a.ld(((self.a.val() << 1) & 0xff) | bit7)
-        self.f.n.reset()
-        self.f.h.reset()
-        self.f.c.setTo(bit7)
-        self.m += 1
-        self.t += 4
+        self._rotA(True, True)
 
     def ldMemnnSP(self, n, m):
         raise NotImplementedError("'LD (nn), SP' has not been implemented")
@@ -288,13 +282,7 @@ class Z80:
 
     def rrcA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        bit0 = self.a.val() & 1
-        self.a.ld(((self.a.val() >> 1) & 0xff) | (bit0 << 7))
-        self.f.n.reset()
-        self.f.h.reset()
-        self.f.c.setTo(bit0)
-        self.m += 1
-        self.t += 4
+        self._rotA(False, True)
 
     def stop(self):
         raise NotImplementedError("'STOP' has not been implemented")
@@ -326,13 +314,7 @@ class Z80:
     def rlA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        bit7 = (self.a.val() >> 7) & 1
-        self.a.ld(((self.a.val() << 1) & 0xff) | self.f.c.val())
-        self.f.n.reset()
-        self.f.h.reset()
-        self.f.c.setTo(bit7)
-        self.m += 1
-        self.t += 4
+        self._rotA(True, False)
 
     def jrn(self, n):
         """Decrements/increments the PC by the signed 16-bit number n."""
@@ -369,13 +351,7 @@ class Z80:
     def rrA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        bit0 = self.a.val() & 1
-        self.a.ld(((self.a.val() >> 1) & 0xff) | (self.f.c.val() << 7))
-        self.f.n.reset()
-        self.f.h.reset()
-        self.f.c.setTo(bit0)
-        self.m += 1
-        self.t += 4
+        self._rotA(False, False)
 
     def jrNZn(self, n):
         """Decrements/increments PC by the signed 16-bit number n if Z is 0."""
@@ -979,6 +955,19 @@ class Z80:
 
     def _ldRn(self, reg, val):
         reg.ld(val)
+        self.m += 1
+        self.t += 4
+
+    def _rotA(self, rotLeft, withCarry):
+        a = self.a.val()
+        c = (a >> 7) & 1 if rotLeft else a & 1
+        orBit = c if withCarry else (1 if self.f.c.val() else 0)
+        if not rotLeft:
+            orBit <<= 7
+        self.a.ld(((a << 1 if rotLeft else a >> 1) & 0xff) | orBit)
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(c)
         self.m += 1
         self.t += 4
 
