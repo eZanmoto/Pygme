@@ -770,7 +770,7 @@ class TestZ80(unittest.TestCase):
             self.flagEq(self.z80.f.z, (i - 1) & 0xff == 0)
             self.flagEq(self.z80.f.n, True)
             self.flagEq(self.z80.f.c, c)
-            self.flagEq(self.z80.f.h, i & 0xf != 0x0)
+            self.flagEq(self.z80.f.h, i & 0xf == 0x0)
 
     def test_ldMemHLn(self):
         opc = 0x36
@@ -1310,7 +1310,7 @@ class TestZ80(unittest.TestCase):
         self.flagEq(self.z80.f.z, reg.val() == 0)
         self.flagEq(self.z80.f.n, not pos)
         self.flagEq(self.z80.f.c, c)
-        self.flagEq(self.z80.f.h, val & 0xf == 0xf if pos else val & 0xf != 0x0)
+        self.flagEq(self.z80.f.h, val & 0xf == 0xf if pos else val & 0xf == 0x0)
 
     def flagsFixed(self, opc, m_, t_, a=None, b=None):
         """Flags are unaffected by running instruction opc with a and b"""

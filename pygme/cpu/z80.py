@@ -502,7 +502,7 @@ class Z80:
         addr = self._hl()
         val = self._mem.get8(addr)
         self._mem.set8(addr, (val - 1) & 0xff)
-        self.f.h.setTo(val & 0xf != 0)
+        self.f.h.setTo(val & 0xf == 0)
         self.f.z.setTo(self._mem.get8(addr) == 0)
         self.m += 3
         self.t += 12
@@ -994,7 +994,7 @@ class Z80:
 
     def _decR(self, reg):
         self.f.n.set()
-        self.f.h.setTo(reg.val() & 0xf != 0)
+        self.f.h.setTo(reg.val() & 0xf == 0)
         reg.ld((reg.val() - 1) & 0xff)
         self._chkZ(reg)
         self.m += 1
