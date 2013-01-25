@@ -1274,6 +1274,21 @@ class TestZ80(unittest.TestCase):
     def test_sbcAB(self):
         self._test_sbcAR(0x98, self.z80.sbcAB, self.z80.b)
 
+    def test_sbcAC(self):
+        self._test_sbcAR(0x99, self.z80.sbcAC, self.z80.c)
+
+    def test_sbcAD(self):
+        self._test_sbcAR(0x9a, self.z80.sbcAD, self.z80.d)
+
+    def test_sbcAE(self):
+        self._test_sbcAR(0x9b, self.z80.sbcAE, self.z80.e)
+
+    def test_sbcAH(self):
+        self._test_sbcAR(0x9c, self.z80.sbcAH, self.z80.h)
+
+    def test_sbcAL(self):
+        self._test_sbcAR(0x9d, self.z80.sbcAL, self.z80.l)
+
     def validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")

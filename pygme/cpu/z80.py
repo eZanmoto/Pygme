@@ -213,6 +213,11 @@ class Z80:
                       (self.subAMemHL, 0),
                       (self.subAA, 0),
                       (self.sbcAB, 0),
+                      (self.sbcAC, 0),
+                      (self.sbcAD, 0),
+                      (self.sbcAE, 0),
+                      (self.sbcAH, 0),
+                      (self.sbcAL, 0),
                      ]
 
     def nop(self):
@@ -940,6 +945,26 @@ class Z80:
     def sbcAB(self):
         """Subtracts B + Carry from A and stores the result in A."""
         self._sbcAR(self.b)
+
+    def sbcAC(self):
+        """Subtracts C + Carry from A and stores the result in A."""
+        self._sbcAR(self.c)
+
+    def sbcAD(self):
+        """Subtracts D + Carry from A and stores the result in A."""
+        self._sbcAR(self.d)
+
+    def sbcAE(self):
+        """Subtracts E + Carry from A and stores the result in A."""
+        self._sbcAR(self.e)
+
+    def sbcAH(self):
+        """Subtracts H + Carry from A and stores the result in A."""
+        self._sbcAR(self.h)
+
+    def sbcAL(self):
+        """Subtracts L + Carry from A and stores the result in A."""
+        self._sbcAR(self.l)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
