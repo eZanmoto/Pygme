@@ -1336,6 +1336,21 @@ class TestZ80(unittest.TestCase):
     def test_andB(self):
         self._test_andR(0xa0, self.z80.andB, self.z80.b)
 
+    def test_andC(self):
+        self._test_andR(0xa1, self.z80.andC, self.z80.c)
+
+    def test_andD(self):
+        self._test_andR(0xa2, self.z80.andD, self.z80.d)
+
+    def test_andE(self):
+        self._test_andR(0xa3, self.z80.andE, self.z80.e)
+
+    def test_andH(self):
+        self._test_andR(0xa4, self.z80.andH, self.z80.h)
+
+    def test_andL(self):
+        self._test_andR(0xa5, self.z80.andL, self.z80.l)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
@@ -1495,6 +1510,7 @@ class TestZ80(unittest.TestCase):
         self._flagEq(self.z80.f.c, c)
 
     def _test_andR(self, opc, func, reg):
+        self._validOpc(opc, func, 0)
         self.z80.a.ld(0b0011)
         reg.ld(0b0101)
         self.z80.f.z.set()
