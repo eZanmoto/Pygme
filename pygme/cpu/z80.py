@@ -55,6 +55,10 @@ class Z80:
     WITH_CARRY    = True
     WITHOUT_CARRY = not WITH_CARRY
 
+    AND = 0
+    OR  = 1
+    XOR = 2
+
     def __init__(self, mem):
         self.a = reg8.Reg8("A")
         self.b = reg8.Reg8("B")
@@ -229,6 +233,7 @@ class Z80:
                       (self.sbcAL, 0),
                       (self.sbcAMemHL, 0),
                       (self.sbcAA, 0),
+                      (self.andB, 0),
                      ]
 
     def nop(self):
@@ -944,6 +949,10 @@ class Z80:
         """Subtracts A + Carry from A and stores the result in A."""
         self._sbcAR(self.a)
 
+    def andB(self):
+        """Bitwise ANDs A and B and stores the result in A."""
+        self._bitwiseR(self.AND, self.b)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -1084,6 +1093,21 @@ class Z80:
         self.f.c.setTo(r_ < 0x00 or r_ > 0xff)
         reg.ld(r_ & 0xff)
         self._chkZ(reg)
+        self.m += 1
+        self.t += 4
+
+    def _bitwiseR(self, op, reg):
+        if op == self.AND:
+            f = lambda a, b: a & b
+        elif op == self.OR:
+            f = lambda a, b: a | b
+        elif op == self.XOR:
+            f = lambda a, b: a ^ b
+        self.a.ld(f(self.a.val(), reg.val()))
+        self.f.n.reset()
+        self.f.h.setTo(op == self.AND)
+        self.f.c.reset()
+        self._chkZ(self.a)
         self.m += 1
         self.t += 4
 
