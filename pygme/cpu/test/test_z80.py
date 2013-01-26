@@ -1453,6 +1453,21 @@ class TestZ80(unittest.TestCase):
     def test_orB(self):
         self._test_orR(0xb0, self.z80.orB, self.z80.b)
 
+    def test_orC(self):
+        self._test_orR(0xb1, self.z80.orC, self.z80.c)
+
+    def test_orD(self):
+        self._test_orR(0xb2, self.z80.orD, self.z80.d)
+
+    def test_orE(self):
+        self._test_orR(0xb3, self.z80.orE, self.z80.e)
+
+    def test_orH(self):
+        self._test_orR(0xb4, self.z80.orH, self.z80.h)
+
+    def test_orL(self):
+        self._test_orR(0xb5, self.z80.orL, self.z80.l)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
