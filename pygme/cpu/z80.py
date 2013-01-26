@@ -257,6 +257,7 @@ class Z80:
                       (self.orL, 0),
                       (self.orMemHL, 0),
                       (self.orA, 0),
+                      (self.cpB, 0),
                      ]
 
     def nop(self):
@@ -1067,6 +1068,12 @@ class Z80:
     def orA(self):
         """Bitwise ORs A and A and stores the result in A."""
         self._bitwiseR(self.OR, self.a)
+
+    def cpB(self):
+        """Updates the flags with the result of subtracting B from A."""
+        a = self.a.val()
+        self._subAR(self.b)
+        self.a.ld(a)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
