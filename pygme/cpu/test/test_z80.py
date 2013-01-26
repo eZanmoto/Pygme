@@ -1438,6 +1438,18 @@ class TestZ80(unittest.TestCase):
         self._regEq(self.z80.a, 0)
         self.assertEquals(self.mem.get8(addr), val)
 
+    def test_xorA(self):
+        opc = 0xaf
+        self._validOpc(opc, self.z80.xorA, 0)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.a.ld(i)
+            self.z80.f.z.reset()
+            self.z80.f.n.set()
+            self.z80.f.h.set()
+            self.z80.f.c.set()
+            self._expectFlags(opc, 1, 4, True, False, False, False)
+            self._regEq(self.z80.a, 0)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
