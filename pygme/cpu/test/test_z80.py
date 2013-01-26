@@ -1394,6 +1394,9 @@ class TestZ80(unittest.TestCase):
         self._expectFlags(opc, 1, 4, True, False, True, False)
         self._regEq(self.z80.a, 0)
 
+    def test_xorB(self):
+        self._test_xorR(0xa8, self.z80.xorB, self.z80.b)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
@@ -1571,6 +1574,27 @@ class TestZ80(unittest.TestCase):
         self._expectFlags(opc, 1, 4, True, False, True, False)
         self._regEq(self.z80.a, 0)
         self._regEq(reg, 0)
+
+    def _test_xorR(self, opc, func, reg):
+        self._validOpc(opc, func, 0)
+        self.z80.a.ld(0b0011)
+        reg.ld(0b0101)
+        self.z80.f.z.set()
+        self.z80.f.n.set()
+        self.z80.f.h.set()
+        self.z80.f.c.set()
+        self._expectFlags(opc, 1, 4, False, False, False, False)
+        self._regEq(self.z80.a, 0b0110)
+        self._regEq(reg, 0b0101)
+        val = self.z80.a.val()
+        reg.ld(val)
+        self.z80.f.z.reset()
+        self.z80.f.n.set()
+        self.z80.f.h.set()
+        self.z80.f.c.set()
+        self._expectFlags(opc, 1, 4, True, False, False, False)
+        self._regEq(self.z80.a, 0)
+        self._regEq(reg, val)
 
     def tearDown(self):
         self.mem = None
