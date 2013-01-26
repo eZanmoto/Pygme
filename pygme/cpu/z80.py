@@ -256,6 +256,7 @@ class Z80:
                       (self.orH, 0),
                       (self.orL, 0),
                       (self.orMemHL, 0),
+                      (self.orA, 0),
                      ]
 
     def nop(self):
@@ -1062,6 +1063,10 @@ class Z80:
     def orMemHL(self):
         """Bitwise ORs A and value at address in HL and stores result in A."""
         self._bitwisen(self.OR, self._mem.get8(self._hl()))
+
+    def orA(self):
+        """Bitwise ORs A and A and stores the result in A."""
+        self._bitwiseR(self.OR, self.a)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
