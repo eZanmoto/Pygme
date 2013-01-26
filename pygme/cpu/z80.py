@@ -1133,6 +1133,8 @@ class Z80:
 
     def _bitwiseR(self, op, reg):
         self._bitwisen(op, reg.val())
+        self.m -= 1
+        self.t -= 4
 
     def _bitwisen(self, op, val):
         if op == self.AND:
@@ -1146,8 +1148,8 @@ class Z80:
         self.f.h.setTo(op == self.AND)
         self.f.c.reset()
         self._chkZ(self.a)
-        self.m += 1
-        self.t += 4
+        self.m += 2
+        self.t += 8
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)

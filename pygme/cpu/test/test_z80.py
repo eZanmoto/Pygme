@@ -1362,7 +1362,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, False, False, True, False)
+        self._expectFlags(opc, 2, 8, False, False, True, False)
         self._regEq(self.z80.a, 0b0001)
         self.assertEquals(self.mem.get8(addr), 0b0101)
         addr = 0xbeef
@@ -1372,7 +1372,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, True, False, True, False)
+        self._expectFlags(opc, 2, 8, True, False, True, False)
         self._regEq(self.z80.a, 0)
         self.assertEquals(self.mem.get8(addr), 0)
 
