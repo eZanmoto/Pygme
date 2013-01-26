@@ -249,6 +249,7 @@ class Z80:
                       (self.xorL, 0),
                       (self.xorMemHL, 0),
                       (self.xorA, 0),
+                      (self.orB, 0),
                      ]
 
     def nop(self):
@@ -1027,6 +1028,10 @@ class Z80:
     def xorA(self):
         """Bitwise XORs A and A and stores the result in A."""
         self._bitwiseR(self.XOR, self.a)
+
+    def orB(self):
+        """Bitwise ORs A and B and stores the result in A."""
+        self._bitwiseR(self.OR, self.b)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
