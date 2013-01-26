@@ -239,6 +239,7 @@ class Z80:
                       (self.andE, 0),
                       (self.andH, 0),
                       (self.andL, 0),
+                      (self.andMemHL, 0),
                      ]
 
     def nop(self):
@@ -978,6 +979,10 @@ class Z80:
         """Bitwise ANDs A and L and stores the result in A."""
         self._bitwiseR(self.AND, self.l)
 
+    def andMemHL(self):
+        """Bitwise ANDs A and value at address in HL and stores result in A."""
+        self._bitwisen(self.AND, self._mem.get8(self._hl()))
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -1122,13 +1127,16 @@ class Z80:
         self.t += 4
 
     def _bitwiseR(self, op, reg):
+        self._bitwisen(op, reg.val())
+
+    def _bitwisen(self, op, val):
         if op == self.AND:
             f = lambda a, b: a & b
         elif op == self.OR:
             f = lambda a, b: a | b
         elif op == self.XOR:
             f = lambda a, b: a ^ b
-        self.a.ld(f(self.a.val(), reg.val()))
+        self.a.ld(f(self.a.val(), val))
         self.f.n.reset()
         self.f.h.setTo(op == self.AND)
         self.f.c.reset()

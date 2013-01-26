@@ -1351,6 +1351,31 @@ class TestZ80(unittest.TestCase):
     def test_andL(self):
         self._test_andR(0xa5, self.z80.andL, self.z80.l)
 
+    def test_andMemHL(self):
+        opc = 0xa6
+        self._validOpc(opc, self.z80.andMemHL, 0)
+        self.z80.a.ld(0b0011)
+        addr = 0xdead
+        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.mem.set8(addr, 0b0101)
+        self.z80.f.z.set()
+        self.z80.f.n.set()
+        self.z80.f.h.reset()
+        self.z80.f.c.set()
+        self._expectFlags(opc, 1, 4, False, False, True, False)
+        self._regEq(self.z80.a, 0b0001)
+        self.assertEquals(self.mem.get8(addr), 0b0101)
+        addr = 0xbeef
+        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.mem.set8(addr, 0)
+        self.z80.f.z.set()
+        self.z80.f.n.set()
+        self.z80.f.h.reset()
+        self.z80.f.c.set()
+        self._expectFlags(opc, 1, 4, True, False, True, False)
+        self._regEq(self.z80.a, 0)
+        self.assertEquals(self.mem.get8(addr), 0)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
