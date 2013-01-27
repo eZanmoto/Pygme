@@ -1530,6 +1530,22 @@ class TestZ80(unittest.TestCase):
     def test_cpL(self):
         self._test_cpR(0xbd, self.z80.cpL, self.z80.l)
 
+    def test_cpMemHL(self):
+        opc = 0xbe
+        self._validOpc(opc, self.z80.cpMemHL, 0)
+        confs = [(0x9c, 0x2a, 0xdead),
+                 (0x72, 0xff, 0xbeef),
+                 (0x73, 0x73, 0xffff)]
+        for conf in confs:
+            a, v, addr = conf
+            self.z80.a.ld(a)
+            self.z80.ldHLnn(addr >> 8, addr & 0xff)
+            self.mem.set8(addr, v)
+            self.z80.f.n.reset()
+            self._expectFlags(opc, 2, 8,
+                              a == v, True, (a & 0xf) < (v & 0xf), a < v)
+            self._regEq(self.z80.a, a)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
