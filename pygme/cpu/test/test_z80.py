@@ -1555,6 +1555,29 @@ class TestZ80(unittest.TestCase):
             self._expectFlags(opc, 1, 4, True, True, False, False)
             self._regEq(self.z80.a, a)
 
+    def test_retNZ(self):
+        opc = 0xc0
+        self._validOpc(opc, self.z80.retNZ, 0)
+        self.z80.f.z.reset()
+        self._test_retNZ(opc, 0xdead, 0xffff, 0xbeef, 0xbeef)
+        self._test_retNZ(opc, 0xbeef, 0xffff, 0xdead, 0xdead)
+        self.z80.f.z.set()
+        self._test_retNZ(opc, 0xdead, 0xffff, 0xbeef, 0)
+        self._test_retNZ(opc, 0xbeef, 0xffff, 0xdead, 0)
+
+    def _test_retNZ(self, opc, sp, pcInit, pcVal, expected):
+        self.mem.set8(sp + 1, pcVal >> 8)
+        self.mem.set8(sp, pcVal & 0xff)
+        self.z80.sp.ld(sp)
+        self.z80.pc.ld(pcInit)
+        self._flagsFixed(opc, 2, 8)
+        if self.z80.f.z.val():
+            self._regEq(self.z80.pc, pcInit)
+            self._regEq(self.z80.sp, sp)
+        else:
+            self._regEq(self.z80.pc, pcVal)
+            self._regEq(self.z80.sp, sp + 2)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")

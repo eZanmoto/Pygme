@@ -265,6 +265,7 @@ class Z80:
                       (self.cpL, 0),
                       (self.cpMemHL, 0),
                       (self.cpA, 0),
+                      (self.retNZ, 0),
                      ]
 
     def nop(self):
@@ -1107,6 +1108,16 @@ class Z80:
     def cpA(self):
         """Updates the flags with the result of subtracting A from A."""
         self._cpR(self.a)
+
+    def retNZ(self):
+        """Pops the top two bytes of the stack into the PC if Z is not set."""
+        if not self.f.z.val():
+            addr = self.sp.val()
+            hiOrd, loOrd = (self._mem.get8(addr + 1), self._mem.get8(addr))
+            self.pc.ld((hiOrd << 8) + loOrd)
+            self.sp.ld(self.sp.val() + 2)
+        self.m += 2
+        self.t += 8
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
