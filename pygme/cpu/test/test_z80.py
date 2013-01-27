@@ -1578,6 +1578,28 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.pc, pcVal)
             self._regEq(self.z80.sp, sp + 2)
 
+    def test_popBC(self):
+        opc = 0xc1
+        self._validOpc(opc, self.z80.popBC, 0)
+        self.z80.sp.ld(0xfffe)
+        vals = [0xa5a5, 0x5a5a, 0xdead, 0xbeef]
+        for val in vals:
+            self._push16(val)
+        vals.reverse()
+        for val in vals:
+            self._flagsFixed(opc, 3, 12)
+            self._regEq(self.z80.b, val >> 8)
+            self._regEq(self.z80.c, val & 0xff)
+
+    def _push16(self, val):
+        self._push8(val >> 8)
+        self._push8(val & 0xff)
+
+    def _push8(self, val):
+        sp = self.z80.sp.val() - 1
+        self.z80.sp.ld(sp)
+        self.mem.set8(sp, val)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
