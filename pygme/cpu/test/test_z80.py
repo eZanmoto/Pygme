@@ -1515,6 +1515,21 @@ class TestZ80(unittest.TestCase):
     def test_cpB(self):
         self._test_cpR(0xb8, self.z80.cpB, self.z80.b)
 
+    def test_cpC(self):
+        self._test_cpR(0xb9, self.z80.cpC, self.z80.c)
+
+    def test_cpD(self):
+        self._test_cpR(0xba, self.z80.cpD, self.z80.d)
+
+    def test_cpE(self):
+        self._test_cpR(0xbb, self.z80.cpE, self.z80.e)
+
+    def test_cpH(self):
+        self._test_cpR(0xbc, self.z80.cpH, self.z80.h)
+
+    def test_cpL(self):
+        self._test_cpR(0xbd, self.z80.cpL, self.z80.l)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
