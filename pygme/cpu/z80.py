@@ -1121,18 +1121,6 @@ class Z80:
         """Pops the top two bytes of the stack into BC."""
         self._popRR(self.b, self.c)
 
-    def _popRR(self, hiOrdReg, loOrdReg):
-        v = self._pop16()
-        hiOrdReg.ld(v >> 8)
-        loOrdReg.ld(v & 0xff)
-        self.m += 3
-        self.t += 12
-
-    def _pop16(self):
-        addr = self.sp.val()
-        self.sp.ld(addr + 2)
-        return (self._mem.get8(addr + 1) << 8) + self._mem.get8(addr)
-
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -1305,6 +1293,18 @@ class Z80:
         a = self.a.val()
         self._subAn(val)
         self.a.ld(a)
+
+    def _popRR(self, hiOrdReg, loOrdReg):
+        v = self._pop16()
+        hiOrdReg.ld(v >> 8)
+        loOrdReg.ld(v & 0xff)
+        self.m += 3
+        self.t += 12
+
+    def _pop16(self):
+        addr = self.sp.val()
+        self.sp.ld(addr + 2)
+        return (self._mem.get8(addr + 1) << 8) + self._mem.get8(addr)
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
