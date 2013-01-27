@@ -264,6 +264,7 @@ class Z80:
                       (self.cpH, 0),
                       (self.cpL, 0),
                       (self.cpMemHL, 0),
+                      (self.cpA, 0),
                      ]
 
     def nop(self):
@@ -1102,6 +1103,10 @@ class Z80:
     def cpMemHL(self):
         """Updates flags after subtracting value at address in HL from A."""
         self._cpn(self._mem.get8(self._hl()))
+
+    def cpA(self):
+        """Updates the flags with the result of subtracting A from A."""
+        self._cpR(self.a)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)

@@ -1546,6 +1546,15 @@ class TestZ80(unittest.TestCase):
                               a == v, True, (a & 0xf) < (v & 0xf), a < v)
             self._regEq(self.z80.a, a)
 
+    def test_cpA(self):
+        opc = 0xbf
+        self._validOpc(opc, self.z80.cpA, 0)
+        for a in range(0, self.NUM_TESTS):
+            self.z80.a.ld(a)
+            self.z80.f.n.reset()
+            self._expectFlags(opc, 1, 4, True, True, False, False)
+            self._regEq(self.z80.a, a)
+
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
             "Opcode out of instruction range")
