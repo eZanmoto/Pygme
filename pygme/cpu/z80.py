@@ -1112,12 +1112,14 @@ class Z80:
     def retNZ(self):
         """Pops the top two bytes of the stack into the PC if Z is not set."""
         if not self.f.z.val():
-            addr = self.sp.val()
-            hiOrd, loOrd = (self._mem.get8(addr + 1), self._mem.get8(addr))
-            self.pc.ld((hiOrd << 8) + loOrd)
-            self.sp.ld(self.sp.val() + 2)
+            self.pc.ld(self._pop16())
         self.m += 2
         self.t += 8
+
+    def _pop16(self):
+        addr = self.sp.val()
+        self.sp.ld(self.sp.val() + 2)
+        return (self._mem.get8(addr + 1) << 8) + self._mem.get8(addr)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
