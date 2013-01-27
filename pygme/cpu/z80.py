@@ -1071,9 +1071,7 @@ class Z80:
 
     def cpB(self):
         """Updates the flags with the result of subtracting B from A."""
-        a = self.a.val()
-        self._subAR(self.b)
-        self.a.ld(a)
+        self._cpR(self.b)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
@@ -1237,6 +1235,11 @@ class Z80:
         self._chkZ(self.a)
         self.m += 2
         self.t += 8
+
+    def _cpR(self, reg):
+        a = self.a.val()
+        self._subAR(reg)
+        self.a.ld(a)
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
