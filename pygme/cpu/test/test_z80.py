@@ -1591,6 +1591,19 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.b, val >> 8)
             self._regEq(self.z80.c, val & 0xff)
 
+    def test_jpNZnn(self):
+        opc = 0xc2
+        self._validOpc(opc, self.z80.jpNZnn, 2)
+        for i in range(0, self.NUM_TESTS):
+            z = i % 2 == 0
+            self.z80.f.z.setTo(z)
+            pc = self.z80.pc.val()
+            self._flagsFixed(opc, 3, 12, i * 2, i * 4)
+            if z:
+                self._regEq(self.z80.pc, pc)
+            else:
+                self._regEq(self.z80.pc, ((i * 4) << 8) + (i * 2))
+
     def _push16(self, val):
         self._push8(val >> 8)
         self._push8(val & 0xff)

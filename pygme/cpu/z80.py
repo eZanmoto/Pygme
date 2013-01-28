@@ -267,6 +267,7 @@ class Z80:
                       (self.cpA, 0),
                       (self.retNZ, 0),
                       (self.popBC, 0),
+                      (self.jpNZnn, 2),
                      ]
 
     def nop(self):
@@ -1120,6 +1121,16 @@ class Z80:
     def popBC(self):
         """Pops the top two bytes of the stack into BC."""
         self._popRR(self.b, self.c)
+
+    def jpNZnn(self, loOrdByte, hiOrdByte):
+        """Loads little-endian word into PC if Z is not set."""
+        if loOrdByte < 0 or loOrdByte > 0xff:
+            raise ValueError("Lo-order byte 0x%x(%d) must be 8-bit" %
+                    (loOrdByte, loOrdByte))
+        if not self.f.z.val():
+            self.pc.ld((hiOrdByte << 8) + loOrdByte)
+        self.m += 3
+        self.t += 12
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
