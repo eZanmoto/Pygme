@@ -366,7 +366,7 @@ class Z80:
         self._rotA(self.LEFT, self.WITHOUT_CARRY)
 
     def jrn(self, n):
-        """Decrements/increments the PC by the signed 16-bit number n."""
+        """Decrements/increments the PC by the signed byte n."""
         pc = self.pc.val()
         pc = (pc + n) - 126
         self.pc.ld(pc & 0xffff)
@@ -403,7 +403,7 @@ class Z80:
         self._rotA(self.RIGHT, self.WITHOUT_CARRY)
 
     def jrNZn(self, n):
-        """Decrements/increments PC by the signed 16-bit number n if Z is 0."""
+        """Decrements/increments PC by the signed byte n if Z is 0."""
         if self.f.z.val():
             self.m += 1
             self.t += 4
@@ -441,7 +441,7 @@ class Z80:
         raise NotImplementedError("'DAA' has not been implemented")
 
     def jrZn(self, n):
-        """Decrements/increments PC by the signed 16-bit number n if Z is 1."""
+        """Decrements/increments PC by the signed byte n if Z is 1."""
         if self.f.z.val():
             self.jrn(n)
         else:
@@ -484,7 +484,7 @@ class Z80:
         self.t += 4
 
     def jrNCn(self, n):
-        """Decrements/increments PC by the signed 16-bit number n if C is 0."""
+        """Decrements/increments PC by the signed byte n if C is 0."""
         if self.f.c.val():
             self.m += 1
             self.t += 4
@@ -547,7 +547,7 @@ class Z80:
         self.t += 4
 
     def jrCn(self, n):
-        """Decrements/increments PC by the signed 16-bit number n if C is 1."""
+        """Decrements/increments PC by the signed byte n if C is 1."""
         if self.f.c.val():
             self.jrn(n)
         else:
