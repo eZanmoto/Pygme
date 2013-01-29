@@ -1205,6 +1205,11 @@ class Z80:
         self._rlcR(self.l)
 
     def rlcMemHL(self):
+        """
+        Value at address in HL is rotated left 1-bit position - bit 7 goes into
+        Carry and bit 0.
+        
+        """
         r = self._getMemHL()
         c = (r >> 7) & 1
         self._setMemHL(((r << 1) & 0xff) | c)
