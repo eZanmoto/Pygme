@@ -279,6 +279,7 @@ class Z80:
                       (self.rst0, 0),
                       (self.retZ, 0),
                       (self.ret, 0),
+                      (self.jpZnn, 2),
                      ]
 
     def nop(self):
@@ -1162,6 +1163,10 @@ class Z80:
         self.pc.ld(self._pop16())
         self.m += 2
         self.t += 8
+
+    def jpZnn(self, loOrdByte, hiOrdByte):
+        """Loads little-endian word into PC if Z is set."""
+        self._jpcnn(self.f.z.val(), loOrdByte, hiOrdByte)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)

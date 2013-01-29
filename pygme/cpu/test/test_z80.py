@@ -1613,6 +1613,14 @@ class TestZ80(unittest.TestCase):
             self.z80.pc.ld(i * 0x5a)
             self._test_retcnn(opc, True)
 
+    def test_jpZnn(self):
+        opc = 0xca
+        self._validOpc(opc, self.z80.jpZnn, 2)
+        for i in range(0, self.NUM_TESTS):
+            z = i % 2 == 0
+            self.z80.f.z.setTo(z)
+            self._test_jpcnn(opc, z, i * 2, i * 4)
+
     def _test_rstn(self, opc, func, n):
         self._validOpc(opc, func, 0)
         self.z80.sp.ld(0xfffe)
