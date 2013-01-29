@@ -1587,6 +1587,24 @@ class TestZ80(unittest.TestCase):
         for val in vals:
             self.assertEquals(self._pop16(), val)
 
+    def test_addAn(self):
+        opc = 0xc6
+        self._validOpc(opc, self.z80.addAn, 1)
+        self.z80.a.ld(0x2b)
+        self.z80.f.n.set()
+        self._expectFlags(opc, 2, 8,
+                          False, False, 0xa + 0x7 > 0xf, 0x2a + 0x47 > 0xff,
+                          0x47)
+        self._regEq(self.z80.a, 0x72)
+        self._expectFlags(opc, 2, 8,
+                          False, False, 0x2 + 0xf > 0xf, 0x72 + 0xff > 0xff,
+                          0xff)
+        self._regEq(self.z80.a, 0x71)
+        self._expectFlags(opc, 2, 8,
+                          True, False, 0xf + 0x1 > 0xf, 0x71 + 0x8f > 0xff,
+                          0x8f)
+        self._regEq(self.z80.a, 0x00)
+
     def _test_callcnn(self, opc, cond, loOrdVal, hiOrdVal):
         pc = self.z80.pc.val()
         self._push8(0xa5)

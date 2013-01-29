@@ -275,6 +275,7 @@ class Z80:
                       (self.jpnn, 2),
                       (self.callNZnn, 2),
                       (self.pushBC, 0),
+                      (self.addAn, 1),
                      ]
 
     def nop(self):
@@ -1129,6 +1130,10 @@ class Z80:
     def pushBC(self):
         """Pushes the contents of BC onto the top of the stack."""
         self._pushRR(self.b, self.c)
+
+    def addAn(self, n):
+        """Adds A and n and stores the result in A."""
+        self._addAn(n)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
