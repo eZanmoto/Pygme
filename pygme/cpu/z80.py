@@ -272,6 +272,7 @@ class Z80:
                       (self.retNZ, 0),
                       (self.popBC, 0),
                       (self.jpNZnn, 2),
+                      (self.jpnn, 2),
                      ]
 
     def nop(self):
@@ -1133,6 +1134,13 @@ class Z80:
         self._assertByte(loOrdByte)
         if not self.f.z.val():
             self.pc.ld((hiOrdByte << 8) + loOrdByte)
+        self.m += 3
+        self.t += 12
+
+    def jpnn(self, loOrdByte, hiOrdByte):
+        """Loads little-endian word into PC."""
+        self._assertByte(loOrdByte)
+        self.pc.ld((hiOrdByte << 8) + loOrdByte)
         self.m += 3
         self.t += 12
 

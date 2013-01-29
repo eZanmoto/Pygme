@@ -1552,12 +1552,13 @@ class TestZ80(unittest.TestCase):
         for i in range(0, self.NUM_TESTS):
             z = i % 2 == 0
             self.z80.f.z.setTo(z)
-            pc = self.z80.pc.val()
-            self._flagsFixed(opc, 3, 12, i * 2, i * 4)
-            if z:
-                self._regEq(self.z80.pc, pc)
-            else:
-                self._regEq(self.z80.pc, ((i * 4) << 8) + (i * 2))
+            self._test_jpcnn(opc, not z, i * 2, i * 4)
+
+    def test_jpnn(self):
+        opc = 0xc3
+        self._validOpc(opc, self.z80.jpnn, 2)
+        for i in range(0, self.NUM_TESTS):
+            self._test_jpcnn(opc, True, i * 2, i * 4)
 
     def _push16(self, val):
         self._push8(val >> 8)
@@ -1814,6 +1815,14 @@ class TestZ80(unittest.TestCase):
         self.z80.pc.ld(1)
         self._flagsFixed(opc, 2, 8, 255)
         self._regEq(self.z80.pc, 0 if cond else 1)
+
+    def _test_jpcnn(self, opc, cond, hiOrdByte, loOrdByte):
+        pc = self.z80.pc.val()
+        self._flagsFixed(opc, 3, 12, loOrdByte, hiOrdByte)
+        if cond:
+            self._regEq(self.z80.pc, (hiOrdByte << 8) + loOrdByte)
+        else:
+            self._regEq(self.z80.pc, pc)
 
     def tearDown(self):
         self.mem = None
