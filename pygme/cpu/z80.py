@@ -1211,6 +1211,7 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c)
+        self._chkZ(self.a) # NOTE Z is unaffected on Z80
         self.m += 1
         self.t += 4
 
