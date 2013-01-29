@@ -1542,7 +1542,9 @@ class TestZ80(unittest.TestCase):
             self._push16(val)
         vals.reverse()
         for val in vals:
+            sp = self.z80.sp.val()
             self._flagsFixed(opc, 3, 12)
+            self._regEq(self.z80.sp, sp + 2)
             self._regEq(self.z80.b, val >> 8)
             self._regEq(self.z80.c, val & 0xff)
 
