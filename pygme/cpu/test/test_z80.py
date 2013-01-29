@@ -103,8 +103,25 @@ class TestZ80(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.z80.ldBn(-1)
 
-    def test_rlcA(self):
-        self._test_rlcR(0x07, self.z80.rlcA, self.z80.a)
+    def test_rlca(self):
+        opc = 0x07
+        self._validOpc(opc, self.z80.rlca, 0)
+        self.z80.a.ld(1)
+        for i in range(0, self.NUM_TESTS):
+            self._regEq(self.z80.a, (1 << (i % 8)) & 0xff)
+            c = (self.z80.a.val() >> 7) & 1
+            self.z80.f.n.set()
+            self.z80.f.h.set()
+            self._timeOp(opc, 1, 4)
+            self._flagEq(self.z80.f.z, self.z80.a.val() == 0)
+            self._flagEq(self.z80.f.n, False)
+            self._flagEq(self.z80.f.h, False)
+            self._flagEq(self.z80.f.c, c)
+        self.z80.f.c.reset()
+        self.z80.a.ld(0)
+        self.z80.f.z.reset()
+        self._timeOp(opc, 1, 4)
+        self._flagEq(self.z80.f.z, True)
 
     def test_ldMemnnSP(self):
         opc = 0x08
@@ -193,9 +210,9 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 1, 4, i)
             self._regEq(self.z80.c, i)
 
-    def test_rrcA(self):
+    def test_rrca(self):
         opc = 0x0f
-        self._validOpc(opc, self.z80.rrcA, 0)
+        self._validOpc(opc, self.z80.rrca, 0)
         self.z80.a.ld(0x80)
         self.z80.f.n.set()
         self.z80.f.h.set()
@@ -295,9 +312,9 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 1, 4, i)
             self._regEq(self.z80.d, i)
 
-    def test_rlA(self):
+    def test_rla(self):
         opc = 0x17
-        self._validOpc(opc, self.z80.rlA, 0)
+        self._validOpc(opc, self.z80.rla, 0)
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.a.ld(0x80)
@@ -411,9 +428,9 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 1, 4, i)
             self._regEq(self.z80.e, i)
 
-    def test_rrA(self):
+    def test_rra(self):
         opc = 0x1f
-        self._validOpc(opc, self.z80.rrA, 0)
+        self._validOpc(opc, self.z80.rra, 0)
         self.z80.a.ld(0x02)
         self.z80.f.n.set()
         self.z80.f.h.set()

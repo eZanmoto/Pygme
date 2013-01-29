@@ -84,7 +84,7 @@ class Z80:
                       (self.incB, 0),
                       (self.decB, 0),
                       (self.ldBn, 1),
-                      (self.rlcA, 0),
+                      (self.rlca, 0),
                       (self.ldMemnnSP, 2),
                       (self.addHLBC, 0),
                       (self.ldAMemBC, 0),
@@ -92,7 +92,7 @@ class Z80:
                       (self.incC, 0),
                       (self.decC, 0),
                       (self.ldCn, 1),
-                      (self.rrcA, 0),
+                      (self.rrca, 0),
                       (self.stop, 0),
                       (self.ldDEnn, 2),
                       (self.ldMemDEA, 0),
@@ -100,7 +100,7 @@ class Z80:
                       (self.incD, 0),
                       (self.decD, 0),
                       (self.ldDn, 1),
-                      (self.rlA, 0),
+                      (self.rla, 0),
                       (self.jrn, 1),
                       (self.addHLDE, 0),
                       (self.ldAMemDE, 0),
@@ -108,7 +108,7 @@ class Z80:
                       (self.incE, 0),
                       (self.decE, 0),
                       (self.ldEn, 1),
-                      (self.rrA, 0),
+                      (self.rra, 0),
                       (self.jrNZn, 1),
                       (self.ldHLnn, 2),
                       (self.ldiMemHLA, 0),
@@ -319,7 +319,7 @@ class Z80:
         """Loads a byte into B."""
         self._ldRn(self.b, b)
 
-    def rlcA(self):
+    def rlca(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
         self._rotA(self.LEFT, self.WITH_CARRY)
 
@@ -350,7 +350,7 @@ class Z80:
         """Loads a byte into C."""
         self._ldRn(self.c, c)
 
-    def rrcA(self):
+    def rrca(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
         self._rotA(self.RIGHT, self.WITH_CARRY)
 
@@ -381,7 +381,7 @@ class Z80:
         """Loads a byte into D."""
         self._ldRn(self.d, d)
 
-    def rlA(self):
+    def rla(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
         self._rotA(self.LEFT, self.WITHOUT_CARRY)
@@ -414,7 +414,7 @@ class Z80:
         """Loads a byte into E."""
         self._ldRn(self.e, e)
 
-    def rrA(self):
+    def rra(self):
         """A is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
         self._rotA(self.RIGHT, self.WITHOUT_CARRY)
