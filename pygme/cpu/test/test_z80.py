@@ -1665,6 +1665,21 @@ class TestZ80(unittest.TestCase):
     def test_rrcB(self):
         self._test_rrcR(0x08, self.z80.rrcB, self.z80.b)
 
+    def test_rrcC(self):
+        self._test_rrcR(0x09, self.z80.rrcC, self.z80.c)
+
+    def test_rrcD(self):
+        self._test_rrcR(0x0a, self.z80.rrcD, self.z80.d)
+
+    def test_rrcE(self):
+        self._test_rrcR(0x0b, self.z80.rrcE, self.z80.e)
+
+    def test_rrcH(self):
+        self._test_rrcR(0x0c, self.z80.rrcH, self.z80.h)
+
+    def test_rrcL(self):
+        self._test_rrcR(0x0d, self.z80.rrcL, self.z80.l)
+
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
 

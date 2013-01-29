@@ -290,6 +290,11 @@ class Z80:
                          (self.rlcMemHL, 0),
                          (self.rlcA, 0),
                          (self.rrcB, 0),
+                         (self.rrcC, 0),
+                         (self.rrcD, 0),
+                         (self.rrcE, 0),
+                         (self.rrcH, 0),
+                         (self.rrcL, 0),
                         ]
 
     def nop(self):
@@ -1229,6 +1234,26 @@ class Z80:
     def rrcB(self):
         """B is rotated right 1-bit position - bit 0 goes into C and bit 7."""
         self._rrcR(self.b)
+
+    def rrcC(self):
+        """C is rotated right 1-bit position - bit 0 goes into C and bit 7."""
+        self._rrcR(self.c)
+
+    def rrcD(self):
+        """D is rotated right 1-bit position - bit 0 goes into C and bit 7."""
+        self._rrcR(self.d)
+
+    def rrcE(self):
+        """E is rotated right 1-bit position - bit 0 goes into C and bit 7."""
+        self._rrcR(self.e)
+
+    def rrcH(self):
+        """H is rotated right 1-bit position - bit 0 goes into C and bit 7."""
+        self._rrcR(self.h)
+
+    def rrcL(self):
+        """L is rotated right 1-bit position - bit 0 goes into C and bit 7."""
+        self._rrcR(self.l)
 
     def _setMemHL(self, val):
         self._mem.set8(self._hl(), val)
