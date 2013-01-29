@@ -1621,6 +1621,36 @@ class TestZ80(unittest.TestCase):
     def test_rlcL(self):
         self._test_rlcR(0x05, self.z80.rlcL, self.z80.l)
 
+    def test_rlcMemHL(self):
+        opc = 0x06
+        self._validExtOpc(opc, self.z80.rlcMemHL, 0)
+        self.z80.ldHLnn(0xbe, 0xef)
+        self._setMemHL(1)
+        for i in range(0, self.NUM_TESTS):
+            self.assertEquals(self._getMemHL(), (1 << (i % 8)) & 0xff)
+            c = (self._getMemHL() >> 7) & 1
+            self.z80.f.n.set()
+            self.z80.f.h.set()
+            self._timeExtOp(opc, 2, 8)
+            self._flagEq(self.z80.f.z, self._getMemHL() == 0)
+            self._flagEq(self.z80.f.n, False)
+            self._flagEq(self.z80.f.h, False)
+            self._flagEq(self.z80.f.c, c)
+        self.z80.f.c.reset()
+        self._setMemHL(0)
+        self.z80.f.z.reset()
+        self._timeExtOp(opc, 2, 8)
+        self._flagEq(self.z80.f.z, True)
+
+    def _setMemHL(self, val):
+        self.mem.set8(self._hl(), val)
+
+    def _getMemHL(self):
+        return self.mem.get8(self._hl())
+
+    def _hl(self):
+        return (self.z80.h.val() << 8) + self.z80.l.val()
+
     def _test_rlcR(self, opc, func, reg):
         if reg == self.z80.a:
             self._validOpc(opc, func, 0)

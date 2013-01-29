@@ -287,6 +287,7 @@ class Z80:
                          (self.rlcE, 0),
                          (self.rlcH, 0),
                          (self.rlcL, 0),
+                         (self.rlcMemHL, 0),
                         ]
 
     def nop(self):
@@ -1198,6 +1199,27 @@ class Z80:
     def rlcL(self):
         """L is rotated left 1-bit position - bit 7 goes into C and bit 0."""
         self._rlcR(self.l)
+
+    def rlcL(self):
+        """L is rotated left 1-bit position - bit 7 goes into C and bit 0."""
+        self._rlcR(self.l)
+
+    def rlcMemHL(self):
+        r = self._getMemHL()
+        c = (r >> 7) & 1
+        self._setMemHL(((r << 1) & 0xff) | c)
+        self.f.z.setTo(self._getMemHL() == 0) # NOTE Z is unaffected on Z80
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(c)
+        self.m += 2
+        self.t += 8
+
+    def _setMemHL(self, val):
+        self._mem.set8(self._hl(), val)
+
+    def _getMemHL(self):
+        return self._mem.get8(self._hl())
 
     def _rlcR(self, reg):
         self._rotR(reg, self.LEFT, self.WITH_CARRY)
