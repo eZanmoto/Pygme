@@ -288,6 +288,7 @@ class Z80:
                          (self.rlcH, 0),
                          (self.rlcL, 0),
                          (self.rlcMemHL, 0),
+                         (self.rlcA, 0),
                         ]
 
     def nop(self):
@@ -1219,6 +1220,10 @@ class Z80:
         self.f.c.setTo(c)
         self.m += 2
         self.t += 8
+
+    def rlcA(self):
+        """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
+        self._rlcR(self.a)
 
     def _setMemHL(self, val):
         self._mem.set8(self._hl(), val)

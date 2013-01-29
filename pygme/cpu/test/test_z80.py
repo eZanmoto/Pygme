@@ -1659,6 +1659,9 @@ class TestZ80(unittest.TestCase):
         self._timeExtOp(opc, 2, 8)
         self._flagEq(self.z80.f.z, True)
 
+    def test_rlcA(self):
+        self._test_rlcR(0x07, self.z80.rlcA, self.z80.a)
+
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
 
@@ -1669,23 +1672,14 @@ class TestZ80(unittest.TestCase):
         return (self.z80.h.val() << 8) + self.z80.l.val()
 
     def _test_rlcR(self, opc, func, reg):
-        if reg == self.z80.a:
-            self._validOpc(opc, func, 0)
-            timeOp = self._timeOp
-            m = 1
-            t = 4
-        else:
-            self._validExtOpc(opc, func, 0)
-            timeOp = self._timeExtOp
-            m = 2
-            t = 8
+        self._validExtOpc(opc, func, 0)
         reg.ld(1)
         for i in range(0, self.NUM_TESTS):
             self._regEq(reg, (1 << (i % 8)) & 0xff)
             c = (reg.val() >> 7) & 1
             self.z80.f.n.set()
             self.z80.f.h.set()
-            timeOp(opc, m, t)
+            self._timeExtOp(opc, 2, 8)
             self._flagEq(self.z80.f.z, reg.val() == 0)
             self._flagEq(self.z80.f.n, False)
             self._flagEq(self.z80.f.h, False)
@@ -1693,7 +1687,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.c.reset()
         reg.ld(0)
         self.z80.f.z.reset()
-        timeOp(opc, m, t)
+        self._timeExtOp(opc, 2, 8)
         self._flagEq(self.z80.f.z, True)
 
     def _test_rstn(self, opc, func, n):
