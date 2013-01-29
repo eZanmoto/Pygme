@@ -405,7 +405,7 @@ class Z80:
         self._rotA(self.RIGHT, self.WITHOUT_CARRY)
 
     def jrNZn(self, n):
-        """Decrements/increments PC by the signed byte n if Z is 0."""
+        """Decrements/increments PC by the signed byte n if Z is reset."""
         self._jrcn(not self.f.z.val(), n)
 
     def ldHLnn(self, h, l):
@@ -439,7 +439,7 @@ class Z80:
         raise NotImplementedError("'DAA' has not been implemented")
 
     def jrZn(self, n):
-        """Decrements/increments PC by the signed byte n if Z is 1."""
+        """Decrements/increments PC by the signed byte n if Z is set."""
         self._jrcn(self.f.z.val(), n)
 
     def addHLHL(self):
@@ -478,7 +478,7 @@ class Z80:
         self.t += 4
 
     def jrNCn(self, n):
-        """Decrements/increments PC by the signed byte n if C is 0."""
+        """Decrements/increments PC by the signed byte n if C is reset."""
         self._jrcn(not self.f.c.val(), n)
 
     def ldSPnn(self, h, l):
@@ -537,7 +537,7 @@ class Z80:
         self.t += 4
 
     def jrCn(self, n):
-        """Decrements/increments PC by the signed byte n if C is 1."""
+        """Decrements/increments PC by the signed byte n if C is set."""
         self._jrcn(self.f.c.val(), n)
 
     def addHLSP(self):
