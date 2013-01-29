@@ -1606,6 +1606,21 @@ class TestZ80(unittest.TestCase):
     def test_rlcB(self):
         self._test_rlcR(0x00, self.z80.rlcB, self.z80.b)
 
+    def test_rlcC(self):
+        self._test_rlcR(0x01, self.z80.rlcC, self.z80.c)
+
+    def test_rlcD(self):
+        self._test_rlcR(0x02, self.z80.rlcD, self.z80.d)
+
+    def test_rlcE(self):
+        self._test_rlcR(0x03, self.z80.rlcE, self.z80.e)
+
+    def test_rlcH(self):
+        self._test_rlcR(0x04, self.z80.rlcH, self.z80.h)
+
+    def test_rlcL(self):
+        self._test_rlcR(0x05, self.z80.rlcL, self.z80.l)
+
     def _test_rlcR(self, opc, func, reg):
         if reg == self.z80.a:
             self._validOpc(opc, func, 0)

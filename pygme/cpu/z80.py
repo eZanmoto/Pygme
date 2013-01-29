@@ -282,6 +282,11 @@ class Z80:
                       (self.jpZnn, 2),
                      ]
         self.extInstr = [(self.rlcB, 0),
+                         (self.rlcC, 0),
+                         (self.rlcD, 0),
+                         (self.rlcE, 0),
+                         (self.rlcH, 0),
+                         (self.rlcL, 0),
                         ]
 
     def nop(self):
@@ -1172,7 +1177,30 @@ class Z80:
 
     def rlcB(self):
         """B is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rotR(self.b, self.LEFT, self.WITH_CARRY)
+        self._rlcR(self.b)
+
+    def rlcC(self):
+        """C is rotated left 1-bit position - bit 7 goes into C and bit 0."""
+        self._rlcR(self.c)
+
+    def rlcD(self):
+        """D is rotated left 1-bit position - bit 7 goes into C and bit 0."""
+        self._rlcR(self.d)
+
+    def rlcE(self):
+        """E is rotated left 1-bit position - bit 7 goes into C and bit 0."""
+        self._rlcR(self.e)
+
+    def rlcH(self):
+        """H is rotated left 1-bit position - bit 7 goes into C and bit 0."""
+        self._rlcR(self.h)
+
+    def rlcL(self):
+        """L is rotated left 1-bit position - bit 7 goes into C and bit 0."""
+        self._rlcR(self.l)
+
+    def _rlcR(self, reg):
+        self._rotR(reg, self.LEFT, self.WITH_CARRY)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
