@@ -1570,6 +1570,21 @@ class TestZ80(unittest.TestCase):
             self.z80.pc.ld(i * 0x5a)
             self._test_callcnn(opc, not z, i * 2, i * 4)
 
+    def test_pushBC(self):
+        opc = 0xc5
+        self._validOpc(opc, self.z80.pushBC, 0)
+        self.z80.sp.ld(0xfffe)
+        vals = [0xa5a5, 0x5a5a, 0xdead, 0xbeef]
+        for val in vals:
+            self.z80.b.ld(val >> 8)
+            self.z80.c.ld(val & 0xff)
+            sp = self.z80.sp.val()
+            self._flagsFixed(opc, 4, 16)
+            self._regEq(self.z80.sp, sp - 2)
+        vals.reverse()
+        for val in vals:
+            self.assertEquals(self._pop16(), val)
+
     def _test_callcnn(self, opc, cond, loOrdVal, hiOrdVal):
         pc = self.z80.pc.val()
         self._push8(0xa5)

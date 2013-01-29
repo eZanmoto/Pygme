@@ -274,6 +274,7 @@ class Z80:
                       (self.jpNZnn, 2),
                       (self.jpnn, 2),
                       (self.callNZnn, 2),
+                      (self.pushBC, 0),
                      ]
 
     def nop(self):
@@ -1125,6 +1126,10 @@ class Z80:
             self._push16(self.pc.val())
             self.jpnn(loOrdByte, hiOrdByte)
 
+    def pushBC(self):
+        """Pushes the contents of BC onto the top of the stack."""
+        self._pushRR(self.b, self.c)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -1309,6 +1314,11 @@ class Z80:
         addr = self.sp.val()
         self.sp.ld(addr + 2)
         return (self._mem.get8(addr + 1) << 8) + self._mem.get8(addr)
+
+    def _pushRR(self, hiOrdReg, loOrdReg):
+        self._push16((hiOrdReg.val() << 8) + loOrdReg.val())
+        self.m += 4
+        self.t += 16
 
     def _push16(self, val):
         sp = self.sp.val()
