@@ -1513,25 +1513,12 @@ class TestZ80(unittest.TestCase):
     def test_retNZ(self):
         opc = 0xc0
         self._validOpc(opc, self.z80.retNZ, 0)
-        self.z80.f.z.reset()
-        self._test_retNZ(opc, 0xdead, 0xffff, 0xbeef, 0xbeef)
-        self._test_retNZ(opc, 0xbeef, 0xffff, 0xdead, 0xdead)
-        self.z80.f.z.set()
-        self._test_retNZ(opc, 0xdead, 0xffff, 0xbeef, 0)
-        self._test_retNZ(opc, 0xbeef, 0xffff, 0xdead, 0)
-
-    def _test_retNZ(self, opc, sp, pcInit, pcVal, expected):
-        self.mem.set8(sp + 1, pcVal >> 8)
-        self.mem.set8(sp, pcVal & 0xff)
-        self.z80.sp.ld(sp)
-        self.z80.pc.ld(pcInit)
-        self._flagsFixed(opc, 2, 8)
-        if self.z80.f.z.val():
-            self._regEq(self.z80.pc, pcInit)
-            self._regEq(self.z80.sp, sp)
-        else:
-            self._regEq(self.z80.pc, pcVal)
-            self._regEq(self.z80.sp, sp + 2)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            z = i % 2 == 0
+            self.z80.f.z.setTo(z)
+            self.z80.pc.ld(i * 0x5a)
+            self._test_retcnn(opc, not z)
 
     def test_popBC(self):
         opc = 0xc1
@@ -1626,6 +1613,20 @@ class TestZ80(unittest.TestCase):
         self._regEq(self.z80.pc, ((hiOrdVal << 8) + loOrdVal) if cond else pc)
         self.assertEquals(self._pop8(), 0x5a)
         if cond:
+            self.assertEquals(self._pop16(), pc)
+        self.assertEquals(self._pop8(), 0xa5)
+
+    def _test_retcnn(self, opc, cond):
+        pc = self.z80.pc.val()
+        self._push8(0xa5)
+        z = self.z80.f.z.val()
+        self.z80.f.z.reset()
+        self.z80.callNZnn(0xbe, 0xef)
+        self.z80.f.z.setTo(z)
+        self._flagsFixed(opc, 2, 8)
+        if cond:
+            self._regEq(self.z80.pc, pc)
+        else:
             self.assertEquals(self._pop16(), pc)
         self.assertEquals(self._pop8(), 0xa5)
 
