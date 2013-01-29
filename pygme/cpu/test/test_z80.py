@@ -340,12 +340,7 @@ class TestZ80(unittest.TestCase):
     def test_jrn(self):
         opc = 0x18
         self._validOpc(opc, self.z80.jrn, 1)
-        self.z80.pc.ld(126)
-        self._flagsFixed(opc, 1, 4, 0x00)
-        self._regEq(self.z80.pc, 0)
-        self.z80.pc.ld(0)
-        self._flagsFixed(opc, 1, 4, 0xff)
-        self._regEq(self.z80.pc, 129)
+        self._test_jrcn(opc, True)
 
     def test_addHLDE(self):
         opc = 0x19
@@ -469,19 +464,9 @@ class TestZ80(unittest.TestCase):
         opc = 0x20
         self._validOpc(opc, self.z80.jrNZn, 1)
         self.z80.f.z.set()
-        self.z80.pc.ld(126)
-        self._flagsFixed(opc, 1, 4, 0x00)
-        self._regEq(self.z80.pc, 126)
-        self.z80.pc.ld(0)
-        self._flagsFixed(opc, 1, 4, 0xff)
-        self._regEq(self.z80.pc, 0)
+        self._test_jrcn(opc, False)
         self.z80.f.z.reset()
-        self.z80.pc.ld(126)
-        self._flagsFixed(opc, 1, 4, 0x00)
-        self._regEq(self.z80.pc, 0)
-        self.z80.pc.ld(0)
-        self._flagsFixed(opc, 1, 4, 0xff)
-        self._regEq(self.z80.pc, 129)
+        self._test_jrcn(opc, True)
 
     def test_ldHLnn(self):
         opc = 0x21
@@ -550,19 +535,9 @@ class TestZ80(unittest.TestCase):
         opc = 0x28
         self._validOpc(opc, self.z80.jrZn, 1)
         self.z80.f.z.set()
-        self.z80.pc.ld(126)
-        self._flagsFixed(opc, 1, 4, 0x00)
-        self._regEq(self.z80.pc, 0)
-        self.z80.pc.ld(0)
-        self._flagsFixed(opc, 1, 4, 0xff)
-        self._regEq(self.z80.pc, 129)
+        self._test_jrcn(opc, True)
         self.z80.f.z.reset()
-        self.z80.pc.ld(126)
-        self._flagsFixed(opc, 1, 4, 0x00)
-        self._regEq(self.z80.pc, 126)
-        self.z80.pc.ld(0)
-        self._flagsFixed(opc, 1, 4, 0xff)
-        self._regEq(self.z80.pc, 0)
+        self._test_jrcn(opc, False)
 
     def test_addHLHL(self):
         opc = 0x29
@@ -693,19 +668,9 @@ class TestZ80(unittest.TestCase):
         opc = 0x30
         self._validOpc(opc, self.z80.jrNCn, 1)
         self.z80.f.c.set()
-        self.z80.pc.ld(126)
-        self._flagsFixed(opc, 1, 4, 0x00)
-        self._regEq(self.z80.pc, 126)
-        self.z80.pc.ld(0)
-        self._flagsFixed(opc, 1, 4, 0xff)
-        self._regEq(self.z80.pc, 0)
+        self._test_jrcn(opc, False)
         self.z80.f.c.reset()
-        self.z80.pc.ld(126)
-        self._flagsFixed(opc, 1, 4, 0x00)
-        self._regEq(self.z80.pc, 0)
-        self.z80.pc.ld(0)
-        self._flagsFixed(opc, 1, 4, 0xff)
-        self._regEq(self.z80.pc, 129)
+        self._test_jrcn(opc, True)
 
     def test_ldSPnn(self):
         opc = 0x31
@@ -797,19 +762,9 @@ class TestZ80(unittest.TestCase):
         opc = 0x38
         self._validOpc(opc, self.z80.jrCn, 1)
         self.z80.f.c.set()
-        self.z80.pc.ld(126)
-        self._flagsFixed(opc, 1, 4, 0x00)
-        self._regEq(self.z80.pc, 0)
-        self.z80.pc.ld(0)
-        self._flagsFixed(opc, 1, 4, 0xff)
-        self._regEq(self.z80.pc, 129)
+        self._test_jrcn(opc, True)
         self.z80.f.c.reset()
-        self.z80.pc.ld(126)
-        self._flagsFixed(opc, 1, 4, 0x00)
-        self._regEq(self.z80.pc, 126)
-        self.z80.pc.ld(0)
-        self._flagsFixed(opc, 1, 4, 0xff)
-        self._regEq(self.z80.pc, 0)
+        self._test_jrcn(opc, False)
 
     def test_addHLSP(self):
         opc = 0x39
@@ -1842,6 +1797,23 @@ class TestZ80(unittest.TestCase):
             self._expectFlags(opc, 1, 4,
                               a == v, True, (a & 0xf) < (v & 0xf), a < v)
             self._regEq(self.z80.a, a)
+
+    def _test_jrcn(self, opc, cond):
+        self.z80.pc.ld(0)
+        self._flagsFixed(opc, 2, 8, 0)
+        self._regEq(self.z80.pc, 0)
+        self.z80.pc.ld(0)
+        self._flagsFixed(opc, 2, 8, 1)
+        self._regEq(self.z80.pc, 1 if cond else 0)
+        self.z80.pc.ld(0)
+        self._flagsFixed(opc, 2, 8, 127)
+        self._regEq(self.z80.pc, 127 if cond else 0)
+        self.z80.pc.ld(128)
+        self._flagsFixed(opc, 2, 8, 128)
+        self._regEq(self.z80.pc, 0 if cond else 128)
+        self.z80.pc.ld(1)
+        self._flagsFixed(opc, 2, 8, 255)
+        self._regEq(self.z80.pc, 0 if cond else 1)
 
     def tearDown(self):
         self.mem = None

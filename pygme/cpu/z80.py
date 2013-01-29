@@ -372,11 +372,13 @@ class Z80:
 
     def jrn(self, n):
         """Decrements/increments the PC by the signed byte n."""
+        self._assertByte(n)
         pc = self.pc.val()
-        pc = (pc + n) - 126
-        self.pc.ld(pc & 0xffff)
-        self.m += 1
-        self.t += 4
+        if n > 127:
+            n = (n & 127) - 128
+        self.pc.ld((pc + n) & 0xffff)
+        self.m += 2
+        self.t += 8
 
     def addHLDE(self):
         """Adds DE to HL and stores the result in HL."""
@@ -410,8 +412,8 @@ class Z80:
     def jrNZn(self, n):
         """Decrements/increments PC by the signed byte n if Z is 0."""
         if self.f.z.val():
-            self.m += 1
-            self.t += 4
+            self.m += 2
+            self.t += 8
         else:
             self.jrn(n)
 
@@ -450,8 +452,8 @@ class Z80:
         if self.f.z.val():
             self.jrn(n)
         else:
-            self.m += 1
-            self.t += 4
+            self.m += 2
+            self.t += 8
 
     def addHLHL(self):
         """Adds HL to HL and stores the result in HL."""
@@ -491,8 +493,8 @@ class Z80:
     def jrNCn(self, n):
         """Decrements/increments PC by the signed byte n if C is 0."""
         if self.f.c.val():
-            self.m += 1
-            self.t += 4
+            self.m += 2
+            self.t += 8
         else:
             self.jrn(n)
 
@@ -556,8 +558,8 @@ class Z80:
         if self.f.c.val():
             self.jrn(n)
         else:
-            self.m += 1
-            self.t += 4
+            self.m += 2
+            self.t += 8
 
     def addHLSP(self):
         """Adds SP to HL and stores the result in HL."""
@@ -1320,6 +1322,10 @@ class Z80:
         addr = self.sp.val()
         self.sp.ld(addr + 2)
         return (self._mem.get8(addr + 1) << 8) + self._mem.get8(addr)
+
+    def _assertByte(self, n):
+        if n < 0 or n > 0xff:
+            raise ValueError("Byte 0x%x(%d) must be 8-bit" % (n, n))
 
     def _chkZ(self, reg):
         self.f.z.setTo(reg.val() == 0)
