@@ -871,7 +871,7 @@ class Z80:
         self._addAn(self._mem.get8(self._hl()))
 
     def addAA(self):
-        """Adds A, C and A and stores the result in A."""
+        """Adds A and A and stores the result in A."""
         self._addAR(self.a)
 
     def adcAB(self):
