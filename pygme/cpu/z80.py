@@ -276,6 +276,7 @@ class Z80:
                       (self.callNZnn, 2),
                       (self.pushBC, 0),
                       (self.addAn, 1),
+                      (self.rst0, 0),
                      ]
 
     def nop(self):
@@ -1136,6 +1137,16 @@ class Z80:
         self._arithAn(n, self.POSITIVE, self.WITHOUT_CARRY)
         self.m += 1
         self.t += 4
+
+    def rst0(self):
+        """Pushes the PC onto the top of the stack and jumps to 0x0000."""
+        self._rstn(0x0000)
+
+    def _rstn(self, n):
+        self._push16(self.pc.val())
+        self.jpnn(n, 0)
+        self.m += 5
+        self.t += 20
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)

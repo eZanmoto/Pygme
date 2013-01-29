@@ -1605,6 +1605,19 @@ class TestZ80(unittest.TestCase):
                           0x8f)
         self._regEq(self.z80.a, 0x00)
 
+    def test_rst0(self):
+        self._test_rstn(0xc7, self.z80.rst0, 0)
+
+    def _test_rstn(self, opc, func, n):
+        self._validOpc(opc, func, 0)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            pc = i * 0x5a
+            self.z80.pc.ld(pc)
+            self._flagsFixed(opc, 8, 32)
+            self._regEq(self.z80.pc, n)
+            self.assertEquals(self._pop16(), pc)
+
     def _test_callcnn(self, opc, cond, loOrdVal, hiOrdVal):
         pc = self.z80.pc.val()
         self._push8(0xa5)
