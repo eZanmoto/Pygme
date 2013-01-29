@@ -1605,6 +1605,14 @@ class TestZ80(unittest.TestCase):
             self.z80.pc.ld(i * 0x5a)
             self._test_retcnn(opc, z)
 
+    def test_ret(self):
+        opc = 0xc9
+        self._validOpc(opc, self.z80.ret, 0)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.pc.ld(i * 0x5a)
+            self._test_retcnn(opc, True)
+
     def _test_rstn(self, opc, func, n):
         self._validOpc(opc, func, 0)
         self.z80.sp.ld(0xfffe)

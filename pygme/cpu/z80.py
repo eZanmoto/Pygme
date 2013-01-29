@@ -278,6 +278,7 @@ class Z80:
                       (self.addAn, 1),
                       (self.rst0, 0),
                       (self.retZ, 0),
+                      (self.ret, 0),
                      ]
 
     def nop(self):
@@ -1153,6 +1154,12 @@ class Z80:
         """Pops the top two bytes of the stack into the PC if Z is set."""
         if self.f.z.val():
             self.pc.ld(self._pop16())
+        self.m += 2
+        self.t += 8
+
+    def ret(self):
+        """Pops the top two bytes of the stack into the PC."""
+        self.pc.ld(self._pop16())
         self.m += 2
         self.t += 8
 
