@@ -281,6 +281,8 @@ class Z80:
                       (self.ret, 0),
                       (self.jpZnn, 2),
                      ]
+        self.extInstr = [(self.rlcB, 0),
+                        ]
 
     def nop(self):
         """The CPU performs no operation during this machine cycle."""
@@ -1168,6 +1170,10 @@ class Z80:
         """Loads little-endian word into PC if Z is set."""
         self._jpcnn(self.f.z.val(), loOrdByte, hiOrdByte)
 
+    def rlcB(self):
+        """B is rotated left 1-bit position - bit 7 goes into C and bit 0."""
+        self._rotR(self.b, self.LEFT, self.WITH_CARRY)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -1202,18 +1208,23 @@ class Z80:
         self.t += 4
 
     def _rotA(self, rotLeft, withCarry):
-        a = self.a.val()
-        c = (a >> 7) & 1 if rotLeft else a & 1
+        self._rotR(self.a, rotLeft, withCarry)
+        self.m -= 1
+        self.t -= 4
+
+    def _rotR(self, reg, rotLeft, withCarry):
+        r = reg.val()
+        c = (r >> 7) & 1 if rotLeft else r & 1
         orBit = c if withCarry else (1 if self.f.c.val() else 0)
         if not rotLeft:
             orBit <<= 7
-        self.a.ld(((a << 1 if rotLeft else a >> 1) & 0xff) | orBit)
+        reg.ld(((r << 1 if rotLeft else r >> 1) & 0xff) | orBit)
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c)
-        self._chkZ(self.a) # NOTE Z is unaffected on Z80
-        self.m += 1
-        self.t += 4
+        self._chkZ(reg) # NOTE Z is unaffected on Z80
+        self.m += 2
+        self.t += 8
 
     def _addHLRR(self, hiOrdReg, loOrdReg):
         hl = (self.h.val() << 8) + self.l.val()

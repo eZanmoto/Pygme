@@ -1603,24 +1603,35 @@ class TestZ80(unittest.TestCase):
             self.z80.f.z.setTo(z)
             self._test_jpcnn(opc, z, i * 2, i * 4)
 
+    def test_rlcB(self):
+        self._test_rlcR(0x00, self.z80.rlcB, self.z80.b)
+
     def _test_rlcR(self, opc, func, reg):
-        self._validOpc(opc, func, 0)
-        self.z80.a.ld(1)
-        m, t = (1, 4) if reg == self.z80.a else (2, 8)
+        if reg == self.z80.a:
+            self._validOpc(opc, func, 0)
+            timeOp = self._timeOp
+            m = 1
+            t = 4
+        else:
+            self._validExtOpc(opc, func, 0)
+            timeOp = self._timeExtOp
+            m = 2
+            t = 8
+        reg.ld(1)
         for i in range(0, self.NUM_TESTS):
             self._regEq(reg, (1 << (i % 8)) & 0xff)
             c = (reg.val() >> 7) & 1
             self.z80.f.n.set()
             self.z80.f.h.set()
-            self._timeOp(opc, m, t)
-            self._flagEq(self.z80.f.z, self.z80.a.val() == 0)
+            timeOp(opc, m, t)
+            self._flagEq(self.z80.f.z, reg.val() == 0)
             self._flagEq(self.z80.f.n, False)
             self._flagEq(self.z80.f.h, False)
             self._flagEq(self.z80.f.c, c)
         self.z80.f.c.reset()
         reg.ld(0)
         self.z80.f.z.reset()
-        self._timeOp(opc, m, t)
+        timeOp(opc, m, t)
         self._flagEq(self.z80.f.z, True)
 
     def _test_rstn(self, opc, func, n):
@@ -1678,9 +1689,14 @@ class TestZ80(unittest.TestCase):
         return self.mem.get8(sp)
 
     def _validOpc(self, opc, func, argc):
-        self.assertTrue(opc < len(self.z80.instr),
-            "Opcode out of instruction range")
-        func_, argc_ = self.z80.instr[opc]
+        self._validInstrOpc(self.z80.instr, opc, func, argc)
+
+    def _validExtOpc(self, opc, func, argc):
+        self._validInstrOpc(self.z80.extInstr, opc, func, argc)
+
+    def _validInstrOpc(self, instrs, opc, func, argc):
+        self.assertTrue(opc < len(instrs), "Opcode out of instruction range")
+        func_, argc_ = instrs[opc]
         self.assertEquals(func, func_,
             "Opcode should be 0x%02x(%d)" % (opc, opc))
         self.assertEquals(argc, argc_,
@@ -1707,14 +1723,26 @@ class TestZ80(unittest.TestCase):
                           f.c.val(), a, b)
 
     def _timeOp(self, opc, m_, t_, a=None, b=None):
+        self._timeAnyOp(self._runOp, opc, m_, t_, a, b)
+
+    def _timeExtOp(self, opc, m_, t_, a=None, b=None):
+        self._timeAnyOp(self._runExtOp, opc, m_, t_, a, b)
+
+    def _timeAnyOp(self, runFunc, opc, m_, t_, a=None, b=None):
         m = self.z80.m
         t = self.z80.t
-        self._runOp(opc, a, b)
+        runFunc(opc, a, b)
         self.assertEqual(self.z80.m, m + m_)
         self.assertEqual(self.z80.t, t + t_)
 
     def _runOp(self, opc, a=None, b=None):
-        op, n = self.z80.instr[opc]
+        self._runAnyOp(self.z80.instr, opc, a, b)
+
+    def _runExtOp(self, opc, a=None, b=None):
+        self._runAnyOp(self.z80.extInstr, opc, a, b)
+
+    def _runAnyOp(self, instrs, opc, a=None, b=None):
+        op, n = instrs[opc]
         if n == 0:
             self.assertIsNone(a, "Expect 0 instructions, got 'a'")
             self.assertIsNone(b, "Expect 0 instructions, got 'b'")
