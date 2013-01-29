@@ -1130,9 +1130,7 @@ class Z80:
 
     def jpNZnn(self, loOrdByte, hiOrdByte):
         """Loads little-endian word into PC if Z is not set."""
-        if loOrdByte < 0 or loOrdByte > 0xff:
-            raise ValueError("Lo-order byte 0x%x(%d) must be 8-bit" %
-                    (loOrdByte, loOrdByte))
+        self._assertByte(loOrdByte)
         if not self.f.z.val():
             self.pc.ld((hiOrdByte << 8) + loOrdByte)
         self.m += 3
