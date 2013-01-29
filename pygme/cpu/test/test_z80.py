@@ -104,24 +104,7 @@ class TestZ80(unittest.TestCase):
             self.z80.ldBn(-1)
 
     def test_rlcA(self):
-        opc = 0x07
-        self._validOpc(opc, self.z80.rlcA, 0)
-        self.z80.a.ld(1)
-        self.z80.f.n.set()
-        self.z80.f.h.set()
-        for i in range(0, self.NUM_TESTS):
-            self._regEq(self.z80.a, (1 << (i % 8)) & 0xff)
-            c = (self.z80.a.val() >> 7) & 1
-            self._timeOp(opc, 1, 4)
-            self._flagEq(self.z80.f.z, self.z80.a.val() == 0)
-            self._flagEq(self.z80.f.n, False)
-            self._flagEq(self.z80.f.h, False)
-            self._flagEq(self.z80.f.c, c)
-        self.z80.f.c.reset()
-        self.z80.a.ld(0)
-        self.z80.f.z.reset()
-        self._timeOp(opc, 1, 4)
-        self._flagEq(self.z80.f.z, True)
+        self._test_rlcR(0x07, self.z80.rlcA, self.z80.a)
 
     def test_ldMemnnSP(self):
         opc = 0x08
@@ -1619,6 +1602,26 @@ class TestZ80(unittest.TestCase):
             z = i % 2 == 0
             self.z80.f.z.setTo(z)
             self._test_jpcnn(opc, z, i * 2, i * 4)
+
+    def _test_rlcR(self, opc, func, reg):
+        self._validOpc(opc, func, 0)
+        self.z80.a.ld(1)
+        m, t = (1, 4) if reg == self.z80.a else (2, 8)
+        for i in range(0, self.NUM_TESTS):
+            self._regEq(reg, (1 << (i % 8)) & 0xff)
+            c = (reg.val() >> 7) & 1
+            self.z80.f.n.set()
+            self.z80.f.h.set()
+            self._timeOp(opc, m, t)
+            self._flagEq(self.z80.f.z, self.z80.a.val() == 0)
+            self._flagEq(self.z80.f.n, False)
+            self._flagEq(self.z80.f.h, False)
+            self._flagEq(self.z80.f.c, c)
+        self.z80.f.c.reset()
+        reg.ld(0)
+        self.z80.f.z.reset()
+        self._timeOp(opc, m, t)
+        self._flagEq(self.z80.f.z, True)
 
     def _test_rstn(self, opc, func, n):
         self._validOpc(opc, func, 0)
