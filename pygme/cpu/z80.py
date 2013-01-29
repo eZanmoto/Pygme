@@ -373,13 +373,7 @@ class Z80:
 
     def jrn(self, n):
         """Decrements/increments the PC by the signed byte n."""
-        self._assertByte(n)
-        pc = self.pc.val()
-        if n > 127:
-            n = (n & 127) - 128
-        self.pc.ld((pc + n) & 0xffff)
-        self.m += 2
-        self.t += 8
+        self._jrcn(True, n)
 
     def addHLDE(self):
         """Adds DE to HL and stores the result in HL."""
@@ -412,11 +406,7 @@ class Z80:
 
     def jrNZn(self, n):
         """Decrements/increments PC by the signed byte n if Z is 0."""
-        if self.f.z.val():
-            self.m += 2
-            self.t += 8
-        else:
-            self.jrn(n)
+        self._jrcn(not self.f.z.val(), n)
 
     def ldHLnn(self, h, l):
         """Loads a byte into H and a byte into L."""
@@ -450,11 +440,7 @@ class Z80:
 
     def jrZn(self, n):
         """Decrements/increments PC by the signed byte n if Z is 1."""
-        if self.f.z.val():
-            self.jrn(n)
-        else:
-            self.m += 2
-            self.t += 8
+        self._jrcn(self.f.z.val(), n)
 
     def addHLHL(self):
         """Adds HL to HL and stores the result in HL."""
@@ -493,11 +479,7 @@ class Z80:
 
     def jrNCn(self, n):
         """Decrements/increments PC by the signed byte n if C is 0."""
-        if self.f.c.val():
-            self.m += 2
-            self.t += 8
-        else:
-            self.jrn(n)
+        self._jrcn(not self.f.c.val(), n)
 
     def ldSPnn(self, h, l):
         """Loads a byte into S and a byte into P."""
@@ -556,11 +538,7 @@ class Z80:
 
     def jrCn(self, n):
         """Decrements/increments PC by the signed byte n if C is 1."""
-        if self.f.c.val():
-            self.jrn(n)
-        else:
-            self.m += 2
-            self.t += 8
+        self._jrcn(self.f.c.val(), n)
 
     def addHLSP(self):
         """Adds SP to HL and stores the result in HL."""
@@ -1321,6 +1299,16 @@ class Z80:
         addr = self.sp.val()
         self.sp.ld(addr + 2)
         return (self._mem.get8(addr + 1) << 8) + self._mem.get8(addr)
+
+    def _jrcn(self, cond, n):
+        self._assertByte(n)
+        if cond:
+            pc = self.pc.val()
+            if n > 127:
+                n = (n & 127) - 128
+            self.pc.ld((pc + n) & 0xffff)
+        self.m += 2
+        self.t += 8
 
     def _jpcnn(self, cond, loOrdByte, hiOrdByte):
         self._assertByte(loOrdByte)
