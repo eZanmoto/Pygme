@@ -1131,18 +1131,11 @@ class Z80:
 
     def jpNZnn(self, loOrdByte, hiOrdByte):
         """Loads little-endian word into PC if Z is not set."""
-        self._assertByte(loOrdByte)
-        if not self.f.z.val():
-            self.pc.ld((hiOrdByte << 8) + loOrdByte)
-        self.m += 3
-        self.t += 12
+        self._jpcnn(not self.f.z.val(), loOrdByte, hiOrdByte)
 
     def jpnn(self, loOrdByte, hiOrdByte):
         """Loads little-endian word into PC."""
-        self._assertByte(loOrdByte)
-        self.pc.ld((hiOrdByte << 8) + loOrdByte)
-        self.m += 3
-        self.t += 12
+        self._jpcnn(True, loOrdByte, hiOrdByte)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
@@ -1328,6 +1321,13 @@ class Z80:
         addr = self.sp.val()
         self.sp.ld(addr + 2)
         return (self._mem.get8(addr + 1) << 8) + self._mem.get8(addr)
+
+    def _jpcnn(self, cond, loOrdByte, hiOrdByte):
+        self._assertByte(loOrdByte)
+        if cond:
+            self.pc.ld((hiOrdByte << 8) + loOrdByte)
+        self.m += 3
+        self.t += 12
 
     def _assertByte(self, n):
         if n < 0 or n > 0xff:
