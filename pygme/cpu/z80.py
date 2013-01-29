@@ -277,6 +277,7 @@ class Z80:
                       (self.pushBC, 0),
                       (self.addAn, 1),
                       (self.rst0, 0),
+                      (self.retZ, 0),
                      ]
 
     def nop(self):
@@ -1147,6 +1148,13 @@ class Z80:
         self.jpnn(n, 0)
         self.m += 5
         self.t += 20
+
+    def retZ(self):
+        """Pops the top two bytes of the stack into the PC if Z is set."""
+        if self.f.z.val():
+            self.pc.ld(self._pop16())
+        self.m += 2
+        self.t += 8
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
