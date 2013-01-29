@@ -869,7 +869,7 @@ class Z80:
 
     def addAMemHL(self):
         """Adds A and value stored at address in HL and stores result in A."""
-        self._addAn(self._mem.get8(self._hl()))
+        self.addAn(self._mem.get8(self._hl()))
 
     def addAA(self):
         """Adds A and A and stores the result in A."""
@@ -1133,7 +1133,9 @@ class Z80:
 
     def addAn(self, n):
         """Adds A and n and stores the result in A."""
-        self._addAn(n)
+        self._arithAn(n, self.POSITIVE, self.WITHOUT_CARRY)
+        self.m += 1
+        self.t += 4
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
@@ -1219,14 +1221,9 @@ class Z80:
         self.t += 8
 
     def _addAR(self, reg):
-        self._addAn(reg.val())
+        self.addAn(reg.val())
         self.m -= 1
         self.t -= 4
-
-    def _addAn(self, val):
-        self._arithAn(val, self.POSITIVE, self.WITHOUT_CARRY)
-        self.m += 1
-        self.t += 4
 
     def _adcAR(self, reg):
         self._adcAn(reg.val())
