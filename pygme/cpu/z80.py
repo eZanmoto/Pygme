@@ -273,6 +273,7 @@ class Z80:
                       (self.popBC, 0),
                       (self.jpNZnn, 2),
                       (self.jpnn, 2),
+                      (self.callNZnn, 2),
                      ]
 
     def nop(self):
@@ -1115,6 +1116,15 @@ class Z80:
         """Loads little-endian word into PC."""
         self._jpcnn(True, loOrdByte, hiOrdByte)
 
+    def callNZnn(self, loOrdByte, hiOrdByte):
+        """Pushes PC and loads little-endian word into PC if Z is reset."""
+        if self.f.z.val():
+            self.m += 3
+            self.t += 12
+        else:
+            self._push16(self.pc.val())
+            self.jpnn(loOrdByte, hiOrdByte)
+
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
@@ -1299,6 +1309,12 @@ class Z80:
         addr = self.sp.val()
         self.sp.ld(addr + 2)
         return (self._mem.get8(addr + 1) << 8) + self._mem.get8(addr)
+
+    def _push16(self, val):
+        sp = self.sp.val()
+        self.sp.ld(sp - 2)
+        self._mem.set8(sp - 1, val >> 8)
+        self._mem.set8(sp - 2, val & 0xff)
 
     def _jrcn(self, cond, n):
         self._assertByte(n)

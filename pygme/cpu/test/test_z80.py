@@ -1560,6 +1560,27 @@ class TestZ80(unittest.TestCase):
         for i in range(0, self.NUM_TESTS):
             self._test_jpcnn(opc, True, i * 2, i * 4)
 
+    def test_callNZnn(self):
+        opc = 0xc4
+        self._validOpc(opc, self.z80.callNZnn, 2)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            z = i % 2 == 0
+            self.z80.f.z.setTo(z)
+            self.z80.pc.ld(i * 0x5a)
+            self._test_callcnn(opc, not z, i * 2, i * 4)
+
+    def _test_callcnn(self, opc, cond, loOrdVal, hiOrdVal):
+        pc = self.z80.pc.val()
+        self._push8(0xa5)
+        self._flagsFixed(opc, 3, 12, loOrdVal, hiOrdVal)
+        self._push8(0x5a)
+        self._regEq(self.z80.pc, ((hiOrdVal << 8) + loOrdVal) if cond else pc)
+        self.assertEquals(self._pop8(), 0x5a)
+        if cond:
+            self.assertEquals(self._pop16(), pc)
+        self.assertEquals(self._pop8(), 0xa5)
+
     def _push16(self, val):
         self._push8(val >> 8)
         self._push8(val & 0xff)
@@ -1568,6 +1589,16 @@ class TestZ80(unittest.TestCase):
         sp = self.z80.sp.val() - 1
         self.z80.sp.ld(sp)
         self.mem.set8(sp, val)
+
+    def _pop16(self):
+        lo = self._pop8()
+        hi = self._pop8()
+        return (hi << 8) + lo
+
+    def _pop8(self):
+        sp = self.z80.sp.val()
+        self.z80.sp.ld(sp + 1)
+        return self.mem.get8(sp)
 
     def _validOpc(self, opc, func, argc):
         self.assertTrue(opc < len(self.z80.instr),
