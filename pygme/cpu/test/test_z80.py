@@ -1805,6 +1805,54 @@ class TestZ80(unittest.TestCase):
         self._flagEq(self.z80.f.n, False)
         self._flagEq(self.z80.f.c, False)
 
+    def test_rrA(self):
+        self._test_rrR(0x1f, self.z80.rrA, self.z80.a)
+
+    def test_slaB(self):
+        self._test_slaR(0x20, self.z80.slaB, self.z80.b)
+
+    def test_slaC(self):
+        self._test_slaR(0x21, self.z80.slaC, self.z80.c)
+
+    def test_slaD(self):
+        self._test_slaR(0x22, self.z80.slaD, self.z80.d)
+
+    def test_slaE(self):
+        self._test_slaR(0x23, self.z80.slaE, self.z80.e)
+
+    def test_slaH(self):
+        self._test_slaR(0x24, self.z80.slaH, self.z80.h)
+
+    def test_slaL(self):
+        self._test_slaR(0x25, self.z80.slaL, self.z80.l)
+
+    def test_slaMemHL(self):
+        self._test_slan(0x26, self.z80.slaMemHL, "(HL)", 4, 16, self._getMemHL,
+                self._setMemHL)
+
+    def test_slaA(self):
+        self._test_slaR(0x27, self.z80.slaA, self.z80.a)
+
+    def _test_slaR(self, opc, func, reg):
+        self._test_slan(opc, func, reg.name(), 2, 8, reg.val, reg.ld)
+
+    def _test_slan(self, opc, func, name, m, t, getf, setf):
+        self._validExtOpc(opc, func, 0)
+        setf(1)
+        for i in range(0, self.NUM_TESTS):
+            val = (1 << i) & 0xff
+            self.assertEquals(getf(), val,
+                    "%s is 0x%02x(%d), should be 0x%02x(%d)" %
+                    (name, getf(), getf(), val, val))
+            c = (getf() >> 7) & 1
+            self.z80.f.n.set()
+            self.z80.f.h.set()
+            self._timeExtOp(opc, m, t)
+            self._flagEq(self.z80.f.z, (1 << (i + 1)) & 0xff == 0)
+            self._flagEq(self.z80.f.n, False)
+            self._flagEq(self.z80.f.h, False)
+            self._flagEq(self.z80.f.c, c)
+
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
 

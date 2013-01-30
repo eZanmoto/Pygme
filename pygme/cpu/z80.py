@@ -312,6 +312,15 @@ class Z80:
                          (self.rrH, 0),
                          (self.rrL, 0),
                          (self.rrMemHL, 0),
+                         (self.rrA, 0),
+                         (self.slaB, 0),
+                         (self.slaC, 0),
+                         (self.slaD, 0),
+                         (self.slaE, 0),
+                         (self.slaH, 0),
+                         (self.slaL, 0),
+                         (self.slaMemHL, 0),
+                         (self.slaA, 0),
                         ]
 
     def nop(self):
@@ -1385,6 +1394,69 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(r & 1)
+        self.m += 4
+        self.t += 16
+
+    def rrA(self):
+        """A is rotated right 1-bit position - bit 0 goes into C and C goes
+        into bit 7."""
+        self._rrR(self.a)
+
+    def slaB(self):
+        """B is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
+        into bit 0."""
+        self._slaR(self.b)
+
+    def slaC(self):
+        """C is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
+        into bit 0."""
+        self._slaR(self.c)
+
+    def slaD(self):
+        """D is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
+        into bit 0."""
+        self._slaR(self.d)
+
+    def slaE(self):
+        """E is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
+        into bit 0."""
+        self._slaR(self.e)
+
+    def slaH(self):
+        """H is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
+        into bit 0."""
+        self._slaR(self.h)
+
+    def slaL(self):
+        """L is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
+        into bit 0."""
+        self._slaR(self.l)
+
+    def slaMemHL(self):
+        """
+        Value at address in HL is rotated left 1-bit position - bit 7 goes into
+        Carry and 0 goes into bit 0.
+
+        """
+        self._slan(self._getMemHL, self._setMemHL)
+
+    def slaA(self):
+        """A is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
+        into bit 0."""
+        self._slaR(self.a)
+
+    def _slaR(self, reg):
+        self._slan(reg.val, reg.ld)
+        self.m -= 2
+        self.t -= 8
+
+    def _slan(self, getf, setf):
+        v = getf()
+        self.f.c.setTo((v >> 7) & 1)
+        setf((v << 1) & 0xff)
+        self.f.z.setTo(getf() == 0) # NOTE Z is unaffected on Z80
+        self.f.n.reset()
+        self.f.h.reset()
         self.m += 4
         self.t += 16
 
