@@ -1753,6 +1753,9 @@ class TestZ80(unittest.TestCase):
         self._flagEq(self.z80.f.h, False)
         self._flagEq(self.z80.f.c, False)
 
+    def test_rlA(self):
+        self._test_rlR(0x17, self.z80.rlA, self.z80.a)
+
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
 
