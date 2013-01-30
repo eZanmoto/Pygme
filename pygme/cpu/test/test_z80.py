@@ -1756,6 +1756,24 @@ class TestZ80(unittest.TestCase):
     def test_rlA(self):
         self._test_rlR(0x17, self.z80.rlA, self.z80.a)
 
+    def test_rrB(self):
+        self._test_rrR(0x18, self.z80.rrB, self.z80.b)
+
+    def test_rrC(self):
+        self._test_rrR(0x19, self.z80.rrC, self.z80.c)
+
+    def test_rrD(self):
+        self._test_rrR(0x1a, self.z80.rrD, self.z80.d)
+
+    def test_rrE(self):
+        self._test_rrR(0x1b, self.z80.rrE, self.z80.e)
+
+    def test_rrH(self):
+        self._test_rrR(0x1c, self.z80.rrH, self.z80.h)
+
+    def test_rrL(self):
+        self._test_rrR(0x1d, self.z80.rrL, self.z80.l)
+
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
 
@@ -1832,6 +1850,36 @@ class TestZ80(unittest.TestCase):
         self._flagEq(self.z80.f.z, False)
         self._flagEq(self.z80.f.n, False)
         self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.c, False)
+
+    def _test_rrR(self, opc, func, reg):
+        self._validExtOpc(opc, func, 0)
+        reg.ld(0x02)
+        self.z80.f.n.set()
+        self.z80.f.h.set()
+        self._timeExtOp(opc, 2, 8)
+        self._regEq(reg, 0x01)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.c, False)
+        self._timeExtOp(opc, 2, 8)
+        self._regEq(reg, 0x00)
+        self._flagEq(self.z80.f.z, True)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.c, True)
+        self._timeExtOp(opc, 2, 8)
+        self._regEq(reg, 0x80)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.c, False)
+        self._timeExtOp(opc, 2, 8)
+        self._regEq(reg, 0x40)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.n, False)
         self._flagEq(self.z80.f.c, False)
 
     def _test_rstn(self, opc, func, n):
