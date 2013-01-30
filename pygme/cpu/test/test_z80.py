@@ -1707,6 +1707,9 @@ class TestZ80(unittest.TestCase):
         self._timeExtOp(opc, 2, 8)
         self._flagEq(self.z80.f.z, True)
 
+    def test_rrcA(self):
+        self._test_rrcR(0x0f, self.z80.rrcA, self.z80.a)
+
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
 
