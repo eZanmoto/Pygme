@@ -297,6 +297,12 @@ class Z80:
                          (self.rrcL, 0),
                          (self.rrcMemHL, 0),
                          (self.rrcA, 0),
+                         (self.rlB, 0),
+                         (self.rlC, 0),
+                         (self.rlD, 0),
+                         (self.rlE, 0),
+                         (self.rlH, 0),
+                         (self.rlL, 0),
                         ]
 
     def nop(self):
@@ -1277,6 +1283,36 @@ class Z80:
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
         self._rrcR(self.a)
 
+    def rlB(self):
+        """B is rotated left 1-bit position - bit 7 goes into C and C goes into
+        bit 0."""
+        self._rlR(self.b)
+
+    def rlC(self):
+        """C is rotated left 1-bit position - bit 7 goes into C and C goes into
+        bit 0."""
+        self._rlR(self.c)
+
+    def rlD(self):
+        """D is rotated left 1-bit position - bit 7 goes into C and C goes into
+        bit 0."""
+        self._rlR(self.d)
+
+    def rlE(self):
+        """E is rotated left 1-bit position - bit 7 goes into C and C goes into
+        bit 0."""
+        self._rlR(self.e)
+
+    def rlH(self):
+        """H is rotated left 1-bit position - bit 7 goes into C and C goes into
+        bit 0."""
+        self._rlR(self.h)
+
+    def rlL(self):
+        """L is rotated left 1-bit position - bit 7 goes into C and C goes into
+        bit 0."""
+        self._rlR(self.l)
+
     def _setMemHL(self, val):
         self._mem.set8(self._hl(), val)
 
@@ -1288,6 +1324,9 @@ class Z80:
 
     def _rrcR(self, reg):
         self._rotR(reg, self.RIGHT, self.WITH_CARRY)
+
+    def _rlR(self, reg):
+        self._rotR(reg, self.LEFT, self.WITHOUT_CARRY)
 
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)

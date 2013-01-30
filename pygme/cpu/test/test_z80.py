@@ -1710,6 +1710,24 @@ class TestZ80(unittest.TestCase):
     def test_rrcA(self):
         self._test_rrcR(0x0f, self.z80.rrcA, self.z80.a)
 
+    def test_rlB(self):
+        self._test_rlR(0x10, self.z80.rlB, self.z80.b)
+
+    def test_rlC(self):
+        self._test_rlR(0x11, self.z80.rlC, self.z80.c)
+
+    def test_rlD(self):
+        self._test_rlR(0x12, self.z80.rlD, self.z80.d)
+
+    def test_rlE(self):
+        self._test_rlR(0x13, self.z80.rlE, self.z80.e)
+
+    def test_rlH(self):
+        self._test_rlR(0x14, self.z80.rlH, self.z80.h)
+
+    def test_rlL(self):
+        self._test_rlR(0x15, self.z80.rlL, self.z80.l)
+
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
 
@@ -1763,6 +1781,30 @@ class TestZ80(unittest.TestCase):
         self.z80.f.z.reset()
         self._timeExtOp(opc, 2, 8)
         self._flagEq(self.z80.f.z, True)
+
+    def _test_rlR(self, opc, func, reg):
+        self._validExtOpc(opc, func, 0)
+        self.z80.f.n.set()
+        self.z80.f.h.set()
+        reg.ld(0x80)
+        self._timeExtOp(opc, 2, 8)
+        self._regEq(reg, 0x00)
+        self._flagEq(self.z80.f.z, True)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.c, True)
+        self._timeExtOp(opc, 2, 8)
+        self._regEq(reg, 0x01)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.c, False)
+        self._timeExtOp(opc, 2, 8)
+        self._regEq(reg, 0x02)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.c, False)
 
     def _test_rstn(self, opc, func, n):
         self._validOpc(opc, func, 0)
