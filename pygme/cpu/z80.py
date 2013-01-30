@@ -1241,8 +1241,8 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c)
-        self.m += 2
-        self.t += 8
+        self.m += 4
+        self.t += 16
 
     def rlcA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
@@ -1285,8 +1285,8 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c)
-        self.m += 2
-        self.t += 8
+        self.m += 4
+        self.t += 16
 
     def rrcA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
@@ -1335,8 +1335,8 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c)
-        self.m += 2
-        self.t += 8
+        self.m += 4
+        self.t += 16
 
     def rlA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
