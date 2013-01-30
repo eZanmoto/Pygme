@@ -1728,6 +1728,31 @@ class TestZ80(unittest.TestCase):
     def test_rlL(self):
         self._test_rlR(0x15, self.z80.rlL, self.z80.l)
 
+    def test_rlMemHL(self):
+        opc = 0x16
+        self._validExtOpc(opc, self.z80.rlMemHL, 0)
+        self.z80.f.n.set()
+        self.z80.f.h.set()
+        self._setMemHL(0x80)
+        self._timeExtOp(opc, 2, 8)
+        self.assertEquals(self._getMemHL(), 0x00)
+        self._flagEq(self.z80.f.z, True)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.c, True)
+        self._timeExtOp(opc, 2, 8)
+        self.assertEquals(self._getMemHL(), 0x01)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.c, False)
+        self._timeExtOp(opc, 2, 8)
+        self.assertEquals(self._getMemHL(), 0x02)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.c, False)
+
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
 
