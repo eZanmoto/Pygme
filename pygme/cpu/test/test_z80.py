@@ -1774,6 +1774,37 @@ class TestZ80(unittest.TestCase):
     def test_rrL(self):
         self._test_rrR(0x1d, self.z80.rrL, self.z80.l)
 
+    def test_rrMemHL(self):
+        opc = 0x1e
+        self._validExtOpc(opc, self.z80.rrMemHL, 0)
+        self._setMemHL(0x02)
+        self.z80.f.n.set()
+        self.z80.f.h.set()
+        self._timeExtOp(opc, 4, 16)
+        self.assertEquals(self._getMemHL(), 0x01)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.c, False)
+        self._timeExtOp(opc, 4, 16)
+        self.assertEquals(self._getMemHL(), 0x00)
+        self._flagEq(self.z80.f.z, True)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.c, True)
+        self._timeExtOp(opc, 4, 16)
+        self.assertEquals(self._getMemHL(), 0x80)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.c, False)
+        self._timeExtOp(opc, 4, 16)
+        self.assertEquals(self._getMemHL(), 0x40)
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.c, False)
+
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
 

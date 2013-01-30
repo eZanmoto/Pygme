@@ -311,6 +311,7 @@ class Z80:
                          (self.rrE, 0),
                          (self.rrH, 0),
                          (self.rrL, 0),
+                         (self.rrMemHL, 0),
                         ]
 
     def nop(self):
@@ -1371,6 +1372,21 @@ class Z80:
         """L is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
         self._rrR(self.l)
+
+    def rrMemHL(self):
+        """
+        Value at address in HL is rotated right 1-bit position - bit 0 goes
+        into C and C goes into bit 7.
+        
+        """
+        r = self._getMemHL()
+        self._setMemHL(((r >> 1) & 0xff) | (1 if self.f.c.val() else 0) << 7)
+        self.f.z.setTo(self._getMemHL() == 0) # NOTE Z is unaffected on Z80
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(r & 1)
+        self.m += 4
+        self.t += 16
 
     def _setMemHL(self, val):
         self._mem.set8(self._hl(), val)
