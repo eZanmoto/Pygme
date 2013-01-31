@@ -286,6 +286,7 @@ class Z80:
                       (self.adcAn, 1),
                       (self.rst8, 0),
                       (self.retNC, 0),
+                      (self.popDE, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2575,6 +2576,10 @@ class Z80:
             self.pc.ld(self._pop16())
         self.m += 2
         self.t += 8
+
+    def popDE(self):
+        """Pops the top two bytes of the stack into DE."""
+        self._popRR(self.d, self.e)
 
     def _rstn(self, n):
         self._push16(self.pc.val())
