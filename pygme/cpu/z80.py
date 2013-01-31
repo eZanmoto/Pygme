@@ -337,6 +337,14 @@ class Z80:
                          (self.swapL, 0),
                          (self.swapMemHL, 0),
                          (self.swapA, 0),
+                         (self.srlB, 0),
+                         (self.srlC, 0),
+                         (self.srlD, 0),
+                         (self.srlE, 0),
+                         (self.srlH, 0),
+                         (self.srlL, 0),
+                         (self.srlMemHL, 0),
+                         (self.srlA, 0),
                         ]
 
     def nop(self):
@@ -1539,6 +1547,64 @@ class Z80:
     def swapA(self):
         """Swaps the most significant and least significant nibbles of A."""
         self._swapR(self.a)
+
+    def srlB(self):
+        """L is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        is reset."""
+        self._srlR(self.b)
+
+    def srlC(self):
+        """C is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        is reset."""
+        self._srlR(self.c)
+
+    def srlD(self):
+        """D is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        is reset."""
+        self._srlR(self.d)
+
+    def srlE(self):
+        """E is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        is reset."""
+        self._srlR(self.e)
+
+    def srlH(self):
+        """H is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        is reset."""
+        self._srlR(self.h)
+
+    def srlL(self):
+        """L is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        is reset."""
+        self._srlR(self.l)
+
+    def srlMemHL(self):
+        """
+        Value at address in HL is rotated right 1-bit position - bit 0 goes
+        into Carry and bit 7 is reset.
+        
+        """
+        self._srln(self._getMemHL, self._setMemHL)
+
+    def srlA(self):
+        """A is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        is reset."""
+        self._srlR(self.a)
+
+    def _srlR(self, reg):
+        self._srln(reg.val, reg.ld)
+        self.m -= 2
+        self.t -= 8
+
+    def _srln(self, getf, setf):
+        v = getf()
+        setf((v >> 1) & 0xff)
+        self.f.z.setTo(getf() == 0) # NOTE Z is unaffected on Z80
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(v & 1)
+        self.m += 4
+        self.t += 16
 
     def _swapR(self, reg):
         self._swapn(reg.val, reg.ld)

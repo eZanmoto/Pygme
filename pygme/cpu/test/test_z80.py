@@ -1883,6 +1883,51 @@ class TestZ80(unittest.TestCase):
     def test_swapA(self):
         self._test_swapR(0x37, self.z80.swapA, self.z80.a)
 
+    def test_srlB(self):
+        self._test_srlR(0x38, self.z80.srlB, self.z80.b)
+
+    def test_srlC(self):
+        self._test_srlR(0x39, self.z80.srlC, self.z80.c)
+
+    def test_srlD(self):
+        self._test_srlR(0x3a, self.z80.srlD, self.z80.d)
+
+    def test_srlE(self):
+        self._test_srlR(0x3b, self.z80.srlE, self.z80.e)
+
+    def test_srlH(self):
+        self._test_srlR(0x3c, self.z80.srlH, self.z80.h)
+
+    def test_srlL(self):
+        self._test_srlR(0x3d, self.z80.srlL, self.z80.l)
+
+    def test_srlMemHL(self):
+        self._test_srln(0x3e, self.z80.srlMemHL, "(HL)", 4, 16, self._getMemHL,
+                self._setMemHL)
+
+    def test_srlA(self):
+        self._test_srlR(0x3f, self.z80.srlA, self.z80.a)
+
+    def _test_srlR(self, opc, func, reg):
+        self._test_srln(opc, func, reg.name(), 2, 8, reg.val, reg.ld)
+
+    def _test_srln(self, opc, func, name, m, t, getf, setf):
+        self._validExtOpc(opc, func, 0)
+        setf(0x80)
+        for i in range(0, self.NUM_TESTS):
+            val = (0x80 >> i) & 0xff
+            self.assertEquals(getf(), val,
+                    "%s is 0x%02x(%d), should be 0x%02x(%d)" %
+                    (name, getf(), getf(), val, val))
+            c = getf() & 1
+            self.z80.f.n.set()
+            self.z80.f.h.set()
+            self._timeExtOp(opc, m, t)
+            self._flagEq(self.z80.f.z, (0x80 >> (i + 1)) & 0xff == 0)
+            self._flagEq(self.z80.f.n, False)
+            self._flagEq(self.z80.f.h, False)
+            self._flagEq(self.z80.f.c, c)
+
     def _test_swapR(self, opc, func, reg):
         self._test_swapn(opc, func, reg.name(), 2, 8, reg.val, reg.ld)
 
