@@ -291,6 +291,7 @@ class Z80:
                       (self._notInstr(0xd3), 0),
                       (self.callNCnn, 2),
                       (self.pushDE, 0),
+                      (self.subAn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2596,6 +2597,14 @@ class Z80:
     def pushDE(self):
         """Pushes the contents of DE onto the top of the stack."""
         self._pushRR(self.d, self.e)
+
+    def subAB(self):
+        """Subtracts B from A and stores the result in A."""
+        self._subAR(self.b)
+
+    def subAn(self, n):
+        """Subtracts n from A and stores result in A."""
+        self._subAn(n)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
