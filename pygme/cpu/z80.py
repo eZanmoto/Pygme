@@ -1549,7 +1549,7 @@ class Z80:
         self._swapR(self.a)
 
     def srlB(self):
-        """L is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        """B is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         is reset."""
         self._srlR(self.b)
 
