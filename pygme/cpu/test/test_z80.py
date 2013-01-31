@@ -2548,6 +2548,9 @@ class TestZ80(unittest.TestCase):
                           0x8c)
         self._regEq(self.z80.a, 0x00)
 
+    def test_rst8(self):
+        self._test_rstn(0xcf, self.z80.rst8, 8)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

@@ -284,6 +284,7 @@ class Z80:
                       (self.callZnn, 2),
                       (self.callnn, 2),
                       (self.adcAn, 1),
+                      (self.rst8, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2568,6 +2569,10 @@ class Z80:
     def adcAn(self, n):
         """Adds A, Carry and a byte and stores the result in A."""
         self._adcAn(n)
+
+    def rst8(self):
+        """Pushes the PC onto the top of the stack and jumps to 0x0008."""
+        self._rstn(0x0008)
 
     def _resBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val, reg.val())
