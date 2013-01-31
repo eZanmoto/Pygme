@@ -281,6 +281,7 @@ class Z80:
                       (self.ret, 0),
                       (self.jpZnn, 2),
                       (self.extErr, 0),
+                      (self.callZnn, 2),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -1380,14 +1381,9 @@ class Z80:
         """Loads little-endian word into PC."""
         self._jpcnn(True, loOrdByte, hiOrdByte)
 
-    def callNZnn(self, loOrdByte, hiOrdByte):
+    def callNZnn(self, lsb, msb):
         """Pushes PC and loads little-endian word into PC if Z is reset."""
-        if self.f.z.val():
-            self.m += 3
-            self.t += 12
-        else:
-            self._push16(self.pc.val())
-            self.jpnn(loOrdByte, hiOrdByte)
+        self._callcnn(not self.f.z.val(), lsb, msb)
 
     def pushBC(self):
         """Pushes the contents of BC onto the top of the stack."""
@@ -2559,8 +2555,20 @@ class Z80:
         raise RuntimeError("Opcode 0xCB is a prefix for an extended"
                 + " instruction and should not be called directly.")
 
+    def callZnn(self, lsb, msb):
+        """Pushes PC and loads little-endian word into PC if Z is set."""
+        self._callcnn(self.f.z.val(), lsb, msb)
+
     def _resBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val, reg.val())
+
+    def _callcnn(self, cond, lsb, msb):
+        if cond:
+            self._push16(self.pc.val())
+            self.jpnn(lsb, msb)
+        else:
+            self.m += 3
+            self.t += 12
 
     def _resBn(self, bitNum, getf, name="(HL)"):
         raise NotImplementedError("'RES %d, %s' has not been implemented" %
