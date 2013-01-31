@@ -288,6 +288,7 @@ class Z80:
                       (self.retNC, 0),
                       (self.popDE, 0),
                       (self.jpNCnn, 2),
+                      (self.notInstr(0xd3), 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2585,6 +2586,11 @@ class Z80:
     def jpNCnn(self, lsb, msb):
         """Loads little-endian word into PC if C is not set."""
         self._jpcnn(not self.f.c.val(), lsb, msb)
+
+    def notInstr(self, opc):
+        def raiseEx(opc):
+            raise RuntimeError("0x%02x is not a valid instruction opcode" % opc)
+        return lambda: raiseEx(opc)
 
     def _rstn(self, n):
         self._push16(self.pc.val())

@@ -2560,6 +2560,14 @@ class TestZ80(unittest.TestCase):
             self.z80.f.c.setTo(c)
             self._test_jpcnn(opc, not c, i * 2, i * 4)
 
+    def test_notInstrs(self):
+        opcs = [0xd3]
+        for opc in opcs:
+            with self.assertRaises(RuntimeError):
+                func, argc = self.z80.instr[opc]
+                self.assertEquals(argc, 0)
+                func()
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
