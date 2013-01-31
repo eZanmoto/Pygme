@@ -2853,6 +2853,7 @@ class Z80:
         self._arithRn(self.a, v, isPositive, withCarry)
 
     def _arithRn(self, reg, v, isPositive, withCarry):
+        self._assertByte(v)
         r = reg.val()
         c = 1 if withCarry and self.f.c.val() else 0
         if isPositive:
