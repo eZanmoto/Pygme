@@ -2573,6 +2573,9 @@ class TestZ80(unittest.TestCase):
             self.z80.pc.ld(i * 0x5a)
             self._test_callcnn(opc, not c, i * 2, i * 4)
 
+    def test_pushDE(self):
+        self._test_pushRR(0xd5, self.z80.pushDE, self.z80.d, self.z80.e)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
@@ -2589,6 +2592,20 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.sp, sp + 2)
             self._regEq(loOrdReg, val >> 8)
             self._regEq(hiOrdReg, val & 0xff)
+
+    def _test_pushRR(self, opc, func, loOrdReg, hiOrdReg):
+        self._validOpc(opc, func, 0)
+        self.z80.sp.ld(0xfffe)
+        vals = [0xa5a5, 0x5a5a, 0xdead, 0xbeef]
+        for val in vals:
+            loOrdReg.ld(val >> 8)
+            hiOrdReg.ld(val & 0xff)
+            sp = self.z80.sp.val()
+            self._flagsFixed(opc, 4, 16)
+            self._regEq(self.z80.sp, sp - 2)
+        vals.reverse()
+        for val in vals:
+            self.assertEquals(self._pop16(), val)
 
     def _test_resBn(self, opc, func, name, m, t, bitNum, setf):
         self._validExtOpc(opc, func, 0)
