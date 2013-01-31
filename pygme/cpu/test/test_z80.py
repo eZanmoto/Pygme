@@ -2610,6 +2610,16 @@ class TestZ80(unittest.TestCase):
             self.z80.f.c.setTo(c)
             self._test_jpcnn(opc, c, i * 2, i * 4)
 
+    def test_callCnn(self):
+        opc = 0xdc
+        self._validOpc(opc, self.z80.callCnn, 2)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            c = i % 2 == 0
+            self.z80.f.c.setTo(c)
+            self.z80.pc.ld(i * 0x5a)
+            self._test_callcnn(opc, c, i * 2, i * 4)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

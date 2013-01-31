@@ -298,6 +298,7 @@ class Z80:
                       (self.reti, 0),
                       (self.jpCnn, 2),
                       (self._notInstr(0xdb), 0),
+                      (self.callCnn, 2),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2631,6 +2632,10 @@ class Z80:
     def jpCnn(self, lsb, msb):
         """Loads little-endian word into PC if C is set."""
         self._jpcnn(self.f.c.val(), lsb, msb)
+
+    def callCnn(self, lsb, msb):
+        """Pushes PC and loads little-endian word into PC if C is set."""
+        self._callcnn(self.f.c.val(), lsb, msb)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
