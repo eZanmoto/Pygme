@@ -2546,6 +2546,8 @@ class TestZ80(unittest.TestCase):
                 0xd3,
                 0xdb,
                 0xdd,
+                0xe3,
+                0xe4,
                ]
         for opc in opcs:
             with self.assertRaises(RuntimeError):
