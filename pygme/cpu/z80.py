@@ -321,6 +321,14 @@ class Z80:
                          (self.slaL, 0),
                          (self.slaMemHL, 0),
                          (self.slaA, 0),
+                         (self.sraB, 0),
+                         (self.sraC, 0),
+                         (self.sraD, 0),
+                         (self.sraE, 0),
+                         (self.sraH, 0),
+                         (self.sraL, 0),
+                         (self.sraMemHL, 0),
+                         (self.sraA, 0),
                         ]
 
     def nop(self):
@@ -1445,6 +1453,49 @@ class Z80:
         into bit 0."""
         self._slaR(self.a)
 
+    def sraB(self):
+        """B is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        retains its value."""
+        self._sraR(self.b)
+
+    def sraC(self):
+        """C is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        retains its value."""
+        self._sraR(self.c)
+
+    def sraD(self):
+        """D is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        retains its value."""
+        self._sraR(self.d)
+
+    def sraE(self):
+        """E is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        retains its value."""
+        self._sraR(self.e)
+
+    def sraH(self):
+        """H is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        retains its value."""
+        self._sraR(self.h)
+
+    def sraL(self):
+        """L is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        retains its value."""
+        self._sraR(self.l)
+
+    def sraMemHL(self):
+        """
+        Value at address in HL is rotated right 1-bit position - bit 0 goes
+        into Carry and bit 7 retains its value.
+        
+        """
+        self._sran(self._getMemHL, self._setMemHL)
+
+    def sraA(self):
+        """A is rotated right 1-bit position - bit 0 goes into Carry and bit 7
+        retains its value."""
+        self._sraR(self.a)
+
     def _slaR(self, reg):
         self._slan(reg.val, reg.ld)
         self.m -= 2
@@ -1457,6 +1508,21 @@ class Z80:
         self.f.z.setTo(getf() == 0) # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
+        self.m += 4
+        self.t += 16
+
+    def _sraR(self, reg):
+        self._sran(reg.val, reg.ld)
+        self.m -= 2
+        self.t -= 8
+
+    def _sran(self, getf, setf):
+        v = getf()
+        setf(((v >> 1) & 0xff) | (v & 0x80))
+        self.f.z.setTo(getf() == 0) # NOTE Z is unaffected on Z80
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(v & 1)
         self.m += 4
         self.t += 16
 

@@ -1833,6 +1833,31 @@ class TestZ80(unittest.TestCase):
     def test_slaA(self):
         self._test_slaR(0x27, self.z80.slaA, self.z80.a)
 
+    def test_sraB(self):
+        self._test_sraR(0x28, self.z80.sraB, self.z80.b)
+
+    def test_sraC(self):
+        self._test_sraR(0x29, self.z80.sraC, self.z80.c)
+
+    def test_sraD(self):
+        self._test_sraR(0x2a, self.z80.sraD, self.z80.d)
+
+    def test_sraE(self):
+        self._test_sraR(0x2b, self.z80.sraE, self.z80.e)
+
+    def test_sraH(self):
+        self._test_sraR(0x2c, self.z80.sraH, self.z80.h)
+
+    def test_sraL(self):
+        self._test_sraR(0x2d, self.z80.sraL, self.z80.l)
+
+    def test_sraMemHL(self):
+        self._test_sran(0x2e, self.z80.sraMemHL, "(HL)", 4, 16, self._getMemHL,
+                self._setMemHL)
+
+    def test_sraA(self):
+        self._test_sraR(0x2f, self.z80.sraA, self.z80.a)
+
     def _test_slaR(self, opc, func, reg):
         self._test_slan(opc, func, reg.name(), 2, 8, reg.val, reg.ld)
 
@@ -1852,6 +1877,41 @@ class TestZ80(unittest.TestCase):
             self._flagEq(self.z80.f.n, False)
             self._flagEq(self.z80.f.h, False)
             self._flagEq(self.z80.f.c, c)
+
+    def _test_sraR(self, opc, func, reg):
+        self._test_sran(opc, func, reg.name(), 2, 8, reg.val, reg.ld)
+
+    def _test_sran(self, opc, func, name, m, t, getf, setf):
+        self._validExtOpc(opc, func, 0)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0x80, 0xc0)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0xc0, 0xe0)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0xe0, 0xf0)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0xf0, 0xf8)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0xf8, 0xfc)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0xfc, 0xfe)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0xfe, 0xff)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0xff, 0xff)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0x7f, 0x3f)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0x3f, 0x1f)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0x1f, 0x0f)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0x0f, 0x07)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0x07, 0x03)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0x03, 0x01)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0x01, 0x00)
+        self._test_sranExec(opc, name, m, t, getf, setf, 0x00, 0x00)
+
+    def _test_sranExec(self, opc, name, m, t, getf, setf, val, expected):
+        setf(val)
+        self.z80.f.n.set()
+        self.z80.f.h.set()
+        self._timeExtOp(opc, m, t)
+        self.assertEquals(getf(), expected,
+                "%s is 0x%02x(%d), should be 0x%02x(%d)" %
+                (name, getf(), getf(), expected, expected))
+        self._flagEq(self.z80.f.z, expected == 0)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.c, val & 1)
 
     def _setMemHL(self, val):
         self.mem.set8(self._hl(), val)
