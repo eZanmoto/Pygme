@@ -285,6 +285,7 @@ class Z80:
                       (self.callnn, 2),
                       (self.adcAn, 1),
                       (self.rst8, 0),
+                      (self.retNC, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2567,6 +2568,13 @@ class Z80:
     def rst8(self):
         """Pushes the PC onto the top of the stack and jumps to 0x0008."""
         self._rstn(0x0008)
+
+    def retNC(self):
+        """Pops the top two bytes of the stack into the PC if C is not set."""
+        if not self.f.c.val():
+            self.pc.ld(self._pop16())
+        self.m += 2
+        self.t += 8
 
     def _rstn(self, n):
         self._push16(self.pc.val())

@@ -2552,7 +2552,7 @@ class TestZ80(unittest.TestCase):
         self._test_rstn(0xcf, self.z80.rst8, 8)
 
     def test_retNC(self):
-        opc = 0xc0
+        opc = 0xd0
         self._validOpc(opc, self.z80.retNC, 0)
         self.z80.sp.ld(0xfffe)
         for i in range(0, self.NUM_TESTS):
