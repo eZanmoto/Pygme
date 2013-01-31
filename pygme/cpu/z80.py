@@ -282,6 +282,7 @@ class Z80:
                       (self.jpZnn, 2),
                       (self.extErr, 0),
                       (self.callZnn, 2),
+                      (self.callnn, 2),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2558,6 +2559,10 @@ class Z80:
     def callZnn(self, lsb, msb):
         """Pushes PC and loads little-endian word into PC if Z is set."""
         self._callcnn(self.f.z.val(), lsb, msb)
+
+    def callnn(self, lsb, msb):
+        """Pushes PC and loads little-endian word into PC."""
+        self._callcnn(True, lsb, msb)
 
     def _resBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val, reg.val())

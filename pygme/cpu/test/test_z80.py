@@ -2525,6 +2525,14 @@ class TestZ80(unittest.TestCase):
             self.z80.pc.ld(i * 0x5a)
             self._test_callcnn(opc, z, i * 2, i * 4)
 
+    def test_callnn(self):
+        opc = 0xcd
+        self._validOpc(opc, self.z80.callnn, 2)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.pc.ld(i * 0x5a)
+            self._test_callcnn(opc, True, i * 2, i * 4)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
