@@ -2544,6 +2544,7 @@ class TestZ80(unittest.TestCase):
     def test_notInstrs(self):
         opcs = [0xcb,
                 0xd3,
+                0xdb,
                ]
         for opc in opcs:
             with self.assertRaises(RuntimeError):

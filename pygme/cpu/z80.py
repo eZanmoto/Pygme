@@ -297,6 +297,7 @@ class Z80:
                       (self.retC, 0),
                       (self.reti, 0),
                       (self.jpCnn, 2),
+                      (self._notInstr(0xdb), 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
