@@ -2608,7 +2608,8 @@ class Z80:
 
     def _notInstr(self, opc):
         def raiseEx(opc):
-            raise RuntimeError("0x%02x is not a valid instruction opcode" % opc)
+            raise RuntimeError("0x%02x is not a valid instruction opcode" %
+                    opc)
         return lambda: raiseEx(opc)
 
     def _rstn(self, n):
