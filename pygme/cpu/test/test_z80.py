@@ -1858,6 +1858,51 @@ class TestZ80(unittest.TestCase):
     def test_sraA(self):
         self._test_sraR(0x2f, self.z80.sraA, self.z80.a)
 
+    def test_swapB(self):
+        self._test_swapR(0x30, self.z80.swapB, self.z80.b)
+
+    def test_swapC(self):
+        self._test_swapR(0x31, self.z80.swapC, self.z80.c)
+
+    def test_swapD(self):
+        self._test_swapR(0x32, self.z80.swapD, self.z80.d)
+
+    def test_swapE(self):
+        self._test_swapR(0x33, self.z80.swapE, self.z80.e)
+
+    def test_swapH(self):
+        self._test_swapR(0x34, self.z80.swapH, self.z80.h)
+
+    def test_swapL(self):
+        self._test_swapR(0x35, self.z80.swapL, self.z80.l)
+
+    def test_swapMemHL(self):
+        self._test_swapn(0x36, self.z80.swapMemHL, "(HL)", 4, 16,
+                self._getMemHL, self._setMemHL)
+
+    def test_swapA(self):
+        self._test_swapR(0x37, self.z80.swapA, self.z80.a)
+
+    def _test_swapR(self, opc, func, reg):
+        self._test_swapn(opc, func, reg.name(), 2, 8, reg.val, reg.ld)
+
+    def _test_swapn(self, opc, func, name, m, t, getf, setf):
+        self._validExtOpc(opc, func, 0)
+        for i in range(0, self.NUM_TESTS):
+            hiOrdVal, loOrdVal = (i & 0xf, (i * 2) & 0xf)
+            setf((hiOrdVal << 4) + loOrdVal)
+            f = self.z80.f
+            z, n, h, c = (f.z.val(), f.n.val(), f.h.val(), f.c.val())
+            self._timeExtOp(opc, m, t)
+            self._flagEq(self.z80.f.z, z)
+            self._flagEq(self.z80.f.n, n)
+            self._flagEq(self.z80.f.h, h)
+            self._flagEq(self.z80.f.c, c)
+            expected = (loOrdVal << 4) + hiOrdVal
+            self.assertEquals(getf(), expected,
+                    "%s is 0x%02x(%d), should be 0x%02x(%d)" %
+                    (name, getf(), getf(), expected, expected))
+
     def _test_slaR(self, opc, func, reg):
         self._test_slan(opc, func, reg.name(), 2, 8, reg.val, reg.ld)
 

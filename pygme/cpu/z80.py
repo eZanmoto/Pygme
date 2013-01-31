@@ -329,6 +329,14 @@ class Z80:
                          (self.sraL, 0),
                          (self.sraMemHL, 0),
                          (self.sraA, 0),
+                         (self.swapB, 0),
+                         (self.swapC, 0),
+                         (self.swapD, 0),
+                         (self.swapE, 0),
+                         (self.swapH, 0),
+                         (self.swapL, 0),
+                         (self.swapMemHL, 0),
+                         (self.swapA, 0),
                         ]
 
     def nop(self):
@@ -1495,6 +1503,52 @@ class Z80:
         """A is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         retains its value."""
         self._sraR(self.a)
+
+    def swapB(self):
+        """Swaps the most significant and least significant nibbles of B."""
+        self._swapR(self.b)
+
+    def swapC(self):
+        """Swaps the most significant and least significant nibbles of C."""
+        self._swapR(self.c)
+
+    def swapD(self):
+        """Swaps the most significant and least significant nibbles of D."""
+        self._swapR(self.d)
+
+    def swapE(self):
+        """Swaps the most significant and least significant nibbles of E."""
+        self._swapR(self.e)
+
+    def swapH(self):
+        """Swaps the most significant and least significant nibbles of H."""
+        self._swapR(self.h)
+
+    def swapL(self):
+        """Swaps the most significant and least significant nibbles of L."""
+        self._swapR(self.l)
+
+    def swapMemHL(self):
+        """
+        Swaps the most significant and least significant nibbles of the value
+        at address in HL.
+
+        """
+        self._swapn(self._getMemHL, self._setMemHL)
+
+    def swapA(self):
+        """Swaps the most significant and least significant nibbles of A."""
+        self._swapR(self.a)
+
+    def _swapR(self, reg):
+        self._swapn(reg.val, reg.ld)
+        self.m -= 2
+        self.t -= 8
+
+    def _swapn(self, getf, setf):
+        setf(((getf() & 0xf) << 4) + ((getf() >> 4) & 0xf))
+        self.m += 4
+        self.t += 16
 
     def _slaR(self, reg):
         self._slan(reg.val, reg.ld)
