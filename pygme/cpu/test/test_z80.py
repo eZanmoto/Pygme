@@ -2508,6 +2508,13 @@ class TestZ80(unittest.TestCase):
     def test_set7A(self):
         self._test_setBR(0xff, self.z80.set7A, 0, self.z80.a)
 
+    def test_opcCBRaisesErr(self):
+        opc = 0xcb
+        self._validOpc(opc, self.z80.extErr, 0)
+        with self.assertRaises(RuntimeError):
+            func, _ = self.z80.instr[opc]
+            func()
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

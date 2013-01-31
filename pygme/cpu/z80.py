@@ -280,6 +280,7 @@ class Z80:
                       (self.retZ, 0),
                       (self.ret, 0),
                       (self.jpZnn, 2),
+                      (self.extErr, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2552,6 +2553,11 @@ class Z80:
     def set7A(self):
         """Set bit 7 of A."""
         self._setBR(7, self.a)
+
+    def extErr(self):
+        """Raises an exception, as method shouldn't be called."""
+        raise RuntimeError("Opcode 0xCB is a prefix for an extended"
+                + " instruction and should not be called directly.")
 
     def _resBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val, reg.val())
