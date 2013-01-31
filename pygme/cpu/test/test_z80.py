@@ -2496,13 +2496,6 @@ class TestZ80(unittest.TestCase):
     def test_set7A(self):
         self._test_setBR(0xff, self.z80.set7A, 0, self.z80.a)
 
-    def test_opcCBRaisesErr(self):
-        opc = 0xcb
-        self._validOpc(opc, self.z80.extErr, 0)
-        with self.assertRaises(RuntimeError):
-            func, _ = self.z80.instr[opc]
-            func()
-
     def test_callZnn(self):
         opc = 0xcc
         self._validOpc(opc, self.z80.callZnn, 2)
@@ -2561,7 +2554,9 @@ class TestZ80(unittest.TestCase):
             self._test_jpcnn(opc, not c, i * 2, i * 4)
 
     def test_notInstrs(self):
-        opcs = [0xd3]
+        opcs = [0xcb,
+                0xd3,
+               ]
         for opc in opcs:
             with self.assertRaises(RuntimeError):
                 func, argc = self.z80.instr[opc]

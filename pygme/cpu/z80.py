@@ -280,7 +280,7 @@ class Z80:
                       (self.retZ, 0),
                       (self.ret, 0),
                       (self.jpZnn, 2),
-                      (self.extErr, 0),
+                      (self.notInstr(0xcb), 0),
                       (self.callZnn, 2),
                       (self.callnn, 2),
                       (self.adcAn, 1),
