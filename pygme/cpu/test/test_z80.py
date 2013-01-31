@@ -1933,6 +1933,181 @@ class TestZ80(unittest.TestCase):
     def test_bit0A(self):
         self._test_bitBR(0x47, self.z80.bit0A, 0, self.z80.a)
 
+    def test_bit1B(self):
+        self._test_bitBR(0x48, self.z80.bit1B, 1, self.z80.b)
+
+    def test_bit1C(self):
+        self._test_bitBR(0x49, self.z80.bit1C, 1, self.z80.c)
+
+    def test_bit1D(self):
+        self._test_bitBR(0x4a, self.z80.bit1D, 1, self.z80.d)
+
+    def test_bit1E(self):
+        self._test_bitBR(0x4b, self.z80.bit1E, 1, self.z80.e)
+
+    def test_bit1H(self):
+        self._test_bitBR(0x4c, self.z80.bit1H, 1, self.z80.h)
+
+    def test_bit1L(self):
+        self._test_bitBR(0x4d, self.z80.bit1L, 1, self.z80.l)
+
+    def test_bit1MemHL(self):
+        self._test_bitBn(0x4e, self.z80.bit1MemHL, "(HL)", 4, 16, 1,
+                self._setMemHL)
+
+    def test_bit1A(self):
+        self._test_bitBR(0x4f, self.z80.bit1A, 1, self.z80.a)
+
+    def test_bit2B(self):
+        self._test_bitBR(0x50, self.z80.bit2B, 2, self.z80.b)
+
+    def test_bit2C(self):
+        self._test_bitBR(0x51, self.z80.bit2C, 2, self.z80.c)
+
+    def test_bit2D(self):
+        self._test_bitBR(0x52, self.z80.bit2D, 2, self.z80.d)
+
+    def test_bit2E(self):
+        self._test_bitBR(0x53, self.z80.bit2E, 2, self.z80.e)
+
+    def test_bit2H(self):
+        self._test_bitBR(0x54, self.z80.bit2H, 2, self.z80.h)
+
+    def test_bit2L(self):
+        self._test_bitBR(0x55, self.z80.bit2L, 2, self.z80.l)
+
+    def test_bit2MemHL(self):
+        self._test_bitBn(0x56, self.z80.bit2MemHL, "(HL)", 4, 16, 2,
+                self._setMemHL)
+
+    def test_bit2A(self):
+        self._test_bitBR(0x57, self.z80.bit2A, 2, self.z80.a)
+
+    def test_bit3B(self):
+        self._test_bitBR(0x58, self.z80.bit3B, 3, self.z80.b)
+
+    def test_bit3C(self):
+        self._test_bitBR(0x59, self.z80.bit3C, 3, self.z80.c)
+
+    def test_bit3D(self):
+        self._test_bitBR(0x5a, self.z80.bit3D, 3, self.z80.d)
+
+    def test_bit3E(self):
+        self._test_bitBR(0x5b, self.z80.bit3E, 3, self.z80.e)
+
+    def test_bit3H(self):
+        self._test_bitBR(0x5c, self.z80.bit3H, 3, self.z80.h)
+
+    def test_bit3L(self):
+        self._test_bitBR(0x5d, self.z80.bit3L, 3, self.z80.l)
+
+    def test_bit3MemHL(self):
+        self._test_bitBn(0x5e, self.z80.bit3MemHL, "(HL)", 4, 16, 3,
+                self._setMemHL)
+
+    def test_bit3A(self):
+        self._test_bitBR(0x5f, self.z80.bit3A, 3, self.z80.a)
+
+    def test_bit4B(self):
+        self._test_bitBR(0x60, self.z80.bit4B, 4, self.z80.b)
+
+    def test_bit4C(self):
+        self._test_bitBR(0x61, self.z80.bit4C, 4, self.z80.c)
+
+    def test_bit4D(self):
+        self._test_bitBR(0x62, self.z80.bit4D, 4, self.z80.d)
+
+    def test_bit4E(self):
+        self._test_bitBR(0x63, self.z80.bit4E, 4, self.z80.e)
+
+    def test_bit4H(self):
+        self._test_bitBR(0x64, self.z80.bit4H, 4, self.z80.h)
+
+    def test_bit4L(self):
+        self._test_bitBR(0x65, self.z80.bit4L, 4, self.z80.l)
+
+    def test_bit4MemHL(self):
+        self._test_bitBn(0x66, self.z80.bit4MemHL, "(HL)", 4, 16, 4,
+                self._setMemHL)
+
+    def test_bit4A(self):
+        self._test_bitBR(0x67, self.z80.bit4A, 4, self.z80.a)
+
+    def test_bit5B(self):
+        self._test_bitBR(0x68, self.z80.bit5B, 5, self.z80.b)
+
+    def test_bit5C(self):
+        self._test_bitBR(0x69, self.z80.bit5C, 5, self.z80.c)
+
+    def test_bit5D(self):
+        self._test_bitBR(0x6a, self.z80.bit5D, 5, self.z80.d)
+
+    def test_bit5E(self):
+        self._test_bitBR(0x6b, self.z80.bit5E, 5, self.z80.e)
+
+    def test_bit5H(self):
+        self._test_bitBR(0x6c, self.z80.bit5H, 5, self.z80.h)
+
+    def test_bit5L(self):
+        self._test_bitBR(0x6d, self.z80.bit5L, 5, self.z80.l)
+
+    def test_bit5MemHL(self):
+        self._test_bitBn(0x6e, self.z80.bit5MemHL, "(HL)", 4, 16, 5,
+                self._setMemHL)
+
+    def test_bit5A(self):
+        self._test_bitBR(0x6f, self.z80.bit5A, 5, self.z80.a)
+
+    def test_bit6B(self):
+        self._test_bitBR(0x70, self.z80.bit6B, 6, self.z80.b)
+
+    def test_bit6C(self):
+        self._test_bitBR(0x71, self.z80.bit6C, 6, self.z80.c)
+
+    def test_bit6D(self):
+        self._test_bitBR(0x72, self.z80.bit6D, 6, self.z80.d)
+
+    def test_bit6E(self):
+        self._test_bitBR(0x73, self.z80.bit6E, 6, self.z80.e)
+
+    def test_bit6H(self):
+        self._test_bitBR(0x74, self.z80.bit6H, 6, self.z80.h)
+
+    def test_bit6L(self):
+        self._test_bitBR(0x75, self.z80.bit6L, 6, self.z80.l)
+
+    def test_bit6MemHL(self):
+        self._test_bitBn(0x76, self.z80.bit6MemHL, "(HL)", 4, 16, 6,
+                self._setMemHL)
+
+    def test_bit6A(self):
+        self._test_bitBR(0x77, self.z80.bit6A, 6, self.z80.a)
+
+    def test_bit7B(self):
+        self._test_bitBR(0x78, self.z80.bit7B, 7, self.z80.b)
+
+    def test_bit7C(self):
+        self._test_bitBR(0x79, self.z80.bit7C, 7, self.z80.c)
+
+    def test_bit7D(self):
+        self._test_bitBR(0x7a, self.z80.bit7D, 7, self.z80.d)
+
+    def test_bit7E(self):
+        self._test_bitBR(0x7b, self.z80.bit7E, 7, self.z80.e)
+
+    def test_bit7H(self):
+        self._test_bitBR(0x7c, self.z80.bit7H, 7, self.z80.h)
+
+    def test_bit7L(self):
+        self._test_bitBR(0x7d, self.z80.bit7L, 7, self.z80.l)
+
+    def test_bit7MemHL(self):
+        self._test_bitBn(0x7e, self.z80.bit7MemHL, "(HL)", 4, 16, 7,
+                self._setMemHL)
+
+    def test_bit7A(self):
+        self._test_bitBR(0x7f, self.z80.bit7A, 7, self.z80.a)
+
     def _test_bitBR(self, opc, func, bitNum, reg):
         self._test_bitBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

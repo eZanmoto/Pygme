@@ -353,6 +353,62 @@ class Z80:
                          (self.bit0L, 0),
                          (self.bit0MemHL, 0),
                          (self.bit0A, 0),
+                         (self.bit1B, 0),
+                         (self.bit1C, 0),
+                         (self.bit1D, 0),
+                         (self.bit1E, 0),
+                         (self.bit1H, 0),
+                         (self.bit1L, 0),
+                         (self.bit1MemHL, 0),
+                         (self.bit1A, 0),
+                         (self.bit2B, 0),
+                         (self.bit2C, 0),
+                         (self.bit2D, 0),
+                         (self.bit2E, 0),
+                         (self.bit2H, 0),
+                         (self.bit2L, 0),
+                         (self.bit2MemHL, 0),
+                         (self.bit2A, 0),
+                         (self.bit3B, 0),
+                         (self.bit3C, 0),
+                         (self.bit3D, 0),
+                         (self.bit3E, 0),
+                         (self.bit3H, 0),
+                         (self.bit3L, 0),
+                         (self.bit3MemHL, 0),
+                         (self.bit3A, 0),
+                         (self.bit4B, 0),
+                         (self.bit4C, 0),
+                         (self.bit4D, 0),
+                         (self.bit4E, 0),
+                         (self.bit4H, 0),
+                         (self.bit4L, 0),
+                         (self.bit4MemHL, 0),
+                         (self.bit4A, 0),
+                         (self.bit5B, 0),
+                         (self.bit5C, 0),
+                         (self.bit5D, 0),
+                         (self.bit5E, 0),
+                         (self.bit5H, 0),
+                         (self.bit5L, 0),
+                         (self.bit5MemHL, 0),
+                         (self.bit5A, 0),
+                         (self.bit6B, 0),
+                         (self.bit6C, 0),
+                         (self.bit6D, 0),
+                         (self.bit6E, 0),
+                         (self.bit6H, 0),
+                         (self.bit6L, 0),
+                         (self.bit6MemHL, 0),
+                         (self.bit6A, 0),
+                         (self.bit7B, 0),
+                         (self.bit7C, 0),
+                         (self.bit7D, 0),
+                         (self.bit7E, 0),
+                         (self.bit7H, 0),
+                         (self.bit7L, 0),
+                         (self.bit7MemHL, 0),
+                         (self.bit7A, 0),
                         ]
 
     def nop(self):
@@ -1630,6 +1686,236 @@ class Z80:
     def bit0A(self):
         """Sets flag Z if bit 0 of A is reset."""
         self._bitBR(0, self.a)
+
+    def bit1B(self):
+        """Sets flag Z if bit 1 of B is reset."""
+        self._bitBR(1, self.b)
+
+    def bit1C(self):
+        """Sets flag Z if bit 1 of C is reset."""
+        self._bitBR(1, self.c)
+
+    def bit1D(self):
+        """Sets flag Z if bit 1 of D is reset."""
+        self._bitBR(1, self.d)
+
+    def bit1E(self):
+        """Sets flag Z if bit 1 of E is reset."""
+        self._bitBR(1, self.e)
+
+    def bit1H(self):
+        """Sets flag Z if bit 1 of H is reset."""
+        self._bitBR(1, self.h)
+
+    def bit1L(self):
+        """Sets flag Z if bit 1 of L is reset."""
+        self._bitBR(1, self.l)
+
+    def bit1MemHL(self):
+        """Sets flag Z if bit 1 of value at address in HL is reset."""
+        self._bitBn(1, self._getMemHL)
+
+    def bit1A(self):
+        """Sets flag Z if bit 1 of A is reset."""
+        self._bitBR(1, self.a)
+
+
+    def bit2B(self):
+        """Sets flag Z if bit 2 of B is reset."""
+        self._bitBR(2, self.b)
+
+    def bit2C(self):
+        """Sets flag Z if bit 2 of C is reset."""
+        self._bitBR(2, self.c)
+
+    def bit2D(self):
+        """Sets flag Z if bit 2 of D is reset."""
+        self._bitBR(2, self.d)
+
+    def bit2E(self):
+        """Sets flag Z if bit 2 of E is reset."""
+        self._bitBR(2, self.e)
+
+    def bit2H(self):
+        """Sets flag Z if bit 2 of H is reset."""
+        self._bitBR(2, self.h)
+
+    def bit2L(self):
+        """Sets flag Z if bit 2 of L is reset."""
+        self._bitBR(2, self.l)
+
+    def bit2MemHL(self):
+        """Sets flag Z if bit 2 of value at address in HL is reset."""
+        self._bitBn(2, self._getMemHL)
+
+    def bit2A(self):
+        """Sets flag Z if bit 2 of A is reset."""
+        self._bitBR(2, self.a)
+
+
+    def bit3B(self):
+        """Sets flag Z if bit 3 of B is reset."""
+        self._bitBR(3, self.b)
+
+    def bit3C(self):
+        """Sets flag Z if bit 3 of C is reset."""
+        self._bitBR(3, self.c)
+
+    def bit3D(self):
+        """Sets flag Z if bit 3 of D is reset."""
+        self._bitBR(3, self.d)
+
+    def bit3E(self):
+        """Sets flag Z if bit 3 of E is reset."""
+        self._bitBR(3, self.e)
+
+    def bit3H(self):
+        """Sets flag Z if bit 3 of H is reset."""
+        self._bitBR(3, self.h)
+
+    def bit3L(self):
+        """Sets flag Z if bit 3 of L is reset."""
+        self._bitBR(3, self.l)
+
+    def bit3MemHL(self):
+        """Sets flag Z if bit 3 of value at address in HL is reset."""
+        self._bitBn(3, self._getMemHL)
+
+    def bit3A(self):
+        """Sets flag Z if bit 3 of A is reset."""
+        self._bitBR(3, self.a)
+
+
+    def bit4B(self):
+        """Sets flag Z if bit 4 of B is reset."""
+        self._bitBR(4, self.b)
+
+    def bit4C(self):
+        """Sets flag Z if bit 4 of C is reset."""
+        self._bitBR(4, self.c)
+
+    def bit4D(self):
+        """Sets flag Z if bit 4 of D is reset."""
+        self._bitBR(4, self.d)
+
+    def bit4E(self):
+        """Sets flag Z if bit 4 of E is reset."""
+        self._bitBR(4, self.e)
+
+    def bit4H(self):
+        """Sets flag Z if bit 4 of H is reset."""
+        self._bitBR(4, self.h)
+
+    def bit4L(self):
+        """Sets flag Z if bit 4 of L is reset."""
+        self._bitBR(4, self.l)
+
+    def bit4MemHL(self):
+        """Sets flag Z if bit 4 of value at address in HL is reset."""
+        self._bitBn(4, self._getMemHL)
+
+    def bit4A(self):
+        """Sets flag Z if bit 4 of A is reset."""
+        self._bitBR(4, self.a)
+
+
+    def bit5B(self):
+        """Sets flag Z if bit 5 of B is reset."""
+        self._bitBR(5, self.b)
+
+    def bit5C(self):
+        """Sets flag Z if bit 5 of C is reset."""
+        self._bitBR(5, self.c)
+
+    def bit5D(self):
+        """Sets flag Z if bit 5 of D is reset."""
+        self._bitBR(5, self.d)
+
+    def bit5E(self):
+        """Sets flag Z if bit 5 of E is reset."""
+        self._bitBR(5, self.e)
+
+    def bit5H(self):
+        """Sets flag Z if bit 5 of H is reset."""
+        self._bitBR(5, self.h)
+
+    def bit5L(self):
+        """Sets flag Z if bit 5 of L is reset."""
+        self._bitBR(5, self.l)
+
+    def bit5MemHL(self):
+        """Sets flag Z if bit 5 of value at address in HL is reset."""
+        self._bitBn(5, self._getMemHL)
+
+    def bit5A(self):
+        """Sets flag Z if bit 5 of A is reset."""
+        self._bitBR(5, self.a)
+
+
+    def bit6B(self):
+        """Sets flag Z if bit 6 of B is reset."""
+        self._bitBR(6, self.b)
+
+    def bit6C(self):
+        """Sets flag Z if bit 6 of C is reset."""
+        self._bitBR(6, self.c)
+
+    def bit6D(self):
+        """Sets flag Z if bit 6 of D is reset."""
+        self._bitBR(6, self.d)
+
+    def bit6E(self):
+        """Sets flag Z if bit 6 of E is reset."""
+        self._bitBR(6, self.e)
+
+    def bit6H(self):
+        """Sets flag Z if bit 6 of H is reset."""
+        self._bitBR(6, self.h)
+
+    def bit6L(self):
+        """Sets flag Z if bit 6 of L is reset."""
+        self._bitBR(6, self.l)
+
+    def bit6MemHL(self):
+        """Sets flag Z if bit 6 of value at address in HL is reset."""
+        self._bitBn(6, self._getMemHL)
+
+    def bit6A(self):
+        """Sets flag Z if bit 6 of A is reset."""
+        self._bitBR(6, self.a)
+
+
+    def bit7B(self):
+        """Sets flag Z if bit 7 of B is reset."""
+        self._bitBR(7, self.b)
+
+    def bit7C(self):
+        """Sets flag Z if bit 7 of C is reset."""
+        self._bitBR(7, self.c)
+
+    def bit7D(self):
+        """Sets flag Z if bit 7 of D is reset."""
+        self._bitBR(7, self.d)
+
+    def bit7E(self):
+        """Sets flag Z if bit 7 of E is reset."""
+        self._bitBR(7, self.e)
+
+    def bit7H(self):
+        """Sets flag Z if bit 7 of H is reset."""
+        self._bitBR(7, self.h)
+
+    def bit7L(self):
+        """Sets flag Z if bit 7 of L is reset."""
+        self._bitBR(7, self.l)
+
+    def bit7MemHL(self):
+        """Sets flag Z if bit 7 of value at address in HL is reset."""
+        self._bitBn(7, self._getMemHL)
+
+    def bit7A(self):
+        """Sets flag Z if bit 7 of A is reset."""
+        self._bitBR(7, self.a)
 
     def _bitBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val)
