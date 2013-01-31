@@ -409,6 +409,134 @@ class Z80:
                          (self.bit7L, 0),
                          (self.bit7MemHL, 0),
                          (self.bit7A, 0),
+                         (self.res0B, 0),
+                         (self.res0C, 0),
+                         (self.res0D, 0),
+                         (self.res0E, 0),
+                         (self.res0H, 0),
+                         (self.res0L, 0),
+                         (self.res0MemHL, 0),
+                         (self.res0A, 0),
+                         (self.res1B, 0),
+                         (self.res1C, 0),
+                         (self.res1D, 0),
+                         (self.res1E, 0),
+                         (self.res1H, 0),
+                         (self.res1L, 0),
+                         (self.res1MemHL, 0),
+                         (self.res1A, 0),
+                         (self.res2B, 0),
+                         (self.res2C, 0),
+                         (self.res2D, 0),
+                         (self.res2E, 0),
+                         (self.res2H, 0),
+                         (self.res2L, 0),
+                         (self.res2MemHL, 0),
+                         (self.res2A, 0),
+                         (self.res3B, 0),
+                         (self.res3C, 0),
+                         (self.res3D, 0),
+                         (self.res3E, 0),
+                         (self.res3H, 0),
+                         (self.res3L, 0),
+                         (self.res3MemHL, 0),
+                         (self.res3A, 0),
+                         (self.res4B, 0),
+                         (self.res4C, 0),
+                         (self.res4D, 0),
+                         (self.res4E, 0),
+                         (self.res4H, 0),
+                         (self.res4L, 0),
+                         (self.res4MemHL, 0),
+                         (self.res4A, 0),
+                         (self.res5B, 0),
+                         (self.res5C, 0),
+                         (self.res5D, 0),
+                         (self.res5E, 0),
+                         (self.res5H, 0),
+                         (self.res5L, 0),
+                         (self.res5MemHL, 0),
+                         (self.res5A, 0),
+                         (self.res6B, 0),
+                         (self.res6C, 0),
+                         (self.res6D, 0),
+                         (self.res6E, 0),
+                         (self.res6H, 0),
+                         (self.res6L, 0),
+                         (self.res6MemHL, 0),
+                         (self.res6A, 0),
+                         (self.res7B, 0),
+                         (self.res7C, 0),
+                         (self.res7D, 0),
+                         (self.res7E, 0),
+                         (self.res7H, 0),
+                         (self.res7L, 0),
+                         (self.res7MemHL, 0),
+                         (self.res7A, 0),
+                         (self.set0B, 0),
+                         (self.set0C, 0),
+                         (self.set0D, 0),
+                         (self.set0E, 0),
+                         (self.set0H, 0),
+                         (self.set0L, 0),
+                         (self.set0MemHL, 0),
+                         (self.set0A, 0),
+                         (self.set1B, 0),
+                         (self.set1C, 0),
+                         (self.set1D, 0),
+                         (self.set1E, 0),
+                         (self.set1H, 0),
+                         (self.set1L, 0),
+                         (self.set1MemHL, 0),
+                         (self.set1A, 0),
+                         (self.set2B, 0),
+                         (self.set2C, 0),
+                         (self.set2D, 0),
+                         (self.set2E, 0),
+                         (self.set2H, 0),
+                         (self.set2L, 0),
+                         (self.set2MemHL, 0),
+                         (self.set2A, 0),
+                         (self.set3B, 0),
+                         (self.set3C, 0),
+                         (self.set3D, 0),
+                         (self.set3E, 0),
+                         (self.set3H, 0),
+                         (self.set3L, 0),
+                         (self.set3MemHL, 0),
+                         (self.set3A, 0),
+                         (self.set4B, 0),
+                         (self.set4C, 0),
+                         (self.set4D, 0),
+                         (self.set4E, 0),
+                         (self.set4H, 0),
+                         (self.set4L, 0),
+                         (self.set4MemHL, 0),
+                         (self.set4A, 0),
+                         (self.set5B, 0),
+                         (self.set5C, 0),
+                         (self.set5D, 0),
+                         (self.set5E, 0),
+                         (self.set5H, 0),
+                         (self.set5L, 0),
+                         (self.set5MemHL, 0),
+                         (self.set5A, 0),
+                         (self.set6B, 0),
+                         (self.set6C, 0),
+                         (self.set6D, 0),
+                         (self.set6E, 0),
+                         (self.set6H, 0),
+                         (self.set6L, 0),
+                         (self.set6MemHL, 0),
+                         (self.set6A, 0),
+                         (self.set7B, 0),
+                         (self.set7C, 0),
+                         (self.set7D, 0),
+                         (self.set7E, 0),
+                         (self.set7H, 0),
+                         (self.set7L, 0),
+                         (self.set7MemHL, 0),
+                         (self.set7A, 0),
                         ]
 
     def nop(self):
@@ -1719,7 +1847,6 @@ class Z80:
         """Sets flag Z if bit 1 of A is reset."""
         self._bitBR(1, self.a)
 
-
     def bit2B(self):
         """Sets flag Z if bit 2 of B is reset."""
         self._bitBR(2, self.b)
@@ -1751,7 +1878,6 @@ class Z80:
     def bit2A(self):
         """Sets flag Z if bit 2 of A is reset."""
         self._bitBR(2, self.a)
-
 
     def bit3B(self):
         """Sets flag Z if bit 3 of B is reset."""
@@ -1818,7 +1944,6 @@ class Z80:
         """Sets flag Z if bit 4 of A is reset."""
         self._bitBR(4, self.a)
 
-
     def bit5B(self):
         """Sets flag Z if bit 5 of B is reset."""
         self._bitBR(5, self.b)
@@ -1884,7 +2009,6 @@ class Z80:
         """Sets flag Z if bit 6 of A is reset."""
         self._bitBR(6, self.a)
 
-
     def bit7B(self):
         """Sets flag Z if bit 7 of B is reset."""
         self._bitBR(7, self.b)
@@ -1916,6 +2040,532 @@ class Z80:
     def bit7A(self):
         """Sets flag Z if bit 7 of A is reset."""
         self._bitBR(7, self.a)
+
+    def res0B(self):
+        """Reset bit 0 of B."""
+        self._resBR(0, self.b)
+
+    def res0C(self):
+        """Reset bit 0 of C."""
+        self._resBR(0, self.c)
+
+    def res0D(self):
+        """Reset bit 0 of D."""
+        self._resBR(0, self.d)
+
+    def res0E(self):
+        """Reset bit 0 of E."""
+        self._resBR(0, self.e)
+
+    def res0H(self):
+        """Reset bit 0 of H."""
+        self._resBR(0, self.h)
+
+    def res0L(self):
+        """Reset bit 0 of L."""
+        self._resBR(0, self.l)
+
+    def res0MemHL(self):
+        """Reset bit 0 of value at address in HL."""
+        self._resBn(0, self._getMemHL)
+
+    def res0A(self):
+        """Reset bit 0 of A."""
+        self._resBR(0, self.a)
+
+    def res1B(self):
+        """Reset bit 1 of B."""
+        self._resBR(1, self.b)
+
+    def res1C(self):
+        """Reset bit 1 of C."""
+        self._resBR(1, self.c)
+
+    def res1D(self):
+        """Reset bit 1 of D."""
+        self._resBR(1, self.d)
+
+    def res1E(self):
+        """Reset bit 1 of E."""
+        self._resBR(1, self.e)
+
+    def res1H(self):
+        """Reset bit 1 of H."""
+        self._resBR(1, self.h)
+
+    def res1L(self):
+        """Reset bit 1 of L."""
+        self._resBR(1, self.l)
+
+    def res1MemHL(self):
+        """Reset bit 1 of value at address in HL."""
+        self._resBn(1, self._getMemHL)
+
+    def res1A(self):
+        """Reset bit 1 of A."""
+        self._resBR(1, self.a)
+
+    def res2B(self):
+        """Reset bit 2 of B."""
+        self._resBR(2, self.b)
+
+    def res2C(self):
+        """Reset bit 2 of C."""
+        self._resBR(2, self.c)
+
+    def res2D(self):
+        """Reset bit 2 of D."""
+        self._resBR(2, self.d)
+
+    def res2E(self):
+        """Reset bit 2 of E."""
+        self._resBR(2, self.e)
+
+    def res2H(self):
+        """Reset bit 2 of H."""
+        self._resBR(2, self.h)
+
+    def res2L(self):
+        """Reset bit 2 of L."""
+        self._resBR(2, self.l)
+
+    def res2MemHL(self):
+        """Reset bit 2 of value at address in HL."""
+        self._resBn(2, self._getMemHL)
+
+    def res2A(self):
+        """Reset bit 2 of A."""
+        self._resBR(2, self.a)
+
+    def res3B(self):
+        """Reset bit 3 of B."""
+        self._resBR(3, self.b)
+
+    def res3C(self):
+        """Reset bit 3 of C."""
+        self._resBR(3, self.c)
+
+    def res3D(self):
+        """Reset bit 3 of D."""
+        self._resBR(3, self.d)
+
+    def res3E(self):
+        """Reset bit 3 of E."""
+        self._resBR(3, self.e)
+
+    def res3H(self):
+        """Reset bit 3 of H."""
+        self._resBR(3, self.h)
+
+    def res3L(self):
+        """Reset bit 3 of L."""
+        self._resBR(3, self.l)
+
+    def res3MemHL(self):
+        """Reset bit 3 of value at address in HL."""
+        self._resBn(3, self._getMemHL)
+
+    def res3A(self):
+        """Reset bit 3 of A."""
+        self._resBR(3, self.a)
+
+    def res4B(self):
+        """Reset bit 4 of B."""
+        self._resBR(4, self.b)
+
+    def res4C(self):
+        """Reset bit 4 of C."""
+        self._resBR(4, self.c)
+
+    def res4D(self):
+        """Reset bit 4 of D."""
+        self._resBR(4, self.d)
+
+    def res4E(self):
+        """Reset bit 4 of E."""
+        self._resBR(4, self.e)
+
+    def res4H(self):
+        """Reset bit 4 of H."""
+        self._resBR(4, self.h)
+
+    def res4L(self):
+        """Reset bit 4 of L."""
+        self._resBR(4, self.l)
+
+    def res4MemHL(self):
+        """Reset bit 4 of value at address in HL."""
+        self._resBn(4, self._getMemHL)
+
+    def res4A(self):
+        """Reset bit 4 of A."""
+        self._resBR(4, self.a)
+
+    def res5B(self):
+        """Reset bit 5 of B."""
+        self._resBR(5, self.b)
+
+    def res5C(self):
+        """Reset bit 5 of C."""
+        self._resBR(5, self.c)
+
+    def res5D(self):
+        """Reset bit 5 of D."""
+        self._resBR(5, self.d)
+
+    def res5E(self):
+        """Reset bit 5 of E."""
+        self._resBR(5, self.e)
+
+    def res5H(self):
+        """Reset bit 5 of H."""
+        self._resBR(5, self.h)
+
+    def res5L(self):
+        """Reset bit 5 of L."""
+        self._resBR(5, self.l)
+
+    def res5MemHL(self):
+        """Reset bit 5 of value at address in HL."""
+        self._resBn(5, self._getMemHL)
+
+    def res5A(self):
+        """Reset bit 5 of A."""
+        self._resBR(5, self.a)
+
+    def res6B(self):
+        """Reset bit 6 of B."""
+        self._resBR(6, self.b)
+
+    def res6C(self):
+        """Reset bit 6 of C."""
+        self._resBR(6, self.c)
+
+    def res6D(self):
+        """Reset bit 6 of D."""
+        self._resBR(6, self.d)
+
+    def res6E(self):
+        """Reset bit 6 of E."""
+        self._resBR(6, self.e)
+
+    def res6H(self):
+        """Reset bit 6 of H."""
+        self._resBR(6, self.h)
+
+    def res6L(self):
+        """Reset bit 6 of L."""
+        self._resBR(6, self.l)
+
+    def res6MemHL(self):
+        """Reset bit 6 of value at address in HL."""
+        self._resBn(6, self._getMemHL)
+
+    def res6A(self):
+        """Reset bit 6 of A."""
+        self._resBR(6, self.a)
+
+    def res7B(self):
+        """Reset bit 7 of B."""
+        self._resBR(7, self.b)
+
+    def res7C(self):
+        """Reset bit 7 of C."""
+        self._resBR(7, self.c)
+
+    def res7D(self):
+        """Reset bit 7 of D."""
+        self._resBR(7, self.d)
+
+    def res7E(self):
+        """Reset bit 7 of E."""
+        self._resBR(7, self.e)
+
+    def res7H(self):
+        """Reset bit 7 of H."""
+        self._resBR(7, self.h)
+
+    def res7L(self):
+        """Reset bit 7 of L."""
+        self._resBR(7, self.l)
+
+    def res7MemHL(self):
+        """Reset bit 7 of value at address in HL."""
+        self._resBn(7, self._getMemHL)
+
+    def res7A(self):
+        """Reset bit 7 of A."""
+        self._resBR(7, self.a)
+
+    def set0B(self):
+        """Set bit 0 of B."""
+        self._setBR(0, self.b)
+
+    def set0C(self):
+        """Set bit 0 of C."""
+        self._setBR(0, self.c)
+
+    def set0D(self):
+        """Set bit 0 of D."""
+        self._setBR(0, self.d)
+
+    def set0E(self):
+        """Set bit 0 of E."""
+        self._setBR(0, self.e)
+
+    def set0H(self):
+        """Set bit 0 of H."""
+        self._setBR(0, self.h)
+
+    def set0L(self):
+        """Set bit 0 of L."""
+        self._setBR(0, self.l)
+
+    def set0MemHL(self):
+        """Set bit 0 of value at address in HL."""
+        self._setBn(0, self._getMemHL)
+
+    def set0A(self):
+        """Set bit 0 of A."""
+        self._setBR(0, self.a)
+
+    def set1B(self):
+        """Set bit 1 of B."""
+        self._setBR(1, self.b)
+
+    def set1C(self):
+        """Set bit 1 of C."""
+        self._setBR(1, self.c)
+
+    def set1D(self):
+        """Set bit 1 of D."""
+        self._setBR(1, self.d)
+
+    def set1E(self):
+        """Set bit 1 of E."""
+        self._setBR(1, self.e)
+
+    def set1H(self):
+        """Set bit 1 of H."""
+        self._setBR(1, self.h)
+
+    def set1L(self):
+        """Set bit 1 of L."""
+        self._setBR(1, self.l)
+
+    def set1MemHL(self):
+        """Set bit 1 of value at address in HL."""
+        self._setBn(1, self._getMemHL)
+
+    def set1A(self):
+        """Set bit 1 of A."""
+        self._setBR(1, self.a)
+
+    def set2B(self):
+        """Set bit 2 of B."""
+        self._setBR(2, self.b)
+
+    def set2C(self):
+        """Set bit 2 of C."""
+        self._setBR(2, self.c)
+
+    def set2D(self):
+        """Set bit 2 of D."""
+        self._setBR(2, self.d)
+
+    def set2E(self):
+        """Set bit 2 of E."""
+        self._setBR(2, self.e)
+
+    def set2H(self):
+        """Set bit 2 of H."""
+        self._setBR(2, self.h)
+
+    def set2L(self):
+        """Set bit 2 of L."""
+        self._setBR(2, self.l)
+
+    def set2MemHL(self):
+        """Set bit 2 of value at address in HL."""
+        self._setBn(2, self._getMemHL)
+
+    def set2A(self):
+        """Set bit 2 of A."""
+        self._setBR(2, self.a)
+
+    def set3B(self):
+        """Set bit 3 of B."""
+        self._setBR(3, self.b)
+
+    def set3C(self):
+        """Set bit 3 of C."""
+        self._setBR(3, self.c)
+
+    def set3D(self):
+        """Set bit 3 of D."""
+        self._setBR(3, self.d)
+
+    def set3E(self):
+        """Set bit 3 of E."""
+        self._setBR(3, self.e)
+
+    def set3H(self):
+        """Set bit 3 of H."""
+        self._setBR(3, self.h)
+
+    def set3L(self):
+        """Set bit 3 of L."""
+        self._setBR(3, self.l)
+
+    def set3MemHL(self):
+        """Set bit 3 of value at address in HL."""
+        self._setBn(3, self._getMemHL)
+
+    def set3A(self):
+        """Set bit 3 of A."""
+        self._setBR(3, self.a)
+
+    def set4B(self):
+        """Set bit 4 of B."""
+        self._setBR(4, self.b)
+
+    def set4C(self):
+        """Set bit 4 of C."""
+        self._setBR(4, self.c)
+
+    def set4D(self):
+        """Set bit 4 of D."""
+        self._setBR(4, self.d)
+
+    def set4E(self):
+        """Set bit 4 of E."""
+        self._setBR(4, self.e)
+
+    def set4H(self):
+        """Set bit 4 of H."""
+        self._setBR(4, self.h)
+
+    def set4L(self):
+        """Set bit 4 of L."""
+        self._setBR(4, self.l)
+
+    def set4MemHL(self):
+        """Set bit 4 of value at address in HL."""
+        self._setBn(4, self._getMemHL)
+
+    def set4A(self):
+        """Set bit 4 of A."""
+        self._setBR(4, self.a)
+
+    def set5B(self):
+        """Set bit 5 of B."""
+        self._setBR(5, self.b)
+
+    def set5C(self):
+        """Set bit 5 of C."""
+        self._setBR(5, self.c)
+
+    def set5D(self):
+        """Set bit 5 of D."""
+        self._setBR(5, self.d)
+
+    def set5E(self):
+        """Set bit 5 of E."""
+        self._setBR(5, self.e)
+
+    def set5H(self):
+        """Set bit 5 of H."""
+        self._setBR(5, self.h)
+
+    def set5L(self):
+        """Set bit 5 of L."""
+        self._setBR(5, self.l)
+
+    def set5MemHL(self):
+        """Set bit 5 of value at address in HL."""
+        self._setBn(5, self._getMemHL)
+
+    def set5A(self):
+        """Set bit 5 of A."""
+        self._setBR(5, self.a)
+
+    def set6B(self):
+        """Set bit 6 of B."""
+        self._setBR(6, self.b)
+
+    def set6C(self):
+        """Set bit 6 of C."""
+        self._setBR(6, self.c)
+
+    def set6D(self):
+        """Set bit 6 of D."""
+        self._setBR(6, self.d)
+
+    def set6E(self):
+        """Set bit 6 of E."""
+        self._setBR(6, self.e)
+
+    def set6H(self):
+        """Set bit 6 of H."""
+        self._setBR(6, self.h)
+
+    def set6L(self):
+        """Set bit 6 of L."""
+        self._setBR(6, self.l)
+
+    def set6MemHL(self):
+        """Set bit 6 of value at address in HL."""
+        self._setBn(6, self._getMemHL)
+
+    def set6A(self):
+        """Set bit 6 of A."""
+        self._setBR(6, self.a)
+
+    def set7B(self):
+        """Set bit 7 of B."""
+        self._setBR(7, self.b)
+
+    def set7C(self):
+        """Set bit 7 of C."""
+        self._setBR(7, self.c)
+
+    def set7D(self):
+        """Set bit 7 of D."""
+        self._setBR(7, self.d)
+
+    def set7E(self):
+        """Set bit 7 of E."""
+        self._setBR(7, self.e)
+
+    def set7H(self):
+        """Set bit 7 of H."""
+        self._setBR(7, self.h)
+
+    def set7L(self):
+        """Set bit 7 of L."""
+        self._setBR(7, self.l)
+
+    def set7MemHL(self):
+        """Set bit 7 of value at address in HL."""
+        self._setBn(7, self._getMemHL)
+
+    def set7A(self):
+        """Set bit 7 of A."""
+        self._setBR(7, self.a)
+
+    def _resBR(self, bitNum, reg):
+        self._bitBn(bitNum, reg.val, reg.val())
+
+    def _resBn(self, bitNum, getf, name="(HL)"):
+        raise NotImplementedError("'RES %d, %s' has not been implemented" %
+                (bitNum, name))
+
+    def _setBR(self, bitNum, reg):
+        self._bitBn(bitNum, reg.val, reg.val())
+
+    def _setBn(self, bitNum, getf, name="(HL)"):
+        raise NotImplementedError("'SET %d, %s' has not been implemented" %
+                (bitNum, name))
 
     def _bitBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val)
