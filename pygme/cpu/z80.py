@@ -300,6 +300,7 @@ class Z80:
                       (self._notInstr(0xdb), 0),
                       (self.callCnn, 2),
                       (self._notInstr(0xdd), 0),
+                      (self.sbcAn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
