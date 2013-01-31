@@ -287,6 +287,7 @@ class Z80:
                       (self.rst8, 0),
                       (self.retNC, 0),
                       (self.popDE, 0),
+                      (self.jpNCnn, 2),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2580,6 +2581,10 @@ class Z80:
     def popDE(self):
         """Pops the top two bytes of the stack into DE."""
         self._popRR(self.d, self.e)
+
+    def jpNCnn(self, lsb, msb):
+        """Loads little-endian word into PC if C is not set."""
+        self._jpcnn(not self.f.c.val(), lsb, msb)
 
     def _rstn(self, n):
         self._push16(self.pc.val())

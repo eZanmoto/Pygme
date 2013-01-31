@@ -2552,6 +2552,14 @@ class TestZ80(unittest.TestCase):
     def test_popDE(self):
         self._test_popRR(0xd1, self.z80.popDE, self.z80.d, self.z80.e)
 
+    def test_jpNCnn(self):
+        opc = 0xd2
+        self._validOpc(opc, self.z80.jpNCnn, 2)
+        for i in range(0, self.NUM_TESTS):
+            c = i % 2 == 0
+            self.z80.f.c.setTo(c)
+            self._test_jpcnn(opc, not c, i * 2, i * 4)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
