@@ -2665,6 +2665,23 @@ class TestZ80(unittest.TestCase):
     def test_pushHL(self):
         self._test_pushRR(0xe5, self.z80.pushHL, self.z80.h, self.z80.l)
 
+    def test_andn(self):
+        opc = 0xe6
+        self._validOpc(opc, self.z80.andn, 1)
+        self.z80.a.ld(0b0011)
+        self.z80.f.z.set()
+        self.z80.f.n.set()
+        self.z80.f.h.reset()
+        self.z80.f.c.set()
+        self._expectFlags(opc, 2, 8, False, False, True, False, 0x0101)
+        self._regEq(self.z80.a, 0b0001)
+        self.z80.f.z.set()
+        self.z80.f.n.set()
+        self.z80.f.h.reset()
+        self.z80.f.c.set()
+        self._expectFlags(opc, 2, 8, True, False, True, False, 0)
+        self._regEq(self.z80.a, 0)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

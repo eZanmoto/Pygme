@@ -308,6 +308,7 @@ class Z80:
                       (self._notInstr(0xe3), 0),
                       (self._notInstr(0xe4), 0),
                       (self.pushHL, 0),
+                      (self.andn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2670,6 +2671,10 @@ class Z80:
     def pushHL(self):
         """Pushes the contents of HL onto the top of the stack."""
         self._pushRR(self.h, self.l)
+
+    def andn(self, n):
+        """Bitwise ANDs A and a byte and stores the result in A."""
+        self._bitwisen(self.AND, n)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
