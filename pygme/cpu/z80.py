@@ -2605,10 +2605,6 @@ class Z80:
         """Pushes the contents of DE onto the top of the stack."""
         self._pushRR(self.d, self.e)
 
-    def subAB(self):
-        """Subtracts B from A and stores the result in A."""
-        self._subAR(self.b)
-
     def subAn(self, n):
         """Subtracts n from A and stores result in A."""
         self._subAn(n)
