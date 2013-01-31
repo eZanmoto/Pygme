@@ -2545,6 +2545,7 @@ class TestZ80(unittest.TestCase):
         opcs = [0xcb,
                 0xd3,
                 0xdb,
+                0xdd,
                ]
         for opc in opcs:
             with self.assertRaises(RuntimeError):
@@ -2619,6 +2620,18 @@ class TestZ80(unittest.TestCase):
             self.z80.f.c.setTo(c)
             self.z80.pc.ld(i * 0x5a)
             self._test_callcnn(opc, c, i * 2, i * 4)
+
+#    def test_sbcAn(self):
+#        opc = 0xde
+#        self._validOpc(opc, self.z80.sbcAn, 0)
+#        self.z80.a.ld(0x9c)
+#        self.z80.f.n.reset()
+#        self._expectFlags(opc, 1, 4, False, True, 0xc < 0xf, True, 0xff)
+#        self._regEq(self.z80.a, 0x9d)
+#        self._expectFlags(opc, 1, 4, False, True, 0xd < 0x1, False, 0x01)
+#        self._regEq(self.z80.a, 0x9b)
+#        self._expectFlags(opc, 1, 4, True, True, 0xb < 0xb, 0x9b < 0x9b, 0x9b)
+#        self._regEq(self.z80.a, 0x00)
 
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)

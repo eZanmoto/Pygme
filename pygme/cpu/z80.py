@@ -299,6 +299,7 @@ class Z80:
                       (self.jpCnn, 2),
                       (self._notInstr(0xdb), 0),
                       (self.callCnn, 2),
+                      (self._notInstr(0xdd), 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2632,6 +2633,10 @@ class Z80:
     def callCnn(self, lsb, msb):
         """Pushes PC and loads little-endian word into PC if C is set."""
         self._callcnn(self.f.c.val(), lsb, msb)
+
+    def sbcAn(self, n):
+        """Subtracts a byte + Carry from A and stores the result in A."""
+        self._sbcAn(n)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
