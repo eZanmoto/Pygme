@@ -1402,12 +1402,6 @@ class Z80:
         """Pushes the PC onto the top of the stack and jumps to 0x0000."""
         self._rstn(0x0000)
 
-    def _rstn(self, n):
-        self._push16(self.pc.val())
-        self.jpnn(n, 0)
-        self.m += 5
-        self.t += 20
-
     def retZ(self):
         """Pops the top two bytes of the stack into the PC if Z is set."""
         if self.f.z.val():
@@ -2573,6 +2567,12 @@ class Z80:
     def rst8(self):
         """Pushes the PC onto the top of the stack and jumps to 0x0008."""
         self._rstn(0x0008)
+
+    def _rstn(self, n):
+        self._push16(self.pc.val())
+        self.jpnn(n, 0)
+        self.m += 5
+        self.t += 20
 
     def _resBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val, reg.val())

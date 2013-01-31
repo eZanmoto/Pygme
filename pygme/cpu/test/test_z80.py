@@ -2551,6 +2551,16 @@ class TestZ80(unittest.TestCase):
     def test_rst8(self):
         self._test_rstn(0xcf, self.z80.rst8, 8)
 
+    def test_retNC(self):
+        opc = 0xc0
+        self._validOpc(opc, self.z80.retNC, 0)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            c = i % 2 == 0
+            self.z80.f.c.setTo(c)
+            self.z80.pc.ld(i * 0x5a)
+            self._test_retcnn(opc, not c)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
