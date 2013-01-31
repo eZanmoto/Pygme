@@ -345,6 +345,14 @@ class Z80:
                          (self.srlL, 0),
                          (self.srlMemHL, 0),
                          (self.srlA, 0),
+                         (self.bit0B, 0),
+                         (self.bit0C, 0),
+                         (self.bit0D, 0),
+                         (self.bit0E, 0),
+                         (self.bit0H, 0),
+                         (self.bit0L, 0),
+                         (self.bit0MemHL, 0),
+                         (self.bit0A, 0),
                         ]
 
     def nop(self):
@@ -1590,6 +1598,50 @@ class Z80:
         """A is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         is reset."""
         self._srlR(self.a)
+
+    def bit0B(self):
+        """Sets flag Z if bit 0 of B is reset."""
+        self._bitBR(0, self.b)
+
+    def bit0C(self):
+        """Sets flag Z if bit 0 of C is reset."""
+        self._bitBR(0, self.c)
+
+    def bit0D(self):
+        """Sets flag Z if bit 0 of D is reset."""
+        self._bitBR(0, self.d)
+
+    def bit0E(self):
+        """Sets flag Z if bit 0 of E is reset."""
+        self._bitBR(0, self.e)
+
+    def bit0H(self):
+        """Sets flag Z if bit 0 of H is reset."""
+        self._bitBR(0, self.h)
+
+    def bit0L(self):
+        """Sets flag Z if bit 0 of L is reset."""
+        self._bitBR(0, self.l)
+
+    def bit0MemHL(self):
+        """Sets flag Z if bit 0 of value at address in HL is reset."""
+        self._bitBn(0, self._getMemHL)
+
+    def bit0A(self):
+        """Sets flag Z if bit 0 of A is reset."""
+        self._bitBR(0, self.a)
+
+    def _bitBR(self, bitNum, reg):
+        self._bitBn(bitNum, reg.val)
+        self.m -= 2
+        self.t -= 8
+
+    def _bitBn(self, bitNum, getf):
+        self.f.z.setTo((getf() >> bitNum) & 1 == 0)
+        self.f.n.reset()
+        self.f.h.set()
+        self.m += 4
+        self.t += 16
 
     def _srlR(self, reg):
         self._srln(reg.val, reg.ld)

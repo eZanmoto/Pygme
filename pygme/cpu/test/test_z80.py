@@ -1908,6 +1908,48 @@ class TestZ80(unittest.TestCase):
     def test_srlA(self):
         self._test_srlR(0x3f, self.z80.srlA, self.z80.a)
 
+    def test_bit0B(self):
+        self._test_bitBR(0x40, self.z80.bit0B, 0, self.z80.b)
+
+    def test_bit0C(self):
+        self._test_bitBR(0x41, self.z80.bit0C, 0, self.z80.c)
+
+    def test_bit0D(self):
+        self._test_bitBR(0x42, self.z80.bit0D, 0, self.z80.d)
+
+    def test_bit0E(self):
+        self._test_bitBR(0x43, self.z80.bit0E, 0, self.z80.e)
+
+    def test_bit0H(self):
+        self._test_bitBR(0x44, self.z80.bit0H, 0, self.z80.h)
+
+    def test_bit0L(self):
+        self._test_bitBR(0x45, self.z80.bit0L, 0, self.z80.l)
+
+    def test_bit0MemHL(self):
+        self._test_bitBn(0x46, self.z80.bit0MemHL, "(HL)", 4, 16, 0,
+                self._setMemHL)
+
+    def test_bit0A(self):
+        self._test_bitBR(0x47, self.z80.bit0A, 0, self.z80.a)
+
+    def _test_bitBR(self, opc, func, bitNum, reg):
+        self._test_bitBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
+
+    def _test_bitBn(self, opc, func, name, m, t, bitNum, setf):
+        self._validExtOpc(opc, func, 0)
+        for i in range(0, self.NUM_TESTS):
+            val = (i * 0xa5) & 0xff
+            setf(val)
+            c = self.z80.f.c.val()
+            self.z80.f.n.set()
+            self.z80.f.h.reset()
+            self._timeExtOp(opc, m, t)
+            self._flagEq(self.z80.f.z, (val >> bitNum) & 1 == 0)
+            self._flagEq(self.z80.f.n, False)
+            self._flagEq(self.z80.f.h, True)
+            self._flagEq(self.z80.f.c, c)
+
     def _test_srlR(self, opc, func, reg):
         self._test_srln(opc, func, reg.name(), 2, 8, reg.val, reg.ld)
 
