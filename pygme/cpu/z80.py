@@ -292,6 +292,7 @@ class Z80:
                       (self.callNCnn, 2),
                       (self.pushDE, 0),
                       (self.subAn, 1),
+                      (self.rst10, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2605,6 +2606,10 @@ class Z80:
     def subAn(self, n):
         """Subtracts n from A and stores result in A."""
         self._subAn(n)
+
+    def rst10(self):
+        """Pushes the PC onto the top of the stack and jumps to 0x0010."""
+        self._rstn(0x0010)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
