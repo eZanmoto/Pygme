@@ -2662,6 +2662,9 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 2, 8)
             self.assertEquals(self.mem.get8(0xff00 + n), v)
 
+    def test_pushHL(self):
+        self._test_pushRR(0xe5, self.z80.pushHL, self.z80.h, self.z80.l)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

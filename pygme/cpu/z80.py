@@ -307,6 +307,7 @@ class Z80:
                       (self.ldhMemCA, 0),
                       (self._notInstr(0xe3), 0),
                       (self._notInstr(0xe4), 0),
+                      (self.pushHL, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2665,6 +2666,10 @@ class Z80:
         self._mem.set8(0xff00 + self.c.val(), self.a.val())
         self.m += 2
         self.t += 8
+
+    def pushHL(self):
+        """Pushes the contents of HL onto the top of the stack."""
+        self._pushRR(self.h, self.l)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
