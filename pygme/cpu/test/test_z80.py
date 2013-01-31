@@ -2581,6 +2581,26 @@ class TestZ80(unittest.TestCase):
     def test_rst10(self):
         self._test_rstn(0xd7, self.z80.rst10, 0x10)
 
+    def test_retC(self):
+        opc = 0xd8
+        self._validOpc(opc, self.z80.retC, 0)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            c = i % 2 == 0
+            self.z80.f.c.setTo(c)
+            self.z80.pc.ld(i * 0x5a)
+            self._test_retcnn(opc, c)
+
+    def test_reti(self):
+        opc = 0xd9
+        self._validOpc(opc, self.z80.reti, 0)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.pc.ld(i * 0x5a)
+            self.z80.intsEnabled = i % 2 == 0
+            self._test_retcnn(opc, True, True)
+            self.assertTrue(self.z80.intsEnabled)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
@@ -2862,19 +2882,23 @@ class TestZ80(unittest.TestCase):
             self.assertEquals(self._pop16(), pc)
         self.assertEquals(self._pop8(), 0xa5)
 
-    def _test_retcnn(self, opc, cond):
+    def _test_retcnn(self, opc, cond, changesInts=False):
         pc = self.z80.pc.val()
         self._push8(0xa5)
         z = self.z80.f.z.val()
         self.z80.f.z.reset()
         self.z80.callNZnn(0xbe, 0xef)
         self.z80.f.z.setTo(z)
+        if not changesInts:
+            intsEn = self.z80.intsEnabled
         self._flagsFixed(opc, 2, 8)
         if cond:
             self._regEq(self.z80.pc, pc)
         else:
             self.assertEquals(self._pop16(), pc)
         self.assertEquals(self._pop8(), 0xa5)
+        if not changesInts:
+            self.assertEquals(intsEn, self.z80.intsEnabled)
 
     def _push16(self, val):
         self._push8(val >> 8)

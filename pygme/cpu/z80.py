@@ -77,6 +77,7 @@ class Z80:
         self.t = 0
         self.f = Flags()
         self._mem = mem
+        self.intsEnabled = False
         self.instr = [(self.nop, 0),
                       (self.ldBCnn, 2),
                       (self.ldMemBCA, 0),
@@ -293,6 +294,8 @@ class Z80:
                       (self.pushDE, 0),
                       (self.subAn, 1),
                       (self.rst10, 0),
+                      (self.retC, 0),
+                      (self.reti, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2610,6 +2613,18 @@ class Z80:
     def rst10(self):
         """Pushes the PC onto the top of the stack and jumps to 0x0010."""
         self._rstn(0x0010)
+
+    def retC(self):
+        """Pops the top two bytes of the stack into the PC if C is set."""
+        if self.f.c.val():
+            self.pc.ld(self._pop16())
+        self.m += 2
+        self.t += 8
+
+    def reti(self):
+        """Pops two bytes off the stack into the PC and enables interrupts."""
+        self.ret()
+        self.intsEnabled = True
 
     def _notInstr(self, opc):
         def raiseEx(opc):
