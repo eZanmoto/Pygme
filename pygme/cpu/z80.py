@@ -2946,6 +2946,7 @@ class Z80:
         self.t -= 4
 
     def _bitwisen(self, op, val):
+        self._assertByte(val)
         if op == self.AND:
             f = lambda a, b: a & b
         elif op == self.OR:
