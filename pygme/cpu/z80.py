@@ -301,6 +301,7 @@ class Z80:
                       (self.callCnn, 2),
                       (self._notInstr(0xdd), 0),
                       (self.sbcAn, 1),
+                      (self.rst18, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2638,6 +2639,10 @@ class Z80:
     def sbcAn(self, n):
         """Subtracts a byte + Carry from A and stores the result in A."""
         self._sbcAn(n)
+
+    def rst18(self):
+        """Pushes the PC onto the top of the stack and jumps to 0x0018."""
+        self._rstn(0x0018)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
