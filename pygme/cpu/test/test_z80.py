@@ -2601,6 +2601,14 @@ class TestZ80(unittest.TestCase):
             self._test_retcnn(opc, True, True)
             self.assertTrue(self.z80.intsEnabled)
 
+    def test_jpCnn(self):
+        opc = 0xda
+        self._validOpc(opc, self.z80.jpCnn, 2)
+        for i in range(0, self.NUM_TESTS):
+            c = i % 2 == 0
+            self.z80.f.c.setTo(c)
+            self._test_jpcnn(opc, c, i * 2, i * 4)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

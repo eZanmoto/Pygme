@@ -296,6 +296,7 @@ class Z80:
                       (self.rst10, 0),
                       (self.retC, 0),
                       (self.reti, 0),
+                      (self.jpCnn, 2),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2625,6 +2626,10 @@ class Z80:
         """Pops two bytes off the stack into the PC and enables interrupts."""
         self.ret()
         self.intsEnabled = True
+
+    def jpCnn(self, lsb, msb):
+        """Loads little-endian word into PC if C is set."""
+        self._jpcnn(self.f.c.val(), lsb, msb)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
