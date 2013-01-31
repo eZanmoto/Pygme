@@ -2533,6 +2533,21 @@ class TestZ80(unittest.TestCase):
             self.z80.pc.ld(i * 0x5a)
             self._test_callcnn(opc, True, i * 2, i * 4)
 
+    def test_adcAn(self):
+        opc = 0xce
+        self._validOpc(opc, self.z80.adcAn, 1)
+        self.z80.a.ld(0x73)
+        self.z80.f.n.set()
+        self._expectFlags(opc, 2, 8, False, False, 0x3 + 0xf > 0xf, True, 0xff)
+        self._regEq(self.z80.a, 0x72)
+        self._expectFlags(opc, 2, 8,
+                          False, False, 0x2 + 0x1 + 0x1 > 0xf, False, 0x01)
+        self._regEq(self.z80.a, 0x74)
+        self._expectFlags(opc, 2, 8,
+                          True, False, 0x4 + 0xc > 0xf, 0x74 + 0x8c > 0xff,
+                          0x8c)
+        self._regEq(self.z80.a, 0x00)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

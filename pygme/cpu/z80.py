@@ -283,6 +283,7 @@ class Z80:
                       (self.extErr, 0),
                       (self.callZnn, 2),
                       (self.callnn, 2),
+                      (self.adcAn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2563,6 +2564,10 @@ class Z80:
     def callnn(self, lsb, msb):
         """Pushes PC and loads little-endian word into PC."""
         self._callcnn(True, lsb, msb)
+
+    def adcAn(self, n):
+        """Adds A, Carry and a byte and stores the result in A."""
+        self._adcAn(n)
 
     def _resBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val, reg.val())
