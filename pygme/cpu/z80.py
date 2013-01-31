@@ -304,6 +304,7 @@ class Z80:
                       (self.rst18, 0),
                       (self.ldhMemnA, 1),
                       (self.popHL, 0),
+                      (self.ldhMemCA, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2656,6 +2657,12 @@ class Z80:
     def popHL(self):
         """Pops the top two bytes of the stack into HL."""
         self._popRR(self.h, self.l)
+
+    def ldhMemCA(self):
+        """Loads A into the memory location 0xFF00 + C."""
+        self._mem.set8(0xff00 + self.c.val(), self.a.val())
+        self.m += 2
+        self.t += 8
 
     def _notInstr(self, opc):
         def raiseEx(opc):

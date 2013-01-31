@@ -2649,6 +2649,17 @@ class TestZ80(unittest.TestCase):
     def test_popHL(self):
         self._test_popRR(0xe1, self.z80.popHL, self.z80.h, self.z80.l)
 
+    def test_ldhMemCA(self):
+        opc = 0xe2
+        self._validOpc(opc, self.z80.ldhMemCA, 0)
+        for i in range(0, self.NUM_TESTS):
+            n = (i * 0xa5) & 0xff
+            v = (i * 0x5a) & 0xff
+            self.z80.a.ld(v)
+            self.z80.c.ld(n)
+            self._flagsFixed(opc, 2, 8)
+            self.assertEquals(self.mem.get8(0xff00 + n), v)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
