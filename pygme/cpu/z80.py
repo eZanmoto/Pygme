@@ -330,6 +330,8 @@ class Z80:
                       (self.ldSPHL, 0),
                       (self.ldAMemnn, 2),
                       (self.ei, 0),
+                      (self._notInstr(0xfc), 0),
+                      (self._notInstr(0xfd), 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
