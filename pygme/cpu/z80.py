@@ -329,6 +329,7 @@ class Z80:
                       (self.ldhlSPn, 1),
                       (self.ldSPHL, 0),
                       (self.ldAMemnn, 2),
+                      (self.ei, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2793,6 +2794,12 @@ class Z80:
         self.a.ld(self._mem.get8((msb << 8) + lsb))
         self.m += 4
         self.t += 16
+
+    def ei(self):
+        """Enables interrupts."""
+        self.intsEnabled = True
+        self.m += 1
+        self.t += 4
 
     def _notInstr(self, opc):
         def raiseEx(opc):

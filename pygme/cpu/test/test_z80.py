@@ -2855,6 +2855,13 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 4, 16, addr & 0xff, addr >> 8)
             self._regEq(self.z80.a, n)
 
+    def test_ei(self):
+        opc = 0xfb
+        self._validOpc(opc, self.z80.ei, 0)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.intsEnabled = i % 2 == 0
+            self._flagsFixed(opc, 1, 4)
+            self.assertTrue(self.z80.intsEnabled)
 
     def _sign(self, n):
         if n > 127:
