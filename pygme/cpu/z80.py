@@ -318,6 +318,7 @@ class Z80:
                       (self._notInstr(0xed), 0),
                       (self.xorn, 1),
                       (self.rst28, 0),
+                      (self.ldhAMemn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2715,6 +2716,13 @@ class Z80:
     def rst28(self):
         """Pushes the PC onto the top of the stack and jumps to 0x0028."""
         self._rstn(0x0028)
+
+    def ldhAMemn(self, n):
+        """Loads the value at the memory location 0xFF00 + n into A."""
+        self._assertByte(n)
+        self.a.ld(self._mem.get8(0xff00 + n))
+        self.m += 3
+        self.t += 12
 
     def _notInstr(self, opc):
         def raiseEx(opc):

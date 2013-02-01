@@ -2735,6 +2735,16 @@ class TestZ80(unittest.TestCase):
     def test_rst28(self):
         self._test_rstn(0xef, self.z80.rst28, 0x28)
 
+    def test_ldhAMemn(self):
+        opc = 0xf0
+        self._validOpc(opc, self.z80.ldhAMemn, 1)
+        for i in range(0, self.NUM_TESTS):
+            n = (i * 0xa5) & 0xff
+            v = (i * 0x5a) & 0xff
+            self.mem.set8(0xff00 + n, v)
+            self._flagsFixed(opc, 3, 12, n)
+            self._regEq(self.z80.a, v)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
