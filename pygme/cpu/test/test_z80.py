@@ -2844,6 +2844,18 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 2, 8)
             self._regEq(self.z80.sp, n)
 
+    def test_ldAMemnn(self):
+        opc = 0xfa
+        self._validOpc(opc, self.z80.ldAMemnn, 2)
+        for i in range(0, self.NUM_TESTS):
+            n = (0xa5 * i) & 0xff
+            addr = (0xbeef * i) & 0xffff
+            self.mem.set8(addr, n)
+            self.z80.a.ld(0)
+            self._flagsFixed(opc, 4, 16, addr & 0xff, addr >> 8)
+            self._regEq(self.z80.a, n)
+
+
     def _sign(self, n):
         if n > 127:
             n = (n & 127) - 128
