@@ -16,6 +16,20 @@ class TestZ80(unittest.TestCase):
         self.mem = array.Array(1 << 16)
         self.z80 = z80.Z80(self.mem)
 
+    def test_notInstrs(self):
+        opcs = [0xcb,
+                0xd3,
+                0xdb,
+                0xdd,
+                0xe3,
+                0xe4,
+               ]
+        for opc in opcs:
+            with self.assertRaises(RuntimeError):
+                func, argc = self.z80.instr[opc]
+                self.assertEquals(argc, 0)
+                func()
+
     def test_nop(self):
         opc = 0x00
         self._validOpc(opc, self.z80.nop, 0)
@@ -2540,20 +2554,6 @@ class TestZ80(unittest.TestCase):
             c = i % 2 == 0
             self.z80.f.c.setTo(c)
             self._test_jpcnn(opc, not c, i * 2, i * 4)
-
-    def test_notInstrs(self):
-        opcs = [0xcb,
-                0xd3,
-                0xdb,
-                0xdd,
-                0xe3,
-                0xe4,
-               ]
-        for opc in opcs:
-            with self.assertRaises(RuntimeError):
-                func, argc = self.z80.instr[opc]
-                self.assertEquals(argc, 0)
-                func()
 
     def test_callNCnn(self):
         opc = 0xd4
