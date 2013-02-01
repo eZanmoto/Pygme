@@ -2833,6 +2833,17 @@ class TestZ80(unittest.TestCase):
         self._expectFlags(opc, 3, 12, False, False, True, True, 0x01)
         self._regEq(self.z80.sp, 0x0000)
 
+    def test_ldSPHL(self):
+        opc = 0xf9
+        self._validOpc(opc, self.z80.ldSPHL, 0)
+        for i in range(0, self.NUM_TESTS):
+            n = (0xa5a5 * i) & 0xffff
+            self.z80.sp.ld(0)
+            self.z80.h.ld(n >> 8)
+            self.z80.l.ld(n & 0xff)
+            self._flagsFixed(opc, 2, 8)
+            self._regEq(self.z80.sp, n)
+
     def _sign(self, n):
         if n > 127:
             n = (n & 127) - 128

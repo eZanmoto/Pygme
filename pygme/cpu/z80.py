@@ -327,6 +327,7 @@ class Z80:
                       (self.orn, 1),
                       (self.rst30, 0),
                       (self.ldhlSPn, 1),
+                      (self.ldSPHL, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2781,6 +2782,11 @@ class Z80:
         self.sp.ld((sp + self._to2sComp(n)) & 0xffff)
         self.m += 3
         self.t += 12
+
+    def ldSPHL(self):
+        self.sp.ld(self._hl())
+        self.m += 2
+        self.t += 8
 
     def _notInstr(self, opc):
         def raiseEx(opc):
