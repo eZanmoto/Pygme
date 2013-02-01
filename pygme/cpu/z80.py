@@ -317,6 +317,7 @@ class Z80:
                       (self._notInstr(0xec), 0),
                       (self._notInstr(0xed), 0),
                       (self.xorn, 1),
+                      (self.rst28, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2710,6 +2711,10 @@ class Z80:
     def xorn(self, n):
         """Bitwise XORs A and a byte and stores the result in A."""
         self._bitwisen(self.XOR, n)
+
+    def rst28(self):
+        """Pushes the PC onto the top of the stack and jumps to 0x0028."""
+        self._rstn(0x0028)
 
     def _notInstr(self, opc):
         def raiseEx(opc):

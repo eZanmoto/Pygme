@@ -2732,6 +2732,9 @@ class TestZ80(unittest.TestCase):
         self._expectFlags(opc, 2, 8, True, False, False, False, 0b0110)
         self._regEq(self.z80.a, 0)
 
+    def test_rst28(self):
+        self._test_rstn(0xef, self.z80.rst28, 0x28)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
