@@ -324,6 +324,7 @@ class Z80:
                       (self.di, 0),
                       (self._notInstr(0xf4), 0),
                       (self.pushAF, 0),
+                      (self.orn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2755,6 +2756,10 @@ class Z80:
                    |((1 if self.f.c.val() else 0) << 4))
         self.m += 4
         self.t += 16
+
+    def orn(self, n):
+        """Bitwise ORs A and a byte and stores the result in A."""
+        self._bitwisen(self.OR, n)
 
     def _notInstr(self, opc):
         def raiseEx(opc):

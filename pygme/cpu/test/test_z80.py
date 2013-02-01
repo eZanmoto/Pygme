@@ -2789,6 +2789,24 @@ class TestZ80(unittest.TestCase):
             self.assertEquals(self._pop8(), f)
             self.assertEquals(self._pop8(), a)
 
+    def test_orn(self):
+        opc = 0xf6
+        self._validOpc(opc, self.z80.orn, 1)
+        self.z80.a.ld(0b0011)
+        self.z80.f.z.set()
+        self.z80.f.n.set()
+        self.z80.f.h.set()
+        self.z80.f.c.set()
+        self._expectFlags(opc, 2, 8, False, False, False, False, 0b0101)
+        self._regEq(self.z80.a, 0b0111)
+        self.z80.a.ld(0)
+        self.z80.f.z.reset()
+        self.z80.f.n.set()
+        self.z80.f.h.set()
+        self.z80.f.c.set()
+        self._expectFlags(opc, 2, 8, True, False, False, False, 0)
+        self._regEq(self.z80.a, 0)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
