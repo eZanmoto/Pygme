@@ -2685,6 +2685,15 @@ class TestZ80(unittest.TestCase):
     def test_rst20(self):
         self._test_rstn(0xe7, self.z80.rst20, 0x20)
 
+    def test_addSPn(self):
+        opc = 0xe8
+        self._validOpc(opc, self.z80.addSPn, 1)
+        self.z80.sp.ld(0xbeef)
+        self._flagsFixed(opc, 4, 16, 0x01)
+        self._regEq(self.z80.sp, 0xbef0)
+        self._flagsFixed(opc, 4, 16, 0xff)
+        self._regEq(self.z80.sp, 0xbeef)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

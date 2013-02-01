@@ -310,6 +310,7 @@ class Z80:
                       (self.pushHL, 0),
                       (self.andn, 1),
                       (self.rst20, 0),
+                      (self.addSPn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2681,6 +2682,13 @@ class Z80:
         """Pushes the PC onto the top of the stack and jumps to 0x0020."""
         self._rstn(0x0020)
 
+    def addSPn(self, n):
+        """Adds signed byte to SP and stores the result in SP."""
+        self._assertByte(n)
+        self.sp.ld(self.sp.val() + self._to2sComp(n))
+        self.m += 4
+        self.t += 16
+
     def _notInstr(self, opc):
         def raiseEx(opc):
             raise RuntimeError("0x%02x is not a valid instruction opcode" %
@@ -3002,12 +3010,16 @@ class Z80:
     def _jrcn(self, cond, n):
         self._assertByte(n)
         if cond:
-            pc = self.pc.val()
-            if n > 127:
-                n = (n & 127) - 128
-            self.pc.ld((pc + n) & 0xffff)
+            pc = self.pc.val() + self._to2sComp(n)
+            self.pc.ld(pc & 0xffff)
         self.m += 2
         self.t += 8
+
+    def _to2sComp(self, n):
+        self._assertByte(n)
+        if n > 127:
+            n = (n & 127) - 128
+        return n
 
     def _jpcnn(self, cond, loOrdByte, hiOrdByte):
         self._assertByte(loOrdByte)
