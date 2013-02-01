@@ -319,6 +319,7 @@ class Z80:
                       (self.xorn, 1),
                       (self.rst28, 0),
                       (self.ldhAMemn, 1),
+                      (self.popAF, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2724,6 +2725,17 @@ class Z80:
         self.m += 3
         self.t += 12
 
+    def popAF(self):
+        """Pops top byte of stack into flags register and next byte into A."""
+        f = self._pop8()
+        self.f.z.setTo((f >> 7) & 1 == 1)
+        self.f.n.setTo((f >> 6) & 1 == 1)
+        self.f.h.setTo((f >> 5) & 1 == 1)
+        self.f.c.setTo((f >> 4) & 1 == 1)
+        self.a.ld(self._pop8())
+        self.m += 3
+        self.t += 12
+
     def _notInstr(self, opc):
         def raiseEx(opc):
             raise RuntimeError("0x%02x is not a valid instruction opcode" %
@@ -3027,9 +3039,14 @@ class Z80:
         self.t += 12
 
     def _pop16(self):
+        lsb = self._pop8()
+        msb = self._pop8()
+        return (msb << 8) + lsb
+
+    def _pop8(self):
         addr = self.sp.val()
-        self.sp.ld(addr + 2)
-        return (self._mem.get8(addr + 1) << 8) + self._mem.get8(addr)
+        self.sp.ld(addr + 1)
+        return self._mem.get8(addr)
 
     def _pushRR(self, hiOrdReg, loOrdReg):
         self._push16((hiOrdReg.val() << 8) + loOrdReg.val())

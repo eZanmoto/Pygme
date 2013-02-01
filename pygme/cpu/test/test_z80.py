@@ -2745,6 +2745,22 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 3, 12, n)
             self._regEq(self.z80.a, v)
 
+    def test_popAF(self):
+        opc = 0xf1
+        self._validOpc(opc, self.z80.popAF, 0)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            a = (0xa5 * i) & 0xff
+            f = (0xef * i) & 0xff
+            self._push8(a)
+            self._push8(f)
+            self._timeOp(opc, 3, 12)
+            self._flagEq(self.z80.f.z, (f >> 7) & 1)
+            self._flagEq(self.z80.f.n, (f >> 6) & 1)
+            self._flagEq(self.z80.f.h, (f >> 5) & 1)
+            self._flagEq(self.z80.f.c, (f >> 4) & 1)
+            self._regEq(self.z80.a, a)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
