@@ -321,6 +321,7 @@ class Z80:
                       (self.ldhAMemn, 1),
                       (self.popAF, 0),
                       (self._notInstr(0xf2), 0),
+                      (self.di, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2736,6 +2737,12 @@ class Z80:
         self.a.ld(self._pop8())
         self.m += 3
         self.t += 12
+
+    def di(self):
+        """Disables interrupts."""
+        self.intsEnabled = False
+        self.m += 1
+        self.t += 4
 
     def _notInstr(self, opc):
         def raiseEx(opc):

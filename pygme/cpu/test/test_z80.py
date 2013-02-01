@@ -2762,6 +2762,14 @@ class TestZ80(unittest.TestCase):
             self._flagEq(self.z80.f.c, (f >> 4) & 1)
             self._regEq(self.z80.a, a)
 
+    def test_di(self):
+        opc = 0xf3
+        self._validOpc(opc, self.z80.di, 0)
+        for i in range(0, self.NUM_TESTS):
+            self.z80.intsEnabled = i % 2 == 0
+            self._flagsFixed(opc, 1, 4)
+            self.assertFalse(self.z80.intsEnabled)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
