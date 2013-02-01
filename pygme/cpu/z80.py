@@ -316,6 +316,7 @@ class Z80:
                       (self._notInstr(0xeb), 0),
                       (self._notInstr(0xec), 0),
                       (self._notInstr(0xed), 0),
+                      (self.xorn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2705,6 +2706,10 @@ class Z80:
         self._mem.set8((msb << 8) + lsb, self.a.val())
         self.m += 4
         self.t += 16
+
+    def xorn(self, n):
+        """Bitwise XORs A and a byte and stores the result in A."""
+        self._bitwisen(self.XOR, n)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
