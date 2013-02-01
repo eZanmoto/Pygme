@@ -2694,6 +2694,13 @@ class TestZ80(unittest.TestCase):
         self._flagsFixed(opc, 4, 16, 0xff)
         self._regEq(self.z80.sp, 0xbeef)
 
+    def test_jpMemHL(self):
+        opc = 0xe9
+        self._validOpc(opc, self.z80.jpMemHL, 0)
+        for i in range(0, self.NUM_TESTS):
+            self._flagsFixed(opc, 1, 4)
+            self._regEq(self.z80.pc, self._hl())
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

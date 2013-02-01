@@ -311,6 +311,7 @@ class Z80:
                       (self.andn, 1),
                       (self.rst20, 0),
                       (self.addSPn, 1),
+                      (self.jpMemHL, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2688,6 +2689,12 @@ class Z80:
         self.sp.ld(self.sp.val() + self._to2sComp(n))
         self.m += 4
         self.t += 16
+
+    def jpMemHL(self):
+        """Loads the value of HL into PC."""
+        self._jpcnn(True, self.l.val(), self.h.val())
+        self.m -= 2
+        self.t -= 8
 
     def _notInstr(self, opc):
         def raiseEx(opc):
