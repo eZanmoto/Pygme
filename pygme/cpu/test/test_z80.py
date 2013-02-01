@@ -2810,6 +2810,34 @@ class TestZ80(unittest.TestCase):
     def test_rst30(self):
         self._test_rstn(0xf7, self.z80.rst30, 0x30)
 
+    def test_ldhlSPn(self):
+        opc = 0xf8
+        self._validOpc(opc, self.z80.ldhlSPn, 1)
+        for i in range(0, self.NUM_TESTS):
+            n = (0xa5 * i) & 0xff
+            self.z80.sp.ld(0x8888)
+            self.z80.f.z.set()
+            self.z80.f.n.set()
+            if n > 127:
+                h = False
+                c = False
+            else:
+                h = (0x8 + (n & 0xf)) > 0xf
+                c = (0x88 + n) > 0xff
+            self._expectFlags(opc, 3, 12, False, False, h, c, n)
+            self._regEq(self.z80.sp, 0x8888 + self._sign(n))
+        self.z80.sp.ld(0x0000)
+        self._expectFlags(opc, 3, 12, False, False, False, False, 0xff)
+        self._regEq(self.z80.sp, 0xffff)
+        self.z80.sp.ld(0xffff)
+        self._expectFlags(opc, 3, 12, False, False, True, True, 0x01)
+        self._regEq(self.z80.sp, 0x0000)
+
+    def _sign(self, n):
+        if n > 127:
+            n = (n & 127) - 128
+        return n
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

@@ -326,6 +326,7 @@ class Z80:
                       (self.pushAF, 0),
                       (self.orn, 1),
                       (self.rst30, 0),
+                      (self.ldhlSPn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2765,6 +2766,21 @@ class Z80:
     def rst30(self):
         """Pushes the PC onto the top of the stack and jumps to 0x0030."""
         self._rstn(0x0030)
+
+    def ldhlSPn(self, n):
+        self._assertByte(n)
+        sp = self.sp.val()
+        self.f.z.reset()
+        self.f.n.reset()
+        if n > 127:
+            self.f.h.reset()
+            self.f.c.reset()
+        else:
+            self.f.h.setTo((sp & 0xf) + (n & 0xf) > 0xf)
+            self.f.c.setTo((sp & 0xff) + n > 0xff)
+        self.sp.ld((sp + self._to2sComp(n)) & 0xffff)
+        self.m += 3
+        self.t += 12
 
     def _notInstr(self, opc):
         def raiseEx(opc):
