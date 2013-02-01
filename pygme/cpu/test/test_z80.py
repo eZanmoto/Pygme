@@ -2876,6 +2876,9 @@ class TestZ80(unittest.TestCase):
                               a == v, True, (a & 0xf) < (v & 0xf), a < v, v)
             self._regEq(self.z80.a, a)
 
+    def test_rst38(self):
+        self._test_rstn(0xff, self.z80.rst38, 0x38)
+
     def _sign(self, n):
         if n > 127:
             n = (n & 127) - 128

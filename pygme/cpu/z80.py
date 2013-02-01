@@ -333,6 +333,7 @@ class Z80:
                       (self._notInstr(0xfc), 0),
                       (self._notInstr(0xfd), 0),
                       (self.cpn, 1),
+                      (self.rst38, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2807,6 +2808,10 @@ class Z80:
     def cpn(self, n):
         """Updates the flags with the result of subtracting n from A."""
         self._cpn(n)
+
+    def rst38(self):
+        """Pushes the PC onto the top of the stack and jumps to 0x0038."""
+        self._rstn(0x0038)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
