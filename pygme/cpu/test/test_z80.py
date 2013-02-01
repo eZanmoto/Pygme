@@ -2771,6 +2771,24 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 1, 4)
             self.assertFalse(self.z80.intsEnabled)
 
+    def test_pushAF(self):
+        opc = 0xf5
+        self._validOpc(opc, self.z80.pushAF, 0)
+        self.z80.sp.ld(0xfffe)
+        for i in range(0, self.NUM_TESTS):
+            a = (0xa5 * i) & 0xff
+            f = ((0x7 * i) & 0xf) << 4
+            self._push8(a)
+            self._push8(f)
+            self.z80.f.z.setTo((f >> 7) & 1 == 1)
+            self.z80.f.n.setTo((f >> 6) & 1 == 1)
+            self.z80.f.h.setTo((f >> 5) & 1 == 1)
+            self.z80.f.c.setTo((f >> 4) & 1 == 1)
+            self.z80.a.ld(a)
+            self._timeOp(opc, 4, 16)
+            self.assertEquals(self._pop8(), f)
+            self.assertEquals(self._pop8(), a)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 

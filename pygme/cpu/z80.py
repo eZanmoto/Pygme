@@ -323,6 +323,7 @@ class Z80:
                       (self._notInstr(0xf2), 0),
                       (self.di, 0),
                       (self._notInstr(0xf4), 0),
+                      (self.pushAF, 0),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2745,6 +2746,16 @@ class Z80:
         self.m += 1
         self.t += 4
 
+    def pushAF(self):
+        """Pushes A onto the stack and then pushes the flags register."""
+        self._push8(self.a.val())
+        self._push8(((1 if self.f.z.val() else 0) << 7)
+                   |((1 if self.f.n.val() else 0) << 6)
+                   |((1 if self.f.h.val() else 0) << 5)
+                   |((1 if self.f.c.val() else 0) << 4))
+        self.m += 4
+        self.t += 16
+
     def _notInstr(self, opc):
         def raiseEx(opc):
             raise RuntimeError("0x%02x is not a valid instruction opcode" %
@@ -3063,10 +3074,13 @@ class Z80:
         self.t += 16
 
     def _push16(self, val):
-        sp = self.sp.val()
-        self.sp.ld(sp - 2)
-        self._mem.set8(sp - 1, val >> 8)
-        self._mem.set8(sp - 2, val & 0xff)
+        self._push8(val >> 8)
+        self._push8(val & 0xff)
+
+    def _push8(self, val):
+        sp = self.sp.val() - 1
+        self._mem.set8(sp, val)
+        self.sp.ld(sp)
 
     def _jrcn(self, cond, n):
         self._assertByte(n)
