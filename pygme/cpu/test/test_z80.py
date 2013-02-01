@@ -2865,6 +2865,17 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 1, 4)
             self.assertTrue(self.z80.intsEnabled)
 
+    def test_cpn(self):
+        opc = 0xfe
+        self._validOpc(opc, self.z80.cpn, 1)
+        for regVal in [(0x9c, 0x2a), (0x72, 0xff), (0x73, 0x73)]:
+            a, v = regVal
+            self.z80.a.ld(a)
+            self.z80.f.n.reset()
+            self._expectFlags(opc, 2, 8,
+                              a == v, True, (a & 0xf) < (v & 0xf), a < v, v)
+            self._regEq(self.z80.a, a)
+
     def _sign(self, n):
         if n > 127:
             n = (n & 127) - 128

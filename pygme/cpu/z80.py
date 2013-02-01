@@ -332,6 +332,7 @@ class Z80:
                       (self.ei, 0),
                       (self._notInstr(0xfc), 0),
                       (self._notInstr(0xfd), 0),
+                      (self.cpn, 1),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2802,6 +2803,10 @@ class Z80:
         self.intsEnabled = True
         self.m += 1
         self.t += 4
+
+    def cpn(self, n):
+        """Updates the flags with the result of subtracting n from A."""
+        self._cpn(n)
 
     def _notInstr(self, opc):
         def raiseEx(opc):
