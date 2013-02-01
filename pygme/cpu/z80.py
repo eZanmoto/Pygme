@@ -312,6 +312,7 @@ class Z80:
                       (self.rst20, 0),
                       (self.addSPn, 1),
                       (self.jpMemHL, 0),
+                      (self.ldMemnnA, 2),
                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
@@ -2695,6 +2696,12 @@ class Z80:
         self._jpcnn(True, self.l.val(), self.h.val())
         self.m -= 2
         self.t -= 8
+
+    def ldMemnnA(self, lsb, msb):
+        """Loads A into the specified memory location."""
+        self._mem.set8((msb << 8) + lsb, self.a.val())
+        self.m += 4
+        self.t += 16
 
     def _notInstr(self, opc):
         def raiseEx(opc):

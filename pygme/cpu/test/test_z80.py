@@ -2701,6 +2701,17 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 1, 4)
             self._regEq(self.z80.pc, self._hl())
 
+    def test_ldMemnnA(self):
+        opc = 0xea
+        self._validOpc(opc, self.z80.ldMemnnA, 2)
+        for i in range(0, self.NUM_TESTS):
+            msb = (i * 0xbe) & 0xff
+            lsb = (i * 0xef) & 0xff
+            v = (i * 0xa5) & 0xff
+            self.z80.a.ld(v)
+            self._flagsFixed(opc, 4, 16, lsb, msb)
+            self.assertEquals(self.mem.get8((msb << 8) + lsb), v)
+
     def _test_resBR(self, opc, func, bitNum, reg):
         self._test_resBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
 
