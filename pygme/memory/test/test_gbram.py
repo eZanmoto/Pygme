@@ -13,8 +13,25 @@ class TestGBRAM(unittest.TestCase):
     def setUp(self):
         self._mem = gbram.GBRAM()
 
+    def test_get8_accessingCartridge_raisesException(self):
+        for addr in range(0x0000, 0x8000):
+            with self.assertRaises(IndexError):
+                self._mem.get8(addr)
+
+    def test_get8_accessingRAM_isSuccessful(self):
+        for addr in range(0x8000, 0x10000):
+            self._mem.get8(addr)
+
+    def test_get8_withNegativeAddress_raisesException(self):
+        with self.assertRaises(IndexError):
+            self._mem.get8(0x0000 - 1)
+
+    def test_get8_withOverflowAddress_raisesException(self):
+        with self.assertRaises(IndexError):
+            self._mem.get8(0xffff + 1)
+
     def tearDown(self):
-        self.mem = None
+        self._mem = None
 
 
 if __name__ == '__main__':
