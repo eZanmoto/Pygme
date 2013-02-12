@@ -22,3 +22,7 @@ class GBRAM:
     def _assertNotCartridge(self, addr):
         if self.ROM_START <= addr < self.RAM_START:
             raise IndexError("Can't access Cartridge data")
+
+    def set8(self, addr, val):
+        self._assertNotCartridge(addr)
+        self._ram.set8(addr - self.RAM_START, val)

@@ -30,6 +30,35 @@ class TestGBRAM(unittest.TestCase):
         with self.assertRaises(IndexError):
             self._mem.get8(0xffff + 1)
 
+    def test_set8_accessingCartridge_raisesException(self):
+        for addr in range(0x0000, 0x8000):
+            with self.assertRaises(IndexError):
+                self._mem.set8(addr, 0)
+
+    def test_set8_accessingRAM_isSuccessful(self):
+        for addr in range(0x8000, 0x10000):
+            self._mem.set8(addr, 0)
+
+    def test_set8_withNegativeAddress_raisesException(self):
+        with self.assertRaises(IndexError):
+            self._mem.set8(0x0000 - 1, 0)
+
+    def test_set8_withOverflowAddress_raisesException(self):
+        with self.assertRaises(IndexError):
+            self._mem.set8(0xffff + 1, 0)
+
+    def test_set8_withNegativeValue_raisesException(self):
+        with self.assertRaises(ValueError):
+            self._mem.set8(0x8000, -1)
+
+    def test_set8_withByteValue_isSuccessful(self):
+        for val in range(0x00, 0x100):
+            self._mem.set8(0x8000, val)
+
+    def test_set8_withOverflowValue_raisesException(self):
+        with self.assertRaises(ValueError):
+            self._mem.set8(0x8000, 0x100)
+
     def tearDown(self):
         self._mem = None
 
