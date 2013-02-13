@@ -71,5 +71,10 @@ class TestCartridge(unittest.TestCase):
             cartridge.set8(addr, 0x00)
             self.assertEquals(cartridge.getBank(), 1)
 
+    def test_set8_ofROMSecondQuarter_raisesRuntimeError(self):
+        cartridge = cart.Cartridge(self._newROM())
+        with self.assertRaises(RuntimeError):
+            cartridge.set8(0x2000, 0)
+
 if __name__ == '__main__':
     unittest.main()

@@ -40,6 +40,8 @@ class Cartridge:
         self._mode = val & 1
 
     def _switchBank(self, val):
+        if self._cartType == self.CART_TYPE_ROM_ONLY:
+            raise RuntimeError("Bank of ROM ONLY cartridge can't be changed")
         self._bank = 1 if val == 0 else val & 0x1f
 
     def getMode(self):
