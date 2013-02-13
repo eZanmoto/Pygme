@@ -6,10 +6,14 @@ import unittest
 
 from pygme.cartridge import cart
 
+
 MIN_ADDR = 0x0000
+
 HEADER_END_ADDR = 0x0150
 
+
 CART_TYPE_MBC1 = 1
+
 
 class TestCartridge(unittest.TestCase):
     """Tests for Cartridge class."""
@@ -94,6 +98,7 @@ class TestCartridge(unittest.TestCase):
                 self.assertEquals(val, i,
                         "Bank is %d, expected 0x%02x, got 0x%02x" %
                         (cartridge.getBank(), i, val))
+
 
 if __name__ == '__main__':
     unittest.main()
