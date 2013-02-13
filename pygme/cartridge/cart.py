@@ -11,6 +11,8 @@ CART_TYPE_ADDR = 0x0147
 
 CART_TYPE_ROM_ONLY = 0
 
+BANK_SIZE = 0x4000
+
 class Cartridge:
     """Provides access to the ROM of a Gameboy cartridge."""
 
@@ -52,4 +54,7 @@ class Cartridge:
 
     def get8(self, addr):
         self._chkAddr(addr)
-        return self._rom[addr]
+        if addr >= BANK_SIZE:
+            return self._rom[(self._bank - 1) * BANK_SIZE + addr]
+        else:
+            return self._rom[addr]

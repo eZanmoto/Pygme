@@ -21,8 +21,8 @@ class TestCartridge(unittest.TestCase):
 
     def _newMBC1(self):
         rom = []
-        for i in range(0, 4):
-            rom.extend([i for _ in range(MIN_ADDR, cart.MAX_ADDR)])
+        for i in range(0, 0x20):
+            rom.extend([i for _ in range(0x0000, 0x4000)])
         rom[cart.CART_TYPE_ADDR] = CART_TYPE_MBC1
         return rom
 
@@ -84,6 +84,16 @@ class TestCartridge(unittest.TestCase):
             val = cartridge.get8(addr)
             self.assertEquals(val, 0, "ROM[0x%04x] = 0x%02x, expected 0x%02x" %
                     (addr, val, 0))
+
+    def test_get8_ofMBC1SecondHalf_changesWithBanking(self):
+        cartridge = cart.Cartridge(self._newMBC1())
+        for i in range(0x01, 0x20):
+            cartridge.set8(cart.BANK_SWITCH_ADDR, i)
+            for addr in [0x4000, 0x5a5a, 0x7fff]:
+                val = cartridge.get8(addr)
+                self.assertEquals(val, i,
+                        "Bank is %d, expected 0x%02x, got 0x%02x" %
+                        (cartridge.getBank(), i, val))
 
 if __name__ == '__main__':
     unittest.main()
