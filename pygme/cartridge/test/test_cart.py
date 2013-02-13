@@ -33,6 +33,17 @@ class TestCartridge(unittest.TestCase):
         with self.assertRaises(IndexError):
             cartridge.set8(self.MAX_ADDR + 1, 0)
 
+    def test_set8_ofMBC1FourthQuarter_setsMode(self):
+        cartridge = cart.Cartridge(self._newMBC1())
+        self.assertEquals(cartridge.getMode(), 0)
+        for addr in [0x0000, 0x1fff, 0x2000, 0x3fff, 0x4000, 0x5fff]:
+            cartridge.set8(addr, 1)
+            self.assertEquals(cartridge.getMode(), 0)
+        for addr in [0x6000, 0x7fff]:
+            cartridge.set8(addr, 1)
+            self.assertEquals(cartridge.getMode(), 1)
+            cartridge.set8(addr, 0)
+            self.assertEquals(cartridge.getMode(), 0)
 
 if __name__ == '__main__':
     unittest.main()
