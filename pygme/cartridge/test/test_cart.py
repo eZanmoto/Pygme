@@ -53,5 +53,23 @@ class TestCartridge(unittest.TestCase):
     def _newROM(self):
         return [0 for _ in range(self.MIN_ADDR, self.MAX_ADDR + 1)]
 
+    def test_set8_ofMBC1SecondQuarter_setsBank(self):
+        cartridge = cart.Cartridge(self._newMBC1())
+        self.assertEquals(cartridge.getBank(), 1)
+        for addr in [0x0000, 0x1fff, 0x4000, 0x5fff, 0x6000, 0x7fff]:
+            cartridge.set8(addr, 0x1f)
+            self.assertEquals(cartridge.getBank(), 1)
+        for addr in [0x2000, 0x3fff]:
+            cartridge.set8(addr, 0x00)
+            self.assertEquals(cartridge.getBank(), 1)
+            cartridge.set8(addr, 0x1f)
+            self.assertEquals(cartridge.getBank(), 31)
+            cartridge.set8(addr, 0x01)
+            self.assertEquals(cartridge.getBank(), 1)
+            cartridge.set8(addr, 0x22)
+            self.assertEquals(cartridge.getBank(), 2)
+            cartridge.set8(addr, 0x00)
+            self.assertEquals(cartridge.getBank(), 1)
+
 if __name__ == '__main__':
     unittest.main()
