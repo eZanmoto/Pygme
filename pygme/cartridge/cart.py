@@ -49,3 +49,7 @@ class Cartridge:
 
     def getBank(self):
         return self._bank
+
+    def get8(self, addr):
+        self._chkAddr(addr)
+        return self._rom[addr]

@@ -10,6 +10,7 @@ class TestCartridge(unittest.TestCase):
     """Tests for Cartridge class."""
 
     MIN_ADDR = 0x0000
+    HEADER_END_ADDR = 0x0150
     MAX_ADDR = 0x7fff
 
     CART_TYPE_ADDR = 0x0147
@@ -79,6 +80,13 @@ class TestCartridge(unittest.TestCase):
         cartridge = cart.Cartridge(self._newROM())
         with self.assertRaises(RuntimeError):
             cartridge.set8(0x2000, 0)
+
+    def test_get8_ofMBC1FirstHalf_doesntChangeWithBanking(self):
+        cartridge = cart.Cartridge(self._newMBC1())
+        for addr in range(self.HEADER_END_ADDR, (self.MAX_ADDR + 1) / 2):
+            val = cartridge.get8(addr)
+            self.assertEquals(val, 0, "ROM[0x%04x] = 0x%02x, expected 0x%02x" %
+                    (addr, val, 0))
 
 if __name__ == '__main__':
     unittest.main()
