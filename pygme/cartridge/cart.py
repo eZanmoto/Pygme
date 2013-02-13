@@ -4,14 +4,19 @@
 
 MAX_ADDR = 0x7fff
 
+
 MODE_SWITCH_ADDR = 0x6000
 BANK_SWITCH_ADDR = 0x2000
 
+
 CART_TYPE_ADDR = 0x0147
+
 
 CART_TYPE_ROM_ONLY = 0
 
+
 BANK_SIZE = 0x4000
+
 
 class Cartridge:
     """Provides access to the ROM of a Gameboy cartridge."""
