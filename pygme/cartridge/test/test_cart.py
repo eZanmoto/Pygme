@@ -45,5 +45,13 @@ class TestCartridge(unittest.TestCase):
             cartridge.set8(addr, 0)
             self.assertEquals(cartridge.getMode(), 0)
 
+    def test_set8_ofROMFourthQuarter_raisesRuntimeError(self):
+        cartridge = cart.Cartridge(self._newROM())
+        with self.assertRaises(RuntimeError):
+            cartridge.set8(0x6000, 0)
+
+    def _newROM(self):
+        return [0 for _ in range(self.MIN_ADDR, self.MAX_ADDR + 1)]
+
 if __name__ == '__main__':
     unittest.main()
