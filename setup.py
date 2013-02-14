@@ -13,9 +13,8 @@ setup(name='Pygme',
           "License :: OSI Approved :: GNU General Public License (GPL)",
           "Programming Language :: Python :: 2.7",
           "Programming Language :: Python",
-          ],
+      ],
       author="Sean Kelleher",
       author_email='ezanmoto@gmail.com',
       license="GPL",
-      packages=['pygme', 'pygme.cpu', 'pygme.cpu.test',],
-     )
+      packages=['pygme', 'pygme.cpu', 'pygme.cpu.test'])
