@@ -15,10 +15,13 @@ class EchoMem:
         self._mem = mem
 
     def set8(self, addr, val):
-        self._mem.set8(addr, val)
+        self._mem.set8(self._toRAMAddrIfEchoAddr(addr), val)
 
-    def get8(self, addr):
+    def _toRAMAddrIfEchoAddr(self, addr):
         addr_ = addr
         if START_ADDR <= addr_ <= END_ADDR:
             addr_ -= OFFSET_FROM_RAM
-        return self._mem.get8(addr_)
+        return addr_
+
+    def get8(self, addr):
+        return self._mem.get8(self._toRAMAddrIfEchoAddr(addr))
