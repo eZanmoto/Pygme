@@ -6,6 +6,7 @@ import unittest
 
 from pygme.memory import array, echomem
 
+
 class TestEchoMem(unittest.TestCase):
     """Tests for EchoMem class."""
 
@@ -29,8 +30,8 @@ class TestEchoMem(unittest.TestCase):
 
     def _expect8(self, addr, v):
         b = self._mem.get8(addr)
-        self.assertEquals(b, v, "Expected 0x%02x(%d), got 0x%02x(%d) at 0x%x"
-            % (v, v, b, b, addr))
+        self.assertEquals(b, v, "Expected 0x%02x(%d), got 0x%02x(%d) at 0x%x" %
+                          (v, v, b, b, addr))
 
     def tearDown(self):
         self._mem = None
