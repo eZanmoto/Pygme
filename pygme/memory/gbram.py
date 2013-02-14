@@ -4,6 +4,7 @@
 
 from pygme.memory import array
 
+
 class GBRAM:
     """Concrete implementation of Gameboy RAM."""
 
