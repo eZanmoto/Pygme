@@ -5,9 +5,7 @@
 from pygme.memory import array
 
 class GBRAM:
-    """
-    Concrete implementation of Gameboy RAM.
-    """
+    """Concrete implementation of Gameboy RAM."""
 
     ROM_START = 0x0000
     RAM_START = 0x8000
