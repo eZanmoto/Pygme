@@ -12,41 +12,7 @@ class Flags:
         self.c = reg_flag.RegFlag("C")
         self.h = reg_flag.RegFlag("H")
 
-# Notes
-#
-# Instructions that update flags:
-#     LDHL SP, n
-#     ADD  A, n
-#     ADC  A, n
-#     SUB  A, n
-#     SBC  A, n
-#     AND  A, n
-#     OR   A, n
-#     XOR  A, n
-#     CP   A, n
-#     INC  n
-#     DEC  n
-#     ADD  HL, n
-#     ADD  SP, n
-#     SWAP n
-#     DAA
-#     CPL
-#     CFF
-#     SCF
-#     RLCA
-#     RLA
-#     RRCA
-#     RRA
-#     RLC  n
-#     RL   n
-#     RRC  n
-#     RR   n
-#     SLA  n
-#     SRA  n
-#     SRL  n
-#     BIT  b, r
-#     JP   cc, nn
-#
+
 # PC should be incremented before processing each argument to an instruction.
 class Z80:
 
