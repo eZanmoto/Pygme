@@ -60,6 +60,9 @@ class Cartridge:
     def get8(self, addr):
         self._chkAddr(addr)
         if addr >= BANK_SIZE:
-            return self._rom[(self._bank - 1) * BANK_SIZE + addr]
+            return self._rom[self._getBank1Offset() + addr]
         else:
             return self._rom[addr]
+
+    def _getBank1Offset(self):
+        return (self._bank-1) * BANK_SIZE
