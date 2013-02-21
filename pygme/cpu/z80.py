@@ -4,6 +4,7 @@
 
 from pygme.cpu import reg8, reg16, reg_flag
 
+
 class Flags:
 
     def __init__(self):
@@ -16,17 +17,17 @@ class Flags:
 # PC should be incremented before processing each argument to an instruction.
 class Z80:
 
-    LEFT  = True
+    LEFT = True
     RIGHT = not LEFT
 
     POSITIVE = True
     NEGATIVE = not POSITIVE
 
-    WITH_CARRY    = True
+    WITH_CARRY = True
     WITHOUT_CARRY = not WITH_CARRY
 
     AND = 0
-    OR  = 1
+    OR = 1
     XOR = 2
 
     def __init__(self, mem):
@@ -300,7 +301,7 @@ class Z80:
                       (self._notInstr(0xfd), 0),
                       (self.cpn, 1),
                       (self.rst38, 0),
-                     ]
+                      ]
         self.extInstr = [(self.rlcB, 0),
                          (self.rlcC, 0),
                          (self.rlcD, 0),
@@ -557,7 +558,7 @@ class Z80:
                          (self.set7L, 0),
                          (self.set7MemHL, 0),
                          (self.set7A, 0),
-                        ]
+                         ]
 
     def nop(self):
         """The CPU performs no operation during this machine cycle."""
@@ -790,7 +791,7 @@ class Z80:
         addr = self._hl()
         val = self._mem.get8(addr)
         self._mem.set8(addr, (val + 1) & 0xff)
-        self.f.h.setTo(val & 0xf  == 0xf)
+        self.f.h.setTo(val & 0xf == 0xf)
         self.f.z.setTo(self._mem.get8(addr) == 0)
         self.m += 3
         self.t += 12
@@ -1466,12 +1467,12 @@ class Z80:
         """
         Value at address in HL is rotated left 1-bit position - bit 7 goes into
         Carry and bit 0.
-        
+
         """
         r = self._getMemHL()
         c = (r >> 7) & 1
         self._setMemHL(((r << 1) & 0xff) | c)
-        self.f.z.setTo(self._getMemHL() == 0) # NOTE Z is unaffected on Z80
+        self.f.z.setTo(self._getMemHL() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c)
@@ -1510,12 +1511,12 @@ class Z80:
         """
         Value at address in HL is rotated right 1-bit position - bit 0 goes
         into Carry and bit 7.
-        
+
         """
         r = self._getMemHL()
         c = r & 1
         self._setMemHL(((r >> 1) & 0xff) | c << 7)
-        self.f.z.setTo(self._getMemHL() == 0) # NOTE Z is unaffected on Z80
+        self.f.z.setTo(self._getMemHL() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c)
@@ -1560,12 +1561,12 @@ class Z80:
         """
         Value at address in HL is rotated left 1-bit position - bit 7 goes into
         Carry and bit 0.
-        
+
         """
         r = self._getMemHL()
         c = (r >> 7) & 1
         self._setMemHL(((r << 1) & 0xff) | (1 if self.f.c.val() else 0))
-        self.f.z.setTo(self._getMemHL() == 0) # NOTE Z is unaffected on Z80
+        self.f.z.setTo(self._getMemHL() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c)
@@ -1611,11 +1612,11 @@ class Z80:
         """
         Value at address in HL is rotated right 1-bit position - bit 0 goes
         into C and C goes into bit 7.
-        
+
         """
         r = self._getMemHL()
         self._setMemHL(((r >> 1) & 0xff) | (1 if self.f.c.val() else 0) << 7)
-        self.f.z.setTo(self._getMemHL() == 0) # NOTE Z is unaffected on Z80
+        self.f.z.setTo(self._getMemHL() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(r & 1)
@@ -1704,7 +1705,7 @@ class Z80:
         """
         Value at address in HL is rotated right 1-bit position - bit 0 goes
         into Carry and bit 7 retains its value.
-        
+
         """
         self._sran(self._getMemHL, self._setMemHL)
 
@@ -1783,7 +1784,7 @@ class Z80:
         """
         Value at address in HL is rotated right 1-bit position - bit 0 goes
         into Carry and bit 7 is reset.
-        
+
         """
         self._srln(self._getMemHL, self._setMemHL)
 
@@ -1920,7 +1921,6 @@ class Z80:
         """Sets flag Z if bit 3 of A is reset."""
         self._bitBR(3, self.a)
 
-
     def bit4B(self):
         """Sets flag Z if bit 4 of B is reset."""
         self._bitBR(4, self.b)
@@ -1984,7 +1984,6 @@ class Z80:
     def bit5A(self):
         """Sets flag Z if bit 5 of A is reset."""
         self._bitBR(5, self.a)
-
 
     def bit6B(self):
         """Sets flag Z if bit 6 of B is reset."""
@@ -2564,8 +2563,8 @@ class Z80:
 
     def extErr(self):
         """Raises an exception, as method shouldn't be called."""
-        raise RuntimeError("Opcode 0xCB is a prefix for an extended"
-                + " instruction and should not be called directly.")
+        raise RuntimeError("Opcode 0xCB is a prefix for an extended" +
+                           " instruction and should not be called directly.")
 
     def callZnn(self, lsb, msb):
         """Pushes PC and loads little-endian word into PC if Z is set."""
@@ -2725,10 +2724,10 @@ class Z80:
     def pushAF(self):
         """Pushes A onto the stack and then pushes the flags register."""
         self._push8(self.a.val())
-        self._push8(((1 if self.f.z.val() else 0) << 7)
-                   |((1 if self.f.n.val() else 0) << 6)
-                   |((1 if self.f.h.val() else 0) << 5)
-                   |((1 if self.f.c.val() else 0) << 4))
+        self._push8(((1 if self.f.z.val() else 0) << 7) |
+                    ((1 if self.f.n.val() else 0) << 6) |
+                    ((1 if self.f.h.val() else 0) << 5) |
+                    ((1 if self.f.c.val() else 0) << 4))
         self.m += 4
         self.t += 16
 
@@ -2782,7 +2781,7 @@ class Z80:
     def _notInstr(self, opc):
         def raiseEx(opc):
             raise RuntimeError("0x%02x is not a valid instruction opcode" %
-                    opc)
+                               opc)
         return lambda: raiseEx(opc)
 
     def _rstn(self, n):
@@ -2833,7 +2832,7 @@ class Z80:
     def _srln(self, getf, setf):
         v = getf()
         setf((v >> 1) & 0xff)
-        self.f.z.setTo(getf() == 0) # NOTE Z is unaffected on Z80
+        self.f.z.setTo(getf() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(v & 1)
@@ -2859,7 +2858,7 @@ class Z80:
         v = getf()
         self.f.c.setTo((v >> 7) & 1)
         setf((v << 1) & 0xff)
-        self.f.z.setTo(getf() == 0) # NOTE Z is unaffected on Z80
+        self.f.z.setTo(getf() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
         self.m += 4
@@ -2873,7 +2872,7 @@ class Z80:
     def _sran(self, getf, setf):
         v = getf()
         setf(((v >> 1) & 0xff) | (v & 0x80))
-        self.f.z.setTo(getf() == 0) # NOTE Z is unaffected on Z80
+        self.f.z.setTo(getf() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(v & 1)
@@ -2946,7 +2945,7 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c)
-        self._chkZ(reg) # NOTE Z is unaffected on Z80
+        self._chkZ(reg)  # NOTE Z is unaffected on Z80
         self.m += 2
         self.t += 8
 
