@@ -2244,185 +2244,185 @@ class TestZ80(unittest.TestCase):
 
     def test_set0MemHL(self):
         self._test_setBn(0xc6, self.z80.set0MemHL, "(HL)", 4, 16, 0,
-                         self._setMemHL)
+                         self._setMemHL, self._getMemHL)
 
     def test_set0A(self):
         self._test_setBR(0xc7, self.z80.set0A, 0, self.z80.a)
 
     def test_set1B(self):
-        self._test_setBR(0xc8, self.z80.set1B, 0, self.z80.b)
+        self._test_setBR(0xc8, self.z80.set1B, 1, self.z80.b)
 
     def test_set1C(self):
-        self._test_setBR(0xc9, self.z80.set1C, 0, self.z80.c)
+        self._test_setBR(0xc9, self.z80.set1C, 1, self.z80.c)
 
     def test_set1D(self):
-        self._test_setBR(0xca, self.z80.set1D, 0, self.z80.d)
+        self._test_setBR(0xca, self.z80.set1D, 1, self.z80.d)
 
     def test_set1E(self):
-        self._test_setBR(0xcb, self.z80.set1E, 0, self.z80.e)
+        self._test_setBR(0xcb, self.z80.set1E, 1, self.z80.e)
 
     def test_set1H(self):
-        self._test_setBR(0xcc, self.z80.set1H, 0, self.z80.h)
+        self._test_setBR(0xcc, self.z80.set1H, 1, self.z80.h)
 
     def test_set1L(self):
-        self._test_setBR(0xcd, self.z80.set1L, 0, self.z80.l)
+        self._test_setBR(0xcd, self.z80.set1L, 1, self.z80.l)
 
     def test_set1MemHL(self):
-        self._test_setBn(0xce, self.z80.set1MemHL, "(HL)", 4, 16, 0,
-                         self._setMemHL)
+        self._test_setBn(0xce, self.z80.set1MemHL, "(HL)", 4, 16, 1,
+                         self._setMemHL, self._getMemHL)
 
     def test_set1A(self):
-        self._test_setBR(0xcf, self.z80.set1A, 0, self.z80.a)
+        self._test_setBR(0xcf, self.z80.set1A, 1, self.z80.a)
 
     def test_set2B(self):
-        self._test_setBR(0xd0, self.z80.set2B, 0, self.z80.b)
+        self._test_setBR(0xd0, self.z80.set2B, 2, self.z80.b)
 
     def test_set2C(self):
-        self._test_setBR(0xd1, self.z80.set2C, 0, self.z80.c)
+        self._test_setBR(0xd1, self.z80.set2C, 2, self.z80.c)
 
     def test_set2D(self):
-        self._test_setBR(0xd2, self.z80.set2D, 0, self.z80.d)
+        self._test_setBR(0xd2, self.z80.set2D, 2, self.z80.d)
 
     def test_set2E(self):
-        self._test_setBR(0xd3, self.z80.set2E, 0, self.z80.e)
+        self._test_setBR(0xd3, self.z80.set2E, 2, self.z80.e)
 
     def test_set2H(self):
-        self._test_setBR(0xd4, self.z80.set2H, 0, self.z80.h)
+        self._test_setBR(0xd4, self.z80.set2H, 2, self.z80.h)
 
     def test_set2L(self):
-        self._test_setBR(0xd5, self.z80.set2L, 0, self.z80.l)
+        self._test_setBR(0xd5, self.z80.set2L, 2, self.z80.l)
 
     def test_set2MemHL(self):
-        self._test_setBn(0xd6, self.z80.set2MemHL, "(HL)", 4, 16, 0,
-                         self._setMemHL)
+        self._test_setBn(0xd6, self.z80.set2MemHL, "(HL)", 4, 16, 2,
+                         self._setMemHL, self._getMemHL)
 
     def test_set2A(self):
-        self._test_setBR(0xd7, self.z80.set2A, 0, self.z80.a)
+        self._test_setBR(0xd7, self.z80.set2A, 2, self.z80.a)
 
     def test_set3B(self):
-        self._test_setBR(0xd8, self.z80.set3B, 0, self.z80.b)
+        self._test_setBR(0xd8, self.z80.set3B, 3, self.z80.b)
 
     def test_set3C(self):
-        self._test_setBR(0xd9, self.z80.set3C, 0, self.z80.c)
+        self._test_setBR(0xd9, self.z80.set3C, 3, self.z80.c)
 
     def test_set3D(self):
-        self._test_setBR(0xda, self.z80.set3D, 0, self.z80.d)
+        self._test_setBR(0xda, self.z80.set3D, 3, self.z80.d)
 
     def test_set3E(self):
-        self._test_setBR(0xdb, self.z80.set3E, 0, self.z80.e)
+        self._test_setBR(0xdb, self.z80.set3E, 3, self.z80.e)
 
     def test_set3H(self):
-        self._test_setBR(0xdc, self.z80.set3H, 0, self.z80.h)
+        self._test_setBR(0xdc, self.z80.set3H, 3, self.z80.h)
 
     def test_set3L(self):
-        self._test_setBR(0xdd, self.z80.set3L, 0, self.z80.l)
+        self._test_setBR(0xdd, self.z80.set3L, 3, self.z80.l)
 
     def test_set3MemHL(self):
-        self._test_setBn(0xde, self.z80.set3MemHL, "(HL)", 4, 16, 0,
-                         self._setMemHL)
+        self._test_setBn(0xde, self.z80.set3MemHL, "(HL)", 4, 16, 3,
+                         self._setMemHL, self._getMemHL)
 
     def test_set3A(self):
-        self._test_setBR(0xdf, self.z80.set3A, 0, self.z80.a)
+        self._test_setBR(0xdf, self.z80.set3A, 3, self.z80.a)
 
     def test_set4B(self):
-        self._test_setBR(0xe0, self.z80.set4B, 0, self.z80.b)
+        self._test_setBR(0xe0, self.z80.set4B, 4, self.z80.b)
 
     def test_set4C(self):
-        self._test_setBR(0xe1, self.z80.set4C, 0, self.z80.c)
+        self._test_setBR(0xe1, self.z80.set4C, 4, self.z80.c)
 
     def test_set4D(self):
-        self._test_setBR(0xe2, self.z80.set4D, 0, self.z80.d)
+        self._test_setBR(0xe2, self.z80.set4D, 4, self.z80.d)
 
     def test_set4E(self):
-        self._test_setBR(0xe3, self.z80.set4E, 0, self.z80.e)
+        self._test_setBR(0xe3, self.z80.set4E, 4, self.z80.e)
 
     def test_set4H(self):
-        self._test_setBR(0xe4, self.z80.set4H, 0, self.z80.h)
+        self._test_setBR(0xe4, self.z80.set4H, 4, self.z80.h)
 
     def test_set4L(self):
-        self._test_setBR(0xe5, self.z80.set4L, 0, self.z80.l)
+        self._test_setBR(0xe5, self.z80.set4L, 4, self.z80.l)
 
     def test_set4MemHL(self):
-        self._test_setBn(0xe6, self.z80.set4MemHL, "(HL)", 4, 16, 0,
-                         self._setMemHL)
+        self._test_setBn(0xe6, self.z80.set4MemHL, "(HL)", 4, 16, 4,
+                         self._setMemHL, self._getMemHL)
 
     def test_set4A(self):
-        self._test_setBR(0xe7, self.z80.set4A, 0, self.z80.a)
+        self._test_setBR(0xe7, self.z80.set4A, 4, self.z80.a)
 
     def test_set5B(self):
-        self._test_setBR(0xe8, self.z80.set5B, 0, self.z80.b)
+        self._test_setBR(0xe8, self.z80.set5B, 5, self.z80.b)
 
     def test_set5C(self):
-        self._test_setBR(0xe9, self.z80.set5C, 0, self.z80.c)
+        self._test_setBR(0xe9, self.z80.set5C, 5, self.z80.c)
 
     def test_set5D(self):
-        self._test_setBR(0xea, self.z80.set5D, 0, self.z80.d)
+        self._test_setBR(0xea, self.z80.set5D, 5, self.z80.d)
 
     def test_set5E(self):
-        self._test_setBR(0xeb, self.z80.set5E, 0, self.z80.e)
+        self._test_setBR(0xeb, self.z80.set5E, 5, self.z80.e)
 
     def test_set5H(self):
-        self._test_setBR(0xec, self.z80.set5H, 0, self.z80.h)
+        self._test_setBR(0xec, self.z80.set5H, 5, self.z80.h)
 
     def test_set5L(self):
-        self._test_setBR(0xed, self.z80.set5L, 0, self.z80.l)
+        self._test_setBR(0xed, self.z80.set5L, 5, self.z80.l)
 
     def test_set5MemHL(self):
-        self._test_setBn(0xee, self.z80.set5MemHL, "(HL)", 4, 16, 0,
-                         self._setMemHL)
+        self._test_setBn(0xee, self.z80.set5MemHL, "(HL)", 4, 16, 5,
+                         self._setMemHL, self._getMemHL)
 
     def test_set5A(self):
-        self._test_setBR(0xef, self.z80.set5A, 0, self.z80.a)
+        self._test_setBR(0xef, self.z80.set5A, 5, self.z80.a)
 
     def test_set6B(self):
-        self._test_setBR(0xf0, self.z80.set6B, 0, self.z80.b)
+        self._test_setBR(0xf0, self.z80.set6B, 6, self.z80.b)
 
     def test_set6C(self):
-        self._test_setBR(0xf1, self.z80.set6C, 0, self.z80.c)
+        self._test_setBR(0xf1, self.z80.set6C, 6, self.z80.c)
 
     def test_set6D(self):
-        self._test_setBR(0xf2, self.z80.set6D, 0, self.z80.d)
+        self._test_setBR(0xf2, self.z80.set6D, 6, self.z80.d)
 
     def test_set6E(self):
-        self._test_setBR(0xf3, self.z80.set6E, 0, self.z80.e)
+        self._test_setBR(0xf3, self.z80.set6E, 6, self.z80.e)
 
     def test_set6H(self):
-        self._test_setBR(0xf4, self.z80.set6H, 0, self.z80.h)
+        self._test_setBR(0xf4, self.z80.set6H, 6, self.z80.h)
 
     def test_set6L(self):
-        self._test_setBR(0xf5, self.z80.set6L, 0, self.z80.l)
+        self._test_setBR(0xf5, self.z80.set6L, 6, self.z80.l)
 
     def test_set6MemHL(self):
-        self._test_setBn(0xf6, self.z80.set6MemHL, "(HL)", 4, 16, 0,
-                         self._setMemHL)
+        self._test_setBn(0xf6, self.z80.set6MemHL, "(HL)", 4, 16, 6,
+                         self._setMemHL, self._getMemHL)
 
     def test_set6A(self):
-        self._test_setBR(0xf7, self.z80.set6A, 0, self.z80.a)
+        self._test_setBR(0xf7, self.z80.set6A, 6, self.z80.a)
 
     def test_set7B(self):
-        self._test_setBR(0xf8, self.z80.set7B, 0, self.z80.b)
+        self._test_setBR(0xf8, self.z80.set7B, 7, self.z80.b)
 
     def test_set7C(self):
-        self._test_setBR(0xf9, self.z80.set7C, 0, self.z80.c)
+        self._test_setBR(0xf9, self.z80.set7C, 7, self.z80.c)
 
     def test_set7D(self):
-        self._test_setBR(0xfa, self.z80.set7D, 0, self.z80.d)
+        self._test_setBR(0xfa, self.z80.set7D, 7, self.z80.d)
 
     def test_set7E(self):
-        self._test_setBR(0xfb, self.z80.set7E, 0, self.z80.e)
+        self._test_setBR(0xfb, self.z80.set7E, 7, self.z80.e)
 
     def test_set7H(self):
-        self._test_setBR(0xfc, self.z80.set7H, 0, self.z80.h)
+        self._test_setBR(0xfc, self.z80.set7H, 7, self.z80.h)
 
     def test_set7L(self):
-        self._test_setBR(0xfd, self.z80.set7L, 0, self.z80.l)
+        self._test_setBR(0xfd, self.z80.set7L, 7, self.z80.l)
 
     def test_set7MemHL(self):
-        self._test_setBn(0xfe, self.z80.set7MemHL, "(HL)", 4, 16, 0,
-                         self._setMemHL)
+        self._test_setBn(0xfe, self.z80.set7MemHL, "(HL)", 4, 16, 7,
+                         self._setMemHL, self._getMemHL)
 
     def test_set7A(self):
-        self._test_setBR(0xff, self.z80.set7A, 0, self.z80.a)
+        self._test_setBR(0xff, self.z80.set7A, 7, self.z80.a)
 
     def test_callZnn(self):
         opc = 0xcc
@@ -2838,10 +2838,33 @@ class TestZ80(unittest.TestCase):
         self._validExtOpc(opc, func, 0)
 
     def _test_setBR(self, opc, func, bitNum, reg):
-        self._test_setBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)
+        self._test_setBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld, reg.val)
 
-    def _test_setBn(self, opc, func, name, m, t, bitNum, setf):
+    def _test_setBn(self, opc, func, name, m, t, bitNum, setf, getf):
         self._validExtOpc(opc, func, 0)
+        setf(0x00)
+        self.z80.f.z.setTo(True)
+        self.z80.f.n.setTo(True)
+        self.z80.f.h.setTo(True)
+        self.z80.f.c.setTo(True)
+        self._timeExtOp(opc, m, t)
+        self.assertEquals(1 << bitNum, getf(), "got %d, should be %d" %
+                          (getf(), 1 << bitNum))
+        self._flagEq(self.z80.f.z, True)
+        self._flagEq(self.z80.f.n, True)
+        self._flagEq(self.z80.f.h, True)
+        self._flagEq(self.z80.f.c, True)
+        setf(0xff ^ (1 << bitNum))
+        self.z80.f.z.setTo(False)
+        self.z80.f.n.setTo(False)
+        self.z80.f.h.setTo(False)
+        self.z80.f.c.setTo(False)
+        self._timeExtOp(opc, m, t)
+        self.assertEquals(0xff, getf())
+        self._flagEq(self.z80.f.z, False)
+        self._flagEq(self.z80.f.n, False)
+        self._flagEq(self.z80.f.h, False)
+        self._flagEq(self.z80.f.c, False)
 
     def _test_bitBR(self, opc, func, bitNum, reg):
         self._test_bitBn(opc, func, reg.name(), 2, 8, bitNum, reg.ld)

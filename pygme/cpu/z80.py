@@ -2327,7 +2327,7 @@ class Z80:
 
     def set0MemHL(self):
         """Set bit 0 of value at address in HL."""
-        self._setBn(0, self._getMemHL)
+        self._setBn(0, self._getMemHL, self._setMemHL)
 
     def set0A(self):
         """Set bit 0 of A."""
@@ -2359,7 +2359,7 @@ class Z80:
 
     def set1MemHL(self):
         """Set bit 1 of value at address in HL."""
-        self._setBn(1, self._getMemHL)
+        self._setBn(1, self._getMemHL, self._setMemHL)
 
     def set1A(self):
         """Set bit 1 of A."""
@@ -2391,7 +2391,7 @@ class Z80:
 
     def set2MemHL(self):
         """Set bit 2 of value at address in HL."""
-        self._setBn(2, self._getMemHL)
+        self._setBn(2, self._getMemHL, self._setMemHL)
 
     def set2A(self):
         """Set bit 2 of A."""
@@ -2423,7 +2423,7 @@ class Z80:
 
     def set3MemHL(self):
         """Set bit 3 of value at address in HL."""
-        self._setBn(3, self._getMemHL)
+        self._setBn(3, self._getMemHL, self._setMemHL)
 
     def set3A(self):
         """Set bit 3 of A."""
@@ -2455,7 +2455,7 @@ class Z80:
 
     def set4MemHL(self):
         """Set bit 4 of value at address in HL."""
-        self._setBn(4, self._getMemHL)
+        self._setBn(4, self._getMemHL, self._setMemHL)
 
     def set4A(self):
         """Set bit 4 of A."""
@@ -2487,7 +2487,7 @@ class Z80:
 
     def set5MemHL(self):
         """Set bit 5 of value at address in HL."""
-        self._setBn(5, self._getMemHL)
+        self._setBn(5, self._getMemHL, self._setMemHL)
 
     def set5A(self):
         """Set bit 5 of A."""
@@ -2519,7 +2519,7 @@ class Z80:
 
     def set6MemHL(self):
         """Set bit 6 of value at address in HL."""
-        self._setBn(6, self._getMemHL)
+        self._setBn(6, self._getMemHL, self._setMemHL)
 
     def set6A(self):
         """Set bit 6 of A."""
@@ -2551,7 +2551,7 @@ class Z80:
 
     def set7MemHL(self):
         """Set bit 7 of value at address in HL."""
-        self._setBn(7, self._getMemHL)
+        self._setBn(7, self._getMemHL, self._setMemHL)
 
     def set7A(self):
         """Set bit 7 of A."""
@@ -2802,11 +2802,14 @@ class Z80:
                 (bitNum, name))
 
     def _setBR(self, bitNum, reg):
-        self._bitBn(bitNum, reg.val, reg.val())
+        self._setBn(bitNum, reg.val, reg.ld)
+        self.m -= 2
+        self.t -= 8
 
-    def _setBn(self, bitNum, getf, name="(HL)"):
-        raise NotImplementedError("'SET %d, %s' has not been implemented" %
-                (bitNum, name))
+    def _setBn(self, bitNum, getf, setf):
+        setf(getf() | (1 << bitNum))
+        self.m += 4
+        self.t += 16
 
     def _bitBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val)
