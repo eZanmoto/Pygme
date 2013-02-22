@@ -2071,7 +2071,7 @@ class Z80:
 
     def res0MemHL(self):
         """Reset bit 0 of value at address in HL."""
-        self._resBn(0, self._getMemHL)
+        self._resBn(0, self._getMemHL, self._setMemHL)
 
     def res0A(self):
         """Reset bit 0 of A."""
@@ -2103,7 +2103,7 @@ class Z80:
 
     def res1MemHL(self):
         """Reset bit 1 of value at address in HL."""
-        self._resBn(1, self._getMemHL)
+        self._resBn(1, self._getMemHL, self._setMemHL)
 
     def res1A(self):
         """Reset bit 1 of A."""
@@ -2135,7 +2135,7 @@ class Z80:
 
     def res2MemHL(self):
         """Reset bit 2 of value at address in HL."""
-        self._resBn(2, self._getMemHL)
+        self._resBn(2, self._getMemHL, self._setMemHL)
 
     def res2A(self):
         """Reset bit 2 of A."""
@@ -2167,7 +2167,7 @@ class Z80:
 
     def res3MemHL(self):
         """Reset bit 3 of value at address in HL."""
-        self._resBn(3, self._getMemHL)
+        self._resBn(3, self._getMemHL, self._setMemHL)
 
     def res3A(self):
         """Reset bit 3 of A."""
@@ -2199,7 +2199,7 @@ class Z80:
 
     def res4MemHL(self):
         """Reset bit 4 of value at address in HL."""
-        self._resBn(4, self._getMemHL)
+        self._resBn(4, self._getMemHL, self._setMemHL)
 
     def res4A(self):
         """Reset bit 4 of A."""
@@ -2231,7 +2231,7 @@ class Z80:
 
     def res5MemHL(self):
         """Reset bit 5 of value at address in HL."""
-        self._resBn(5, self._getMemHL)
+        self._resBn(5, self._getMemHL, self._setMemHL)
 
     def res5A(self):
         """Reset bit 5 of A."""
@@ -2263,7 +2263,7 @@ class Z80:
 
     def res6MemHL(self):
         """Reset bit 6 of value at address in HL."""
-        self._resBn(6, self._getMemHL)
+        self._resBn(6, self._getMemHL, self._setMemHL)
 
     def res6A(self):
         """Reset bit 6 of A."""
@@ -2295,7 +2295,7 @@ class Z80:
 
     def res7MemHL(self):
         """Reset bit 7 of value at address in HL."""
-        self._resBn(7, self._getMemHL)
+        self._resBn(7, self._getMemHL, self._setMemHL)
 
     def res7A(self):
         """Reset bit 7 of A."""
@@ -2786,9 +2786,6 @@ class Z80:
         self.m += 5
         self.t += 20
 
-    def _resBR(self, bitNum, reg):
-        self._bitBn(bitNum, reg.val, reg.val())
-
     def _callcnn(self, cond, lsb, msb):
         if cond:
             self._push16(self.pc.val())
@@ -2797,9 +2794,15 @@ class Z80:
             self.m += 3
             self.t += 12
 
-    def _resBn(self, bitNum, getf, name="(HL)"):
-        raise NotImplementedError("'RES %d, %s' has not been implemented" %
-                (bitNum, name))
+    def _resBR(self, bitNum, reg):
+        self._resBn(bitNum, reg.val, reg.ld)
+        self.m -= 2
+        self.t -= 8
+
+    def _resBn(self, bitNum, getf, setf):
+        setf(getf() & (~ (1 << bitNum)))
+        self.m += 4
+        self.t += 16
 
     def _setBR(self, bitNum, reg):
         self._setBn(bitNum, reg.val, reg.ld)
