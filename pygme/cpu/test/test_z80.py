@@ -119,18 +119,19 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.b, i & 0xff)
 
     def test_decB(self):
-        opc = 0x05
-        self._validOpc(opc, self.z80.decB, 0)
-        self.z80.b.ld(0x1ff & 0xff)
-        for i in range(0x1ff, 0, -1):
-            self._regEq(self.z80.b, i & 0xff)
-            self._incOp8(opc, self.z80.b, -1, 1, 4)
-        self.z80.b.ld(1)
-        self._incOp8(opc, self.z80.b, -1, 1, 4)
-        self._regEq(self.z80.b, 0)
-        self.z80.b.ld(0)
-        self._incOp8(opc, self.z80.b, -1, 1, 4)
-        self._regEq(self.z80.b, 0xff)
+        self._test_decr8(0x05, self.z80.decB, 0, self.z80.b)
+
+    def _test_decr8(self, opc, func, argc, reg):
+        self._validOpc(opc, func, argc)
+        reg.ld(0x02)
+        self._incOp8(opc, reg, -1, 1, 4)
+        self._regEq(reg, 0x01)
+        self._incOp8(opc, reg, -1, 1, 4)
+        self._regEq(reg, 0x00)
+        self._incOp8(opc, reg, -1, 1, 4)
+        self._regEq(reg, 0xff)
+        self._incOp8(opc, reg, -1, 1, 4)
+        self._regEq(reg, 0xfe)
 
     def test_ldBn(self):
         opc = 0x06
@@ -236,18 +237,7 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.c, i & 0xff)
 
     def test_decC(self):
-        opc = 0x0d
-        self._validOpc(opc, self.z80.decC, 0)
-        self.z80.ldBCnn(0, 0x1ff & 0xff)
-        for i in range(0x1ff, 0, -1):
-            self._regEq(self.z80.c, i & 0xff)
-            self._incOp8(opc, self.z80.c, -1, 1, 4)
-        self.z80.ldBCnn(0, 1)
-        self._incOp8(opc, self.z80.c, -1, 1, 4)
-        self._regEq(self.z80.c, 0)
-        self.z80.ldBCnn(0, 0)
-        self._incOp8(opc, self.z80.c, -1, 1, 4)
-        self._regEq(self.z80.c, 0xff)
+        self._test_decr8(0x0d, self.z80.decC, 0, self.z80.c)
 
     def test_ldCn(self):
         opc = 0x0e
@@ -334,18 +324,7 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.d, i & 0xff)
 
     def test_decD(self):
-        opc = 0x15
-        self._validOpc(opc, self.z80.decD, 0)
-        self.z80.ldDEnn(0x1ff & 0xff, 0)
-        for i in range(0x1ff, 0, -1):
-            self._regEq(self.z80.d, i & 0xff)
-            self._incOp8(opc, self.z80.d, -1, 1, 4)
-        self.z80.ldDEnn(1, 0)
-        self._incOp8(opc, self.z80.d, -1, 1, 4)
-        self._regEq(self.z80.d, 0)
-        self.z80.ldDEnn(0, 0)
-        self._incOp8(opc, self.z80.d, -1, 1, 4)
-        self._regEq(self.z80.d, 0xff)
+        self._test_decr8(0x15, self.z80.decD, 0, self.z80.d)
 
     def test_ldDn(self):
         opc = 0x16
@@ -450,18 +429,7 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.e, i & 0xff)
 
     def test_decE(self):
-        opc = 0x1d
-        self._validOpc(opc, self.z80.decE, 0)
-        self.z80.ldDEnn(0, 0x1ff & 0xff)
-        for i in range(0x1ff, 0, -1):
-            self._regEq(self.z80.e, i & 0xff)
-            self._incOp8(opc, self.z80.e, -1, 1, 4)
-        self.z80.ldDEnn(0, 1)
-        self._incOp8(opc, self.z80.e, -1, 1, 4)
-        self._regEq(self.z80.e, 0)
-        self.z80.ldDEnn(0, 0)
-        self._incOp8(opc, self.z80.e, -1, 1, 4)
-        self._regEq(self.z80.e, 0xff)
+        self._test_decr8(0x1d, self.z80.decE, 0, self.z80.e)
 
     def test_ldEn(self):
         opc = 0x1e
@@ -544,18 +512,7 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.h, i & 0xff)
 
     def test_decH(self):
-        opc = 0x25
-        self._validOpc(opc, self.z80.decH, 0)
-        self.z80.h.ld(0x1ff & 0xff)
-        for i in range(0x1ff, 0, -1):
-            self._regEq(self.z80.h, i & 0xff)
-            self._incOp8(opc, self.z80.h, -1, 1, 4)
-        self.z80.h.ld(1)
-        self._incOp8(opc, self.z80.h, -1, 1, 4)
-        self._regEq(self.z80.h, 0)
-        self.z80.h.ld(0)
-        self._incOp8(opc, self.z80.h, -1, 1, 4)
-        self._regEq(self.z80.h, 0xff)
+        self._test_decr8(0x25, self.z80.decH, 0, self.z80.h)
 
     def test_ldHn(self):
         opc = 0x26
@@ -648,18 +605,7 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.l, i & 0xff)
 
     def test_decL(self):
-        opc = 0x2d
-        self._validOpc(opc, self.z80.decL, 0)
-        self.z80.l.ld(0x1ff & 0xff)
-        for i in range(0x1ff, 0, -1):
-            self._regEq(self.z80.l, i & 0xff)
-            self._incOp8(opc, self.z80.l, -1, 1, 4)
-        self.z80.l.ld(1)
-        self._incOp8(opc, self.z80.l, -1, 1, 4)
-        self._regEq(self.z80.l, 0)
-        self.z80.l.ld(0)
-        self._incOp8(opc, self.z80.l, -1, 1, 4)
-        self._regEq(self.z80.l, 0xff)
+        self._test_decr8(0x2d, self.z80.decL, 0, self.z80.l)
 
     def test_ldLn(self):
         opc = 0x2e
@@ -862,18 +808,7 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.a, i & 0xff)
 
     def test_decA(self):
-        opc = 0x3d
-        self._validOpc(opc, self.z80.decA, 0)
-        self.z80.a.ld(0x1ff & 0xff)
-        for i in range(0x1ff, 0, -1):
-            self._regEq(self.z80.a, i & 0xff)
-            self._incOp8(opc, self.z80.a, -1, 1, 4)
-        self.z80.a.ld(1)
-        self._incOp8(opc, self.z80.a, -1, 1, 4)
-        self._regEq(self.z80.a, 0)
-        self.z80.a.ld(0)
-        self._incOp8(opc, self.z80.a, -1, 1, 4)
-        self._regEq(self.z80.a, 0xff)
+        self._test_decr8(0x3d, self.z80.decA, 0, self.z80.a)
 
     def test_ldAn(self):
         opc = 0x3e
