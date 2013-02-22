@@ -56,12 +56,25 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 1, 4)
 
     def test_ldBCnn(self):
-        opc = 0x01
-        self._validOpc(opc, self.z80.ldBCnn, 2)
-        for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 3, 12, i * 2, i * 4)
-            self._regEq(self.z80.b, i * 2)
-            self._regEq(self.z80.c, i * 4)
+        self._test_ldr16nn(0x01, self.z80.ldBCnn,
+                           self._r16valffromr8r8(self.z80.b, self.z80.c))
+
+    def _r16valffromr8r8(self, hireg, loreg):
+        """
+        Create a function that gets the value of two 8-bit registers as a
+        single integer.
+        """
+        return lambda: (hireg.val() << 8) + loreg.val()
+
+    def _test_ldr16nn(self, opc, func, getf):
+        self._validOpc(opc, func, 2)
+        lsbmsbs = [(0x00, 0xff),
+                   (0x01, 0xfe),
+                   ]
+        for lsbmsb in lsbmsbs:
+            lsb, msb = lsbmsb
+            self._flagsFixed(opc, 3, 12, lsb, msb)
+            self.assertEquals(getf(), (msb << 8) + lsb)
 
     def test_ldBCnn_maxValue(self):
         self.z80.ldBCnn(0xff, 0xff)
@@ -275,12 +288,8 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.stop, 0)
 
     def test_ldDEnn(self):
-        opc = 0x11
-        self._validOpc(opc, self.z80.ldDEnn, 2)
-        for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 3, 12, i * 2, i * 4)
-            self._regEq(self.z80.d, i * 2)
-            self._regEq(self.z80.e, i * 4)
+        self._test_ldr16nn(0x11, self.z80.ldDEnn,
+                           self._r16valffromr8r8(self.z80.d, self.z80.e))
 
     def test_ldDEnn_maxValue(self):
         self.z80.ldDEnn(0xff, 0xff)
@@ -501,12 +510,8 @@ class TestZ80(unittest.TestCase):
         self._test_jrcn(opc, True)
 
     def test_ldHLnn(self):
-        opc = 0x21
-        self._validOpc(opc, self.z80.ldHLnn, 2)
-        for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 3, 12, i * 2, i * 4)
-            self._regEq(self.z80.h, i * 2)
-            self._regEq(self.z80.l, i * 4)
+        self._test_ldr16nn(0x21, self.z80.ldHLnn,
+                           self._r16valffromr8r8(self.z80.h, self.z80.l))
 
     def test_ldiMemHLA(self):
         opc = 0x22
@@ -705,11 +710,7 @@ class TestZ80(unittest.TestCase):
         self._test_jrcn(opc, True)
 
     def test_ldSPnn(self):
-        opc = 0x31
-        self._validOpc(opc, self.z80.ldSPnn, 2)
-        for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 3, 12, i * 2, i * 4)
-            self._regEq(self.z80.sp, ((i * 2) << 8) + i * 4)
+        self._test_ldr16nn(0x31, self.z80.ldSPnn, self.z80.sp.val)
 
     def test_lddMemHLA(self):
         opc = 0x32

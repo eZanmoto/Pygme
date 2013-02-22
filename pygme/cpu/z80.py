@@ -565,9 +565,9 @@ class Z80:
         self.m += 1
         self.t += 4
 
-    def ldBCnn(self, b, c):
+    def ldBCnn(self, lsb, msb):
         """Loads a byte into B and a byte into C."""
-        self._ldRRnn(self.b, b, self.c, c)
+        self._ldRRnn(self.b, msb, self.c, lsb)
 
     def ldMemBCA(self):
         """Loads the contents of A into the memory address specified by BC."""
@@ -627,9 +627,9 @@ class Z80:
     def stop(self):
         raise NotImplementedError("'STOP' has not been implemented")
 
-    def ldDEnn(self, d, e):
+    def ldDEnn(self, lsb, msb):
         """Loads a byte into D and a byte into E."""
-        self._ldRRnn(self.d, d, self.e, e)
+        self._ldRRnn(self.d, msb, self.e, lsb)
 
     def ldMemDEA(self):
         """Loads the contents of A into the memory address specified by DE."""
@@ -693,9 +693,9 @@ class Z80:
         """Decrements/increments PC by the signed byte n if Z is reset."""
         self._jrcn(not self.f.z.val(), n)
 
-    def ldHLnn(self, h, l):
+    def ldHLnn(self, lsb, msb):
         """Loads a byte into H and a byte into L."""
-        self._ldRRnn(self.h, h, self.l, l)
+        self._ldRRnn(self.h, msb, self.l, lsb)
 
     def ldiMemHLA(self):
         """Loads A into the memory address in HL and increments HL."""
@@ -766,9 +766,9 @@ class Z80:
         """Decrements/increments PC by the signed byte n if C is reset."""
         self._jrcn(not self.f.c.val(), n)
 
-    def ldSPnn(self, h, l):
+    def ldSPnn(self, lsb, msb):
         """Loads a byte into S and a byte into P."""
-        self.sp.ld((h << 8) + l)
+        self.sp.ld((msb << 8) + lsb)
         self.m += 3
         self.t += 12
 
