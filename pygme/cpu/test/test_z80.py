@@ -1108,7 +1108,8 @@ class TestZ80(unittest.TestCase):
         self._expectFlags(opc, 1, 4, False, False, 0xf + 0x1 + 0x1 > 0xf, True)
         self._regEq(self.z80.a, 0xff)
         self.z80.a.ld(0x01)
-        self._expectFlags(opc, 1, 4, False, False, 0x1 + 0x1 + 0x1 > 0xf, False)
+        self._expectFlags(opc, 1, 4, False, False, 0x1 + 0x1 + 0x1 > 0xf,
+                          False)
         self._regEq(self.z80.a, 0x03)
         self.z80.a.ld(0x01)
         self._expectFlags(opc, 1, 4, False, False, 0x1 + 0x1 > 0xf, False)
@@ -1743,7 +1744,7 @@ class TestZ80(unittest.TestCase):
 
     def test_slaMemHL(self):
         self._test_slan(0x26, self.z80.slaMemHL, "(HL)", 4, 16, self._getMemHL,
-                self._setMemHL)
+                        self._setMemHL)
 
     def test_slaA(self):
         self._test_slaR(0x27, self.z80.slaA, self.z80.a)
@@ -1768,7 +1769,7 @@ class TestZ80(unittest.TestCase):
 
     def test_sraMemHL(self):
         self._test_sran(0x2e, self.z80.sraMemHL, "(HL)", 4, 16, self._getMemHL,
-                self._setMemHL)
+                        self._setMemHL)
 
     def test_sraA(self):
         self._test_sraR(0x2f, self.z80.sraA, self.z80.a)
@@ -1793,7 +1794,7 @@ class TestZ80(unittest.TestCase):
 
     def test_swapMemHL(self):
         self._test_swapn(0x36, self.z80.swapMemHL, "(HL)", 4, 16,
-                self._getMemHL, self._setMemHL)
+                         self._getMemHL, self._setMemHL)
 
     def test_swapA(self):
         self._test_swapR(0x37, self.z80.swapA, self.z80.a)
@@ -1818,7 +1819,7 @@ class TestZ80(unittest.TestCase):
 
     def test_srlMemHL(self):
         self._test_srln(0x3e, self.z80.srlMemHL, "(HL)", 4, 16, self._getMemHL,
-                self._setMemHL)
+                        self._setMemHL)
 
     def test_srlA(self):
         self._test_srlR(0x3f, self.z80.srlA, self.z80.a)
@@ -1843,7 +1844,7 @@ class TestZ80(unittest.TestCase):
 
     def test_bit0MemHL(self):
         self._test_bitBn(0x46, self.z80.bit0MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_bit0A(self):
         self._test_bitBR(0x47, self.z80.bit0A, 0, self.z80.a)
@@ -1868,7 +1869,7 @@ class TestZ80(unittest.TestCase):
 
     def test_bit1MemHL(self):
         self._test_bitBn(0x4e, self.z80.bit1MemHL, "(HL)", 4, 16, 1,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_bit1A(self):
         self._test_bitBR(0x4f, self.z80.bit1A, 1, self.z80.a)
@@ -1893,7 +1894,7 @@ class TestZ80(unittest.TestCase):
 
     def test_bit2MemHL(self):
         self._test_bitBn(0x56, self.z80.bit2MemHL, "(HL)", 4, 16, 2,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_bit2A(self):
         self._test_bitBR(0x57, self.z80.bit2A, 2, self.z80.a)
@@ -1918,7 +1919,7 @@ class TestZ80(unittest.TestCase):
 
     def test_bit3MemHL(self):
         self._test_bitBn(0x5e, self.z80.bit3MemHL, "(HL)", 4, 16, 3,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_bit3A(self):
         self._test_bitBR(0x5f, self.z80.bit3A, 3, self.z80.a)
@@ -1943,7 +1944,7 @@ class TestZ80(unittest.TestCase):
 
     def test_bit4MemHL(self):
         self._test_bitBn(0x66, self.z80.bit4MemHL, "(HL)", 4, 16, 4,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_bit4A(self):
         self._test_bitBR(0x67, self.z80.bit4A, 4, self.z80.a)
@@ -1968,7 +1969,7 @@ class TestZ80(unittest.TestCase):
 
     def test_bit5MemHL(self):
         self._test_bitBn(0x6e, self.z80.bit5MemHL, "(HL)", 4, 16, 5,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_bit5A(self):
         self._test_bitBR(0x6f, self.z80.bit5A, 5, self.z80.a)
@@ -1993,7 +1994,7 @@ class TestZ80(unittest.TestCase):
 
     def test_bit6MemHL(self):
         self._test_bitBn(0x76, self.z80.bit6MemHL, "(HL)", 4, 16, 6,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_bit6A(self):
         self._test_bitBR(0x77, self.z80.bit6A, 6, self.z80.a)
@@ -2018,7 +2019,7 @@ class TestZ80(unittest.TestCase):
 
     def test_bit7MemHL(self):
         self._test_bitBn(0x7e, self.z80.bit7MemHL, "(HL)", 4, 16, 7,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_bit7A(self):
         self._test_bitBR(0x7f, self.z80.bit7A, 7, self.z80.a)
@@ -2043,7 +2044,7 @@ class TestZ80(unittest.TestCase):
 
     def test_res0MemHL(self):
         self._test_resBn(0x86, self.z80.res0MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_res0A(self):
         self._test_resBR(0x87, self.z80.res0A, 0, self.z80.a)
@@ -2068,7 +2069,7 @@ class TestZ80(unittest.TestCase):
 
     def test_res1MemHL(self):
         self._test_resBn(0x8e, self.z80.res1MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_res1A(self):
         self._test_resBR(0x8f, self.z80.res1A, 0, self.z80.a)
@@ -2093,7 +2094,7 @@ class TestZ80(unittest.TestCase):
 
     def test_res2MemHL(self):
         self._test_resBn(0x96, self.z80.res2MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_res2A(self):
         self._test_resBR(0x97, self.z80.res2A, 0, self.z80.a)
@@ -2118,7 +2119,7 @@ class TestZ80(unittest.TestCase):
 
     def test_res3MemHL(self):
         self._test_resBn(0x9e, self.z80.res3MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_res3A(self):
         self._test_resBR(0x9f, self.z80.res3A, 0, self.z80.a)
@@ -2143,7 +2144,7 @@ class TestZ80(unittest.TestCase):
 
     def test_res4MemHL(self):
         self._test_resBn(0xa6, self.z80.res4MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_res4A(self):
         self._test_resBR(0xa7, self.z80.res4A, 0, self.z80.a)
@@ -2168,7 +2169,7 @@ class TestZ80(unittest.TestCase):
 
     def test_res5MemHL(self):
         self._test_resBn(0xae, self.z80.res5MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_res5A(self):
         self._test_resBR(0xaf, self.z80.res5A, 0, self.z80.a)
@@ -2193,7 +2194,7 @@ class TestZ80(unittest.TestCase):
 
     def test_res6MemHL(self):
         self._test_resBn(0xb6, self.z80.res6MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_res6A(self):
         self._test_resBR(0xb7, self.z80.res6A, 0, self.z80.a)
@@ -2218,7 +2219,7 @@ class TestZ80(unittest.TestCase):
 
     def test_res7MemHL(self):
         self._test_resBn(0xbe, self.z80.res7MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_res7A(self):
         self._test_resBR(0xbf, self.z80.res7A, 0, self.z80.a)
@@ -2243,7 +2244,7 @@ class TestZ80(unittest.TestCase):
 
     def test_set0MemHL(self):
         self._test_setBn(0xc6, self.z80.set0MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_set0A(self):
         self._test_setBR(0xc7, self.z80.set0A, 0, self.z80.a)
@@ -2268,7 +2269,7 @@ class TestZ80(unittest.TestCase):
 
     def test_set1MemHL(self):
         self._test_setBn(0xce, self.z80.set1MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_set1A(self):
         self._test_setBR(0xcf, self.z80.set1A, 0, self.z80.a)
@@ -2293,7 +2294,7 @@ class TestZ80(unittest.TestCase):
 
     def test_set2MemHL(self):
         self._test_setBn(0xd6, self.z80.set2MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_set2A(self):
         self._test_setBR(0xd7, self.z80.set2A, 0, self.z80.a)
@@ -2318,7 +2319,7 @@ class TestZ80(unittest.TestCase):
 
     def test_set3MemHL(self):
         self._test_setBn(0xde, self.z80.set3MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_set3A(self):
         self._test_setBR(0xdf, self.z80.set3A, 0, self.z80.a)
@@ -2343,7 +2344,7 @@ class TestZ80(unittest.TestCase):
 
     def test_set4MemHL(self):
         self._test_setBn(0xe6, self.z80.set4MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_set4A(self):
         self._test_setBR(0xe7, self.z80.set4A, 0, self.z80.a)
@@ -2368,7 +2369,7 @@ class TestZ80(unittest.TestCase):
 
     def test_set5MemHL(self):
         self._test_setBn(0xee, self.z80.set5MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_set5A(self):
         self._test_setBR(0xef, self.z80.set5A, 0, self.z80.a)
@@ -2393,7 +2394,7 @@ class TestZ80(unittest.TestCase):
 
     def test_set6MemHL(self):
         self._test_setBn(0xf6, self.z80.set6MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_set6A(self):
         self._test_setBR(0xf7, self.z80.set6A, 0, self.z80.a)
@@ -2418,7 +2419,7 @@ class TestZ80(unittest.TestCase):
 
     def test_set7MemHL(self):
         self._test_setBn(0xfe, self.z80.set7MemHL, "(HL)", 4, 16, 0,
-                self._setMemHL)
+                         self._setMemHL)
 
     def test_set7A(self):
         self._test_setBR(0xff, self.z80.set7A, 0, self.z80.a)
@@ -2868,8 +2869,8 @@ class TestZ80(unittest.TestCase):
         for i in range(0, self.NUM_TESTS):
             val = (0x80 >> i) & 0xff
             self.assertEquals(getf(), val,
-                    "%s is 0x%02x(%d), should be 0x%02x(%d)" %
-                    (name, getf(), getf(), val, val))
+                              "%s is 0x%02x(%d), should be 0x%02x(%d)" %
+                              (name, getf(), getf(), val, val))
             c = getf() & 1
             self.z80.f.n.set()
             self.z80.f.h.set()
@@ -2896,8 +2897,8 @@ class TestZ80(unittest.TestCase):
             self._flagEq(self.z80.f.c, c)
             expected = (loOrdVal << 4) + hiOrdVal
             self.assertEquals(getf(), expected,
-                    "%s is 0x%02x(%d), should be 0x%02x(%d)" %
-                    (name, getf(), getf(), expected, expected))
+                              "%s is 0x%02x(%d), should be 0x%02x(%d)" %
+                              (name, getf(), getf(), expected, expected))
 
     def _test_slaR(self, opc, func, reg):
         self._test_slan(opc, func, reg.name(), 2, 8, reg.val, reg.ld)
@@ -2908,8 +2909,8 @@ class TestZ80(unittest.TestCase):
         for i in range(0, self.NUM_TESTS):
             val = (1 << i) & 0xff
             self.assertEquals(getf(), val,
-                    "%s is 0x%02x(%d), should be 0x%02x(%d)" %
-                    (name, getf(), getf(), val, val))
+                              "%s is 0x%02x(%d), should be 0x%02x(%d)" %
+                              (name, getf(), getf(), val, val))
             c = (getf() >> 7) & 1
             self.z80.f.n.set()
             self.z80.f.h.set()
@@ -2947,8 +2948,8 @@ class TestZ80(unittest.TestCase):
         self.z80.f.h.set()
         self._timeExtOp(opc, m, t)
         self.assertEquals(getf(), expected,
-                "%s is 0x%02x(%d), should be 0x%02x(%d)" %
-                (name, getf(), getf(), expected, expected))
+                          "%s is 0x%02x(%d), should be 0x%02x(%d)" %
+                          (name, getf(), getf(), expected, expected))
         self._flagEq(self.z80.f.z, expected == 0)
         self._flagEq(self.z80.f.n, False)
         self._flagEq(self.z80.f.h, False)
@@ -3130,9 +3131,10 @@ class TestZ80(unittest.TestCase):
         self.assertTrue(opc < len(instrs), "Opcode out of instruction range")
         func_, argc_ = instrs[opc]
         self.assertEquals(func, func_,
-            "Opcode should be 0x%02x(%d)" % (opc, opc))
+                          "Opcode should be 0x%02x(%d)" % (opc, opc))
         self.assertEquals(argc, argc_,
-            "Instruction should take %d args, got %d" % (argc, argc_))
+                          "Instruction should take %d args, got %d" %
+                          (argc, argc_))
 
     def _incOp8(self, opc, reg, inc, m_, t_, a=None, b=None):
         if inc == 0:
@@ -3146,7 +3148,8 @@ class TestZ80(unittest.TestCase):
         self._flagEq(self.z80.f.z, reg.val() == 0)
         self._flagEq(self.z80.f.n, not pos)
         self._flagEq(self.z80.f.c, c)
-        self._flagEq(self.z80.f.h, val & 0xf == 0xf if pos else val & 0xf == 0x0)
+        self._flagEq(self.z80.f.h,
+                     val & 0xf == 0xf if pos else val & 0xf == 0x0)
 
     def _flagsFixed(self, opc, m_, t_, a=None, b=None):
         """Flags are unaffected by running instruction opc with a and b"""
@@ -3190,12 +3193,12 @@ class TestZ80(unittest.TestCase):
 
     def _flagEq(self, flag, val):
         self.assertEquals(flag.val(), val, "Flag %s is 0x%d, should be 0x%d" %
-            (flag.name(), flag.val(), val))
+                          (flag.name(), flag.val(), val))
 
     def _regEq(self, reg, val):
         self.assertEquals(reg.val(), val,
-                "Register %s is 0x%02x(%d), should be 0x%02x(%d)"
-                % (reg.name(), reg.val(), reg.val(), val, val))
+                          "Register %s is 0x%02x(%d), should be 0x%02x(%d)" %
+                          (reg.name(), reg.val(), reg.val(), val, val))
 
     def _test_ldRR(self, opc, func, dstReg, srcReg):
         self._validOpc(opc, func, 0)
