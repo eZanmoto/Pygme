@@ -974,9 +974,6 @@ class TestZ80(unittest.TestCase):
     def test_ldLA(self):
         self._test_ldRR(0x6f, self.z80.ldLA, self.z80.l, self.z80.a)
 
-    def test_ldLA(self):
-        self._test_ldRR(0x6f, self.z80.ldLA, self.z80.l, self.z80.a)
-
     def test_ldMemHLB(self):
         self._test_ldMemHLR(0x70, self.z80.ldMemHLB, self.z80.b)
 
