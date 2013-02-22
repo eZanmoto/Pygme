@@ -214,20 +214,29 @@ class TestZ80(unittest.TestCase):
             self._regEq(self.z80.a, val)
 
     def test_decBC(self):
-        opc = 0x0b
-        self._validOpc(opc, self.z80.decBC, 0)
-        self.z80.ldBCnn(0x01, 0x00)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.b, 0x00)
-        self._regEq(self.z80.c, 0xff)
-        self.z80.ldBCnn(0x00, 0x01)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.b, 0x00)
-        self._regEq(self.z80.c, 0x00)
-        self.z80.ldBCnn(0x00, 0x00)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.b, 0xff)
-        self._regEq(self.z80.c, 0xff)
+        self._test_decr8r8(0x0b, self.z80.decBC, 0, self.z80.ldBCnn,
+                           self.z80.b, self.z80.c)
+
+    def _test_decr8r8(self, opc, func, argc, setr8r8f, hireg, loreg):
+        setr16f = lambda v: setr8r8f(v & 0xff, v >> 8)
+        getf = lambda: (hireg.val() << 8) + loreg.val()
+        self._test_decr16(opc, func, argc, setr16f, getf)
+
+    def _test_decr16(self, opc, func, argc, setf, getf):
+        srctgts = [(0x0101, 0x0100),
+                   (0x0100, 0x00ff),
+                   (0x0002, 0x0001),
+                   (0x0001, 0x0000),
+                   (0x0000, 0xffff),
+                   (0xffff, 0xfffe),
+                   (0xff00, 0xfeff),
+                   ]
+        self._validOpc(opc, func, argc)
+        for srctgt in srctgts:
+            src, tgt = srctgt
+            setf(src)
+            self._flagsFixed(opc, 1, 4)
+            self.assertEquals(tgt, getf())
 
     def test_incC(self):
         opc = 0x0c
@@ -402,24 +411,9 @@ class TestZ80(unittest.TestCase):
             self._flagsFixed(opc, 2, 8)
             self._regEq(self.z80.a, val)
 
-    def test_decBC(self):
-        opc = 0x1b
-        self._validOpc(opc, self.z80.decDE, 0)
-        self.z80.d.ld(0x01)
-        self.z80.e.ld(0x00)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.d, 0x00)
-        self._regEq(self.z80.e, 0xff)
-        self.z80.d.ld(0x00)
-        self.z80.e.ld(0x01)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.d, 0x00)
-        self._regEq(self.z80.e, 0x00)
-        self.z80.d.ld(0x00)
-        self.z80.e.ld(0x00)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.d, 0xff)
-        self._regEq(self.z80.e, 0xff)
+    def test_decDE(self):
+        self._test_decr8r8(0x1b, self.z80.decDE, 0, self.z80.ldDEnn,
+                           self.z80.d, self.z80.e)
 
     def test_incE(self):
         opc = 0x1c
@@ -582,20 +576,8 @@ class TestZ80(unittest.TestCase):
         self._regEq(self.z80.l, 0x00)
 
     def test_decHL(self):
-        opc = 0x2b
-        self._validOpc(opc, self.z80.decHL, 0)
-        self.z80.ldHLnn(0x01, 0x00)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.h, 0x00)
-        self._regEq(self.z80.l, 0xff)
-        self.z80.ldHLnn(0x00, 0x01)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.h, 0x00)
-        self._regEq(self.z80.l, 0x00)
-        self.z80.ldHLnn(0x00, 0x00)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.h, 0xff)
-        self._regEq(self.z80.l, 0xff)
+        self._test_decr8r8(0x2b, self.z80.decHL, 0, self.z80.ldHLnn,
+                           self.z80.h, self.z80.l)
 
     def test_incL(self):
         opc = 0x2c
@@ -788,17 +770,8 @@ class TestZ80(unittest.TestCase):
         self._regEq(loReg, value & 0xff)
 
     def test_decSP(self):
-        opc = 0x3b
-        self._validOpc(opc, self.z80.decSP, 0)
-        self.z80.sp.ld(0x0100)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.sp, 0x00ff)
-        self.z80.sp.ld(0x0001)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.sp, 0x0000)
-        self.z80.sp.ld(0x0000)
-        self._flagsFixed(opc, 1, 4)
-        self._regEq(self.z80.sp, 0xffff)
+        self._test_decr16(0x3b, self.z80.decSP, 0, self.z80.sp.ld,
+                          self.z80.sp.val)
 
     def test_incA(self):
         opc = 0x3c
