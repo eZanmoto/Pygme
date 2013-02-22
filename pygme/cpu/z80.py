@@ -1459,10 +1459,6 @@ class Z80:
         """L is rotated left 1-bit position - bit 7 goes into C and bit 0."""
         self._rlcR(self.l)
 
-    def rlcL(self):
-        """L is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rlcR(self.l)
-
     def rlcMemHL(self):
         """
         Value at address in HL is rotated left 1-bit position - bit 7 goes into
