@@ -1471,7 +1471,7 @@ class Z80:
         self.f.z.setTo(self._getMemHL() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
-        self.f.c.setTo(c)
+        self.f.c.setTo(c == 1)
         self.m += 4
         self.t += 16
 
@@ -1515,7 +1515,7 @@ class Z80:
         self.f.z.setTo(self._getMemHL() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
-        self.f.c.setTo(c)
+        self.f.c.setTo(c == 1)
         self.m += 4
         self.t += 16
 
@@ -1565,7 +1565,7 @@ class Z80:
         self.f.z.setTo(self._getMemHL() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
-        self.f.c.setTo(c)
+        self.f.c.setTo(c == 1)
         self.m += 4
         self.t += 16
 
@@ -1615,7 +1615,7 @@ class Z80:
         self.f.z.setTo(self._getMemHL() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
-        self.f.c.setTo(r & 1)
+        self.f.c.setTo(r & 1 == 1)
         self.m += 4
         self.t += 16
 
@@ -2831,7 +2831,7 @@ class Z80:
         self.f.z.setTo(getf() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
-        self.f.c.setTo(v & 1)
+        self.f.c.setTo(v & 1 == 1)
         self.m += 4
         self.t += 16
 
@@ -2852,11 +2852,11 @@ class Z80:
 
     def _slan(self, getf, setf):
         v = getf()
-        self.f.c.setTo((v >> 7) & 1)
         setf((v << 1) & 0xff)
         self.f.z.setTo(getf() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
+        self.f.c.setTo((v >> 7) & 1 == 1)
         self.m += 4
         self.t += 16
 
@@ -2871,7 +2871,7 @@ class Z80:
         self.f.z.setTo(getf() == 0)  # NOTE Z is unaffected on Z80
         self.f.n.reset()
         self.f.h.reset()
-        self.f.c.setTo(v & 1)
+        self.f.c.setTo(v & 1 == 1)
         self.m += 4
         self.t += 16
 
@@ -2940,7 +2940,7 @@ class Z80:
         reg.ld(((r << 1 if rotLeft else r >> 1) & 0xff) | orBit)
         self.f.n.reset()
         self.f.h.reset()
-        self.f.c.setTo(c)
+        self.f.c.setTo(c == 1)
         self._chkZ(reg)  # NOTE Z is unaffected on Z80
         self.m += 2
         self.t += 8
