@@ -1019,20 +1019,20 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.addAMemHL, 0)
         self.z80.a.ld(0x2b)
         addr = 0xdead
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x47)
         self.z80.f.n.set()
         self._expectFlags(opc, 2, 8,
                           False, False, 0xa + 0x7 > 0xf, 0x2a + 0x47 > 0xff)
         self._regEq(self.z80.a, 0x72)
         addr = 0xbeef
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0xff)
         self._expectFlags(opc, 2, 8,
                           False, False, 0x2 + 0xf > 0xf, 0x72 + 0xff > 0xff)
         self._regEq(self.z80.a, 0x71)
         addr = 0xffff
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x8f)
         self._expectFlags(opc, 2, 8,
                           True, False, 0xf + 0x1 > 0xf, 0x71 + 0x8f > 0xff)
@@ -1078,20 +1078,20 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.adcAMemHL, 0)
         self.z80.a.ld(0x73)
         addr = 0xdead
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0xff)
         self.z80.f.n.set()
         self._expectFlags(opc, 2, 8,
                           False, False, 0x3 + 0xf > 0xf, True)
         self._regEq(self.z80.a, 0x72)
         addr = 0xbeef
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x01)
         self._expectFlags(opc, 2, 8,
                           False, False, 0x2 + 0x1 + 0x1 > 0xf, False)
         self._regEq(self.z80.a, 0x74)
         addr = 0xffff
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x8c)
         self._expectFlags(opc, 2, 8,
                           True, False, 0x4 + 0xc > 0xf, 0x74 + 0x8c > 0xff)
@@ -1137,18 +1137,18 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.subAMemHL, 0)
         self.z80.a.ld(0x9c)
         addr = 0xdead
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x2a)
         self.z80.f.n.reset()
         self._expectFlags(opc, 2, 8, False, True, 0xc < 0xa, 0x9c < 0x2a)
         self._regEq(self.z80.a, 0x72)
         addr = 0xbeef
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0xff)
         self._expectFlags(opc, 2, 8, False, True, 0x2 < 0xf, 0x72 < 0xff)
         self._regEq(self.z80.a, 0x73)
         addr = 0xbeef
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x73)
         self._expectFlags(opc, 2, 8, True, True, 0x3 < 0x3, 0x73 < 0x73)
         self._regEq(self.z80.a, 0x00)
@@ -1187,19 +1187,19 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.sbcAMemHL, 0)
         self.z80.a.ld(0x0e)
         addr = 0xdead
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x9c)
         self.z80.f.n.reset()
         self._expectFlags(opc, 2, 8, False, True, 0xe < 0xc, True)
         self._regEq(self.z80.a, 0x72)
         addr = 0xbeef
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x01)
         self._expectFlags(opc, 2, 8,
                           False, True, 0x2 < 0x1 + 0x1, False)
         self._regEq(self.z80.a, 0x70)
         addr = 0xbeef
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x70)
         self._expectFlags(opc, 2, 8, True, True, 0x0 < 0x0, 0x70 < 0x70)
         self._regEq(self.z80.a, 0x00)
@@ -1249,7 +1249,7 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.andMemHL, 0)
         self.z80.a.ld(0b0011)
         addr = 0xdead
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0b0101)
         self.z80.f.z.set()
         self.z80.f.n.set()
@@ -1259,7 +1259,7 @@ class TestZ80(unittest.TestCase):
         self._regEq(self.z80.a, 0b0001)
         self.assertEquals(self.mem.get8(addr), 0b0101)
         addr = 0xbeef
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0)
         self.z80.f.z.set()
         self.z80.f.n.set()
@@ -1310,7 +1310,7 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.xorMemHL, 0)
         self.z80.a.ld(0b0011)
         addr = 0xdead
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0b0101)
         self.z80.f.z.set()
         self.z80.f.n.set()
@@ -1320,7 +1320,7 @@ class TestZ80(unittest.TestCase):
         self._regEq(self.z80.a, 0b0110)
         self.assertEquals(self.mem.get8(addr), 0b0101)
         addr = 0xbeef
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         val = self.z80.a.val()
         self.mem.set8(addr, val)
         self.z80.f.z.reset()
@@ -1366,7 +1366,7 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.orMemHL, 0)
         self.z80.a.ld(0b0011)
         addr = 0xdead
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0b0101)
         self.z80.f.z.set()
         self.z80.f.n.set()
@@ -1377,7 +1377,7 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(self.mem.get8(addr), 0b0101)
         self.z80.a.ld(0)
         addr = 0xbeef
-        self.z80.ldHLnn(addr >> 8, addr & 0xff)
+        self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0)
         self.z80.f.z.reset()
         self.z80.f.n.set()
@@ -1432,7 +1432,7 @@ class TestZ80(unittest.TestCase):
         for conf in confs:
             a, v, addr = conf
             self.z80.a.ld(a)
-            self.z80.ldHLnn(addr >> 8, addr & 0xff)
+            self.z80.ldHLnn(addr & 0xff, addr >> 8)
             self.mem.set8(addr, v)
             self.z80.f.n.reset()
             self._expectFlags(opc, 2, 8,
