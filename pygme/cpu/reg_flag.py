@@ -22,10 +22,9 @@ class RegFlag:
         self._val = False
 
     def setTo(self, val):
-        if val == True:
+        if not isinstance(val, bool):
+            raise ValueError("'val' must be 'bool', got '%s'" % type(val))
+        if val:
             self.set()
-        elif val == False:
-            self.reset()
         else:
-            raise ValueError("Cannot assign %d to flag register '%s'" %
-                    (val, self.name()))
+            self.reset()
