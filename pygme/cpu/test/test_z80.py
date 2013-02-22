@@ -7,6 +7,7 @@ import unittest
 from pygme.cpu import z80
 from pygme.memory import array
 
+
 class TestZ80(unittest.TestCase):
 
     # The default number of times each test should be run
@@ -30,7 +31,7 @@ class TestZ80(unittest.TestCase):
                 0xf4,
                 0xfc,
                 0xfd,
-               ]
+                ]
         for opc in opcs:
             with self.assertRaises(RuntimeError):
                 func, argc = self.z80.instr[opc]
