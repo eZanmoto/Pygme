@@ -16,6 +16,15 @@ class Flags:
 
 # PC should be incremented before processing each argument to an instruction.
 class Z80:
+    """
+    The Z80 class emulates a gameboy CPU.
+
+    The class allows the execution of emulated instructions using its
+    exported methods, and monitors the side-effects of these
+    instructions on its registers.
+
+    This implementation does not include clock registers.
+    """
 
     LEFT = True
     RIGHT = not LEFT
@@ -40,8 +49,6 @@ class Z80:
         self.l = reg8.Reg8("L")
         self.pc = reg16.Reg16("PC")
         self.sp = reg16.Reg16("SP")
-        self.m = 0
-        self.t = 0
         self.f = Flags()
         self._mem = mem
         self.intsEnabled = False
@@ -562,8 +569,6 @@ class Z80:
 
     def nop(self):
         """The CPU performs no operation during this machine cycle."""
-        self.m += 1
-        self.t += 4
 
     def ldBCnn(self, lsb, msb):
         """Loads a byte into B and a byte into C."""
@@ -701,8 +706,6 @@ class Z80:
         """Loads A into the memory address in HL and increments HL."""
         self._ldMemRRA(self.h, self.l)
         self.incHL()
-        self.m -= 1
-        self.t -= 4
 
     def incHL(self):
         """Increments the contents of HL."""
@@ -735,8 +738,6 @@ class Z80:
         """Loads byte at memory address in HL into A and increments HL."""
         self._ldRMemHL(self.a)
         self.incHL()
-        self.m -= 1
-        self.t -= 4
 
     def decHL(self):
         """Decrements the contents of HL."""
@@ -759,8 +760,6 @@ class Z80:
         self.a.ld(0xff - self.a.val())
         self.f.n.set()
         self.f.h.set()
-        self.m += 1
-        self.t += 4
 
     def jrNCn(self, n):
         """Decrements/increments PC by the signed byte n if C is reset."""
@@ -769,21 +768,15 @@ class Z80:
     def ldSPnn(self, lsb, msb):
         """Loads a byte into S and a byte into P."""
         self.sp.ld((msb << 8) + lsb)
-        self.m += 3
-        self.t += 12
 
     def lddMemHLA(self):
         """Loads A into the memory address in HL and decrements HL."""
         self._ldMemRRA(self.h, self.l)
         self.decHL()
-        self.m -= 1
-        self.t -= 4
 
     def incSP(self):
         """Increments the contents of SP."""
         self.sp.ld((self.sp.val() + 1) & 0xffff)
-        self.m += 1
-        self.t += 4
 
     def incMemHL(self):
         """Increments the contents of the memory address specified by HL."""
@@ -793,8 +786,6 @@ class Z80:
         self._mem.set8(addr, (val + 1) & 0xff)
         self.f.h.setTo(val & 0xf == 0xf)
         self.f.z.setTo(self._mem.get8(addr) == 0)
-        self.m += 3
-        self.t += 12
 
     def decMemHL(self):
         """Decrements the contents of the memory address specified by HL."""
@@ -804,22 +795,16 @@ class Z80:
         self._mem.set8(addr, (val - 1) & 0xff)
         self.f.h.setTo(val & 0xf == 0)
         self.f.z.setTo(self._mem.get8(addr) == 0)
-        self.m += 3
-        self.t += 12
 
     def ldMemHLn(self, hl):
         """Loads a byte into the memory address specified by HL."""
         self._mem.set8(self._hl(), hl)
-        self.m += 3
-        self.t += 12
 
     def scf(self):
         """Sets the carry flag."""
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.set()
-        self.m += 1
-        self.t += 4
 
     def jrCn(self, n):
         """Decrements/increments PC by the signed byte n if C is set."""
@@ -834,21 +819,15 @@ class Z80:
         self.f.n.reset()
         self.f.h.setTo((hl & 0xfff) + (self.sp.val() & 0xfff) > 0xfff)
         self.f.c.setTo(result > 0xffff)
-        self.m += 3
-        self.t += 12
 
     def lddAMemHL(self):
         """Loads the value at memory address in HL into A and decrements HL."""
         self._ldRMemHL(self.a)
         self.decHL()
-        self.m -= 1
-        self.t -= 4
 
     def decSP(self):
         """Decrements the contents of SP."""
         self.sp.ld((self.sp.val() - 1) & 0xffff)
-        self.m += 1
-        self.t += 4
 
     def incA(self):
         """Increments the contents of A."""
@@ -867,8 +846,6 @@ class Z80:
         self.f.h.reset()
         self.f.n.reset()
         self.f.c.setTo(not self.f.c.val())
-        self.m += 1
-        self.t += 4
 
     def ldBB(self):
         """Loads the contents of B into B."""
@@ -1385,8 +1362,6 @@ class Z80:
         """Pops the top two bytes of the stack into the PC if Z is not set."""
         if not self.f.z.val():
             self.pc.ld(self._pop16())
-        self.m += 2
-        self.t += 8
 
     def popBC(self):
         """Pops the top two bytes of the stack into BC."""
@@ -1411,8 +1386,6 @@ class Z80:
     def addAn(self, n):
         """Adds A and n and stores the result in A."""
         self._arithAn(n, self.POSITIVE, self.WITHOUT_CARRY)
-        self.m += 1
-        self.t += 4
 
     def rst0(self):
         """Pushes the PC onto the top of the stack and jumps to 0x0000."""
@@ -1422,14 +1395,10 @@ class Z80:
         """Pops the top two bytes of the stack into the PC if Z is set."""
         if self.f.z.val():
             self.pc.ld(self._pop16())
-        self.m += 2
-        self.t += 8
 
     def ret(self):
         """Pops the top two bytes of the stack into the PC."""
         self.pc.ld(self._pop16())
-        self.m += 2
-        self.t += 8
 
     def jpZnn(self, loOrdByte, hiOrdByte):
         """Loads little-endian word into PC if Z is set."""
@@ -1472,8 +1441,6 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c == 1)
-        self.m += 4
-        self.t += 16
 
     def rlcA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
@@ -1516,8 +1483,6 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c == 1)
-        self.m += 4
-        self.t += 16
 
     def rrcA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
@@ -1566,8 +1531,6 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(c == 1)
-        self.m += 4
-        self.t += 16
 
     def rlA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
@@ -1616,8 +1579,6 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(r & 1 == 1)
-        self.m += 4
-        self.t += 16
 
     def rrA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and C goes
@@ -2582,8 +2543,6 @@ class Z80:
         """Pops the top two bytes of the stack into the PC if C is not set."""
         if not self.f.c.val():
             self.pc.ld(self._pop16())
-        self.m += 2
-        self.t += 8
 
     def popDE(self):
         """Pops the top two bytes of the stack into DE."""
@@ -2613,8 +2572,6 @@ class Z80:
         """Pops the top two bytes of the stack into the PC if C is set."""
         if self.f.c.val():
             self.pc.ld(self._pop16())
-        self.m += 2
-        self.t += 8
 
     def reti(self):
         """Pops two bytes off the stack into the PC and enables interrupts."""
@@ -2641,8 +2598,6 @@ class Z80:
         """Loads A into the memory location 0xFF00 + n."""
         self._assertByte(n)
         self._mem.set8(0xff00 + n, self.a.val())
-        self.m += 3
-        self.t += 12
 
     def popHL(self):
         """Pops the top two bytes of the stack into HL."""
@@ -2651,8 +2606,6 @@ class Z80:
     def ldhMemCA(self):
         """Loads A into the memory location 0xFF00 + C."""
         self._mem.set8(0xff00 + self.c.val(), self.a.val())
-        self.m += 2
-        self.t += 8
 
     def pushHL(self):
         """Pushes the contents of HL onto the top of the stack."""
@@ -2670,20 +2623,14 @@ class Z80:
         """Adds signed byte to SP and stores the result in SP."""
         self._assertByte(n)
         self.sp.ld(self.sp.val() + self._to2sComp(n))
-        self.m += 4
-        self.t += 16
 
     def jpMemHL(self):
         """Loads the value of HL into PC."""
         self._jpcnn(True, self.l.val(), self.h.val())
-        self.m -= 2
-        self.t -= 8
 
     def ldMemnnA(self, lsb, msb):
         """Loads A into the specified memory location."""
         self._mem.set8((msb << 8) + lsb, self.a.val())
-        self.m += 4
-        self.t += 16
 
     def xorn(self, n):
         """Bitwise XORs A and a byte and stores the result in A."""
@@ -2697,8 +2644,6 @@ class Z80:
         """Loads the value at the memory location 0xFF00 + n into A."""
         self._assertByte(n)
         self.a.ld(self._mem.get8(0xff00 + n))
-        self.m += 3
-        self.t += 12
 
     def popAF(self):
         """Pops top byte of stack into flags register and next byte into A."""
@@ -2708,14 +2653,10 @@ class Z80:
         self.f.h.setTo((f >> 5) & 1 == 1)
         self.f.c.setTo((f >> 4) & 1 == 1)
         self.a.ld(self._pop8())
-        self.m += 3
-        self.t += 12
 
     def di(self):
         """Disables interrupts."""
         self.intsEnabled = False
-        self.m += 1
-        self.t += 4
 
     def pushAF(self):
         """Pushes A onto the stack and then pushes the flags register."""
@@ -2724,8 +2665,6 @@ class Z80:
                     ((1 if self.f.n.val() else 0) << 6) |
                     ((1 if self.f.h.val() else 0) << 5) |
                     ((1 if self.f.c.val() else 0) << 4))
-        self.m += 4
-        self.t += 16
 
     def orn(self, n):
         """Bitwise ORs A and a byte and stores the result in A."""
@@ -2747,24 +2686,16 @@ class Z80:
             self.f.h.setTo((sp & 0xf) + (n & 0xf) > 0xf)
             self.f.c.setTo((sp & 0xff) + n > 0xff)
         self.sp.ld((sp + self._to2sComp(n)) & 0xffff)
-        self.m += 3
-        self.t += 12
 
     def ldSPHL(self):
         self.sp.ld(self._hl())
-        self.m += 2
-        self.t += 8
 
     def ldAMemnn(self, lsb, msb):
         self.a.ld(self._mem.get8((msb << 8) + lsb))
-        self.m += 4
-        self.t += 16
 
     def ei(self):
         """Enables interrupts."""
         self.intsEnabled = True
-        self.m += 1
-        self.t += 4
 
     def cpn(self, n):
         """Updates the flags with the result of subtracting n from A."""
@@ -2783,53 +2714,34 @@ class Z80:
     def _rstn(self, n):
         self._push16(self.pc.val())
         self.jpnn(n, 0)
-        self.m += 5
-        self.t += 20
 
     def _callcnn(self, cond, lsb, msb):
         if cond:
             self._push16(self.pc.val())
             self.jpnn(lsb, msb)
-        else:
-            self.m += 3
-            self.t += 12
 
     def _resBR(self, bitNum, reg):
         self._resBn(bitNum, reg.val, reg.ld)
-        self.m -= 2
-        self.t -= 8
 
     def _resBn(self, bitNum, getf, setf):
         setf(getf() & (~ (1 << bitNum)))
-        self.m += 4
-        self.t += 16
 
     def _setBR(self, bitNum, reg):
         self._setBn(bitNum, reg.val, reg.ld)
-        self.m -= 2
-        self.t -= 8
 
     def _setBn(self, bitNum, getf, setf):
         setf(getf() | (1 << bitNum))
-        self.m += 4
-        self.t += 16
 
     def _bitBR(self, bitNum, reg):
         self._bitBn(bitNum, reg.val)
-        self.m -= 2
-        self.t -= 8
 
     def _bitBn(self, bitNum, getf):
         self.f.z.setTo((getf() >> bitNum) & 1 == 0)
         self.f.n.reset()
         self.f.h.set()
-        self.m += 4
-        self.t += 16
 
     def _srlR(self, reg):
         self._srln(reg.val, reg.ld)
-        self.m -= 2
-        self.t -= 8
 
     def _srln(self, getf, setf):
         v = getf()
@@ -2838,23 +2750,15 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(v & 1 == 1)
-        self.m += 4
-        self.t += 16
 
     def _swapR(self, reg):
         self._swapn(reg.val, reg.ld)
-        self.m -= 2
-        self.t -= 8
 
     def _swapn(self, getf, setf):
         setf(((getf() & 0xf) << 4) + ((getf() >> 4) & 0xf))
-        self.m += 4
-        self.t += 16
 
     def _slaR(self, reg):
         self._slan(reg.val, reg.ld)
-        self.m -= 2
-        self.t -= 8
 
     def _slan(self, getf, setf):
         v = getf()
@@ -2863,13 +2767,9 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo((v >> 7) & 1 == 1)
-        self.m += 4
-        self.t += 16
 
     def _sraR(self, reg):
         self._sran(reg.val, reg.ld)
-        self.m -= 2
-        self.t -= 8
 
     def _sran(self, getf, setf):
         v = getf()
@@ -2878,8 +2778,6 @@ class Z80:
         self.f.n.reset()
         self.f.h.reset()
         self.f.c.setTo(v & 1 == 1)
-        self.m += 4
-        self.t += 16
 
     def _setMemHL(self, val):
         self._mem.set8(self._hl(), val)
@@ -2902,20 +2800,14 @@ class Z80:
     def _ldRRnn(self, hiOrdReg, hiOrdVal, loOrdReg, loOrdVal):
         self._ldRn(hiOrdReg, hiOrdVal)
         self._ldRn(loOrdReg, loOrdVal)
-        self.m += 1
-        self.t += 4
 
     def _ldMemRRA(self, hiOrdReg, loOrdReg):
         self._mem.set8((hiOrdReg.val() << 8) + loOrdReg.val(), self.a.val())
-        self.m += 2
-        self.t += 8
 
     def _incRR(self, hiOrdReg, loOrdReg):
         loOrdReg.ld((loOrdReg.val() + 1) & 0xff)
         if loOrdReg.val() == 0:
             hiOrdReg.ld((hiOrdReg.val() + 1) & 0xff)
-        self.m += 1
-        self.t += 4
 
     def _incR(self, reg):
         c = self.f.c.val()
@@ -2929,13 +2821,9 @@ class Z80:
 
     def _ldRn(self, reg, val):
         reg.ld(val)
-        self.m += 1
-        self.t += 4
 
     def _rotA(self, rotLeft, withCarry):
         self._rotR(self.a, rotLeft, withCarry)
-        self.m -= 1
-        self.t -= 4
 
     def _rotR(self, reg, rotLeft, withCarry):
         r = reg.val()
@@ -2948,8 +2836,6 @@ class Z80:
         self.f.h.reset()
         self.f.c.setTo(c == 1)
         self._chkZ(reg)  # NOTE Z is unaffected on Z80
-        self.m += 2
-        self.t += 8
 
     def _addHLRR(self, hiOrdReg, loOrdReg):
         hl = (self.h.val() << 8) + self.l.val()
@@ -2960,68 +2846,44 @@ class Z80:
         self.f.n.reset()
         self.f.h.setTo((hl & 0xfff) + (rr & 0xfff) > 0xfff)
         self.f.c.setTo(result > 0xffff)
-        self.m += 3
-        self.t += 12
 
     def _ldAMemRR(self, hiOrdReg, loOrdReg):
         self.a.ld(self._mem.get8((hiOrdReg.val() << 8) + loOrdReg.val()))
-        self.m += 2
-        self.t += 8
 
     def _decRR(self, hiOrdReg, loOrdReg):
         loOrdReg.ld((loOrdReg.val() - 1) & 0xff)
         if loOrdReg.val() == 0xff:
             hiOrdReg.ld((hiOrdReg.val() - 1) & 0xff)
-        self.m += 1
-        self.t += 4
 
     def _ldRR(self, dstReg, srcReg):
         self._ldRn(dstReg, srcReg.val())
 
     def _ldRMemHL(self, reg):
         self._ldRn(reg, self._mem.get8(self._hl()))
-        self.m += 1
-        self.t += 4
 
     def _ldMemHLR(self, reg):
         self._mem.set8(self._hl(), reg.val())
-        self.m += 2
-        self.t += 8
 
     def _addAR(self, reg):
         self.addAn(reg.val())
-        self.m -= 1
-        self.t -= 4
 
     def _adcAR(self, reg):
         self._adcAn(reg.val())
-        self.m -= 1
-        self.t -= 4
 
     def _adcAn(self, val):
         self._arithAn(val, self.POSITIVE, self.WITH_CARRY)
-        self.m += 1
-        self.t += 4
 
     def _subAR(self, reg):
         self._subAn(reg.val())
-        self.m -= 1
-        self.t -= 4
 
     def _subAn(self, v):
         self._arithAn(v, self.NEGATIVE, self.WITHOUT_CARRY)
-        self.m += 1
-        self.t += 4
 
     def _sbcAR(self, reg):
         self._sbcAn(reg.val())
-        self.m -= 1
-        self.t -= 4
 
     def _sbcAn(self, v):
         self._arithAn(v, self.NEGATIVE, self.WITH_CARRY)
-        self.m += 1
-        self.t += 4
 
     def _arithAn(self, v, isPositive, withCarry):
         self._arithRn(self.a, v, isPositive, withCarry)
@@ -3041,13 +2903,9 @@ class Z80:
         self.f.c.setTo(r_ < 0x00 or r_ > 0xff)
         reg.ld(r_ & 0xff)
         self._chkZ(reg)
-        self.m += 1
-        self.t += 4
 
     def _bitwiseR(self, op, reg):
         self._bitwisen(op, reg.val())
-        self.m -= 1
-        self.t -= 4
 
     def _bitwisen(self, op, val):
         self._assertByte(val)
@@ -3062,13 +2920,9 @@ class Z80:
         self.f.h.setTo(op == self.AND)
         self.f.c.reset()
         self._chkZ(self.a)
-        self.m += 2
-        self.t += 8
 
     def _cpR(self, reg):
         self._cpn(reg.val())
-        self.m -= 1
-        self.t -= 4
 
     def _cpn(self, val):
         a = self.a.val()
@@ -3079,8 +2933,6 @@ class Z80:
         v = self._pop16()
         hiOrdReg.ld(v >> 8)
         loOrdReg.ld(v & 0xff)
-        self.m += 3
-        self.t += 12
 
     def _pop16(self):
         lsb = self._pop8()
@@ -3094,8 +2946,6 @@ class Z80:
 
     def _pushRR(self, hiOrdReg, loOrdReg):
         self._push16((hiOrdReg.val() << 8) + loOrdReg.val())
-        self.m += 4
-        self.t += 16
 
     def _push16(self, val):
         self._push8(val >> 8)
@@ -3111,8 +2961,6 @@ class Z80:
         if cond:
             pc = self.pc.val() + self._to2sComp(n)
             self.pc.ld(pc & 0xffff)
-        self.m += 2
-        self.t += 8
 
     def _to2sComp(self, n):
         self._assertByte(n)
@@ -3124,8 +2972,6 @@ class Z80:
         self._assertByte(loOrdByte)
         if cond:
             self.pc.ld((hiOrdByte << 8) + loOrdByte)
-        self.m += 3
-        self.t += 12
 
     def _assertByte(self, n):
         if n < 0 or n > 0xff:
