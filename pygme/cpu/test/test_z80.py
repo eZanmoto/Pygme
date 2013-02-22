@@ -9,6 +9,17 @@ from pygme.memory import array
 
 
 class TestZ80(unittest.TestCase):
+    """
+    Tests for Z80 class.
+
+    When a parameter to a method is a function, the parameter name
+    should ideally be suffixed with 'f'.
+
+    MSB and LSB stand for most significant byte and least significant
+    byte, respectively.
+
+    r8 and r16 denote an 8-bit and a 16-bit register, respectively.
+    """
 
     # The default number of times each test should be run
     NUM_TESTS = 10
