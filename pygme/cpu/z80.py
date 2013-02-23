@@ -215,7 +215,7 @@ class Z80:
             (self.sbcAE, 4, 0),
             (self.sbcAH, 4, 0),
             (self.sbcAL, 4, 0),
-            (self.sbcAMemHL,8, 0),
+            (self.sbcAMemHL, 8, 0),
             (self.sbcAA, 4, 0),
             (self.andB, 4, 0),
             (self.andC, 4, 0),
@@ -2597,7 +2597,7 @@ class Z80:
     def reti(self):
         """Pops two bytes off the stack into the PC and enables interrupts."""
         self.ret()
-        self.intsEnabled = True
+        self.ei()
 
     def jpCnn(self, lsb, msb):
         """Loads little-endian word into PC if C is set."""
