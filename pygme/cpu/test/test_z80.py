@@ -53,7 +53,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x00
         self._validOpc(opc, self.z80.nop, 0)
         for _ in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
 
     def test_ldBCnn(self):
         self._test_ldr16nn(0x01, self.z80.ldBCnn,
@@ -73,7 +73,7 @@ class TestZ80(unittest.TestCase):
                    ]
         for lsbmsb in lsbmsbs:
             lsb, msb = lsbmsb
-            self._flagsFixed(opc, 3, 12, lsb, msb)
+            self._flagsFixed(opc, lsb, msb)
             self.assertEquals(getf(), (msb << 8) + lsb)
 
     def test_ldBCnn_maxValue(self):
@@ -99,7 +99,7 @@ class TestZ80(unittest.TestCase):
             self.z80.c.ld(i * 4)
             addr = (self.z80.b.val() << 8) + self.z80.c.val()
             self.assertEquals(self.mem.get8(addr), 0)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self.assertEquals(self.mem.get8(addr), self.z80.a.val())
 
     def test_incBC(self):
@@ -108,14 +108,14 @@ class TestZ80(unittest.TestCase):
         self._regEq(self.z80.b, 0)
         for i in range(0, 0x200):
             self._regEq(self.z80.c, i & 0xff)
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
         self._regEq(self.z80.b, 2)
 
     def test_incB(self):
         opc = 0x04
         self._validOpc(opc, self.z80.incB, 0)
         for i in range(1, 0x200):
-            self._incOp8(opc, self.z80.b, 1, 1, 4)
+            self._incOp8(opc, self.z80.b, 1)
             self._regEq(self.z80.b, i & 0xff)
 
     def test_decB(self):
@@ -124,20 +124,20 @@ class TestZ80(unittest.TestCase):
     def _test_decr8(self, opc, func, argc, reg):
         self._validOpc(opc, func, argc)
         reg.ld(0x02)
-        self._incOp8(opc, reg, -1, 1, 4)
+        self._incOp8(opc, reg, -1)
         self._regEq(reg, 0x01)
-        self._incOp8(opc, reg, -1, 1, 4)
+        self._incOp8(opc, reg, -1)
         self._regEq(reg, 0x00)
-        self._incOp8(opc, reg, -1, 1, 4)
+        self._incOp8(opc, reg, -1)
         self._regEq(reg, 0xff)
-        self._incOp8(opc, reg, -1, 1, 4)
+        self._incOp8(opc, reg, -1)
         self._regEq(reg, 0xfe)
 
     def test_ldBn(self):
         opc = 0x06
         self._validOpc(opc, self.z80.ldBn, 1)
         for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 1, 4, i)
+            self._flagsFixed(opc, i)
             self._regEq(self.z80.b, i)
 
     def test_ldBn_maxValue(self):
@@ -210,7 +210,7 @@ class TestZ80(unittest.TestCase):
             val = (i * 3) & 0xff
             self.mem.set8(addr, val)
             self.z80.a.ld(0)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self._regEq(self.z80.a, val)
 
     def test_decBC(self):
@@ -235,14 +235,14 @@ class TestZ80(unittest.TestCase):
         for srctgt in srctgts:
             src, tgt = srctgt
             setf(src)
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
             self.assertEquals(tgt, getf())
 
     def test_incC(self):
         opc = 0x0c
         self._validOpc(opc, self.z80.incC, 0)
         for i in range(1, 0x200):
-            self._incOp8(opc, self.z80.c, 1, 1, 4)
+            self._incOp8(opc, self.z80.c, 1)
             self._regEq(self.z80.c, i & 0xff)
 
     def test_decC(self):
@@ -252,7 +252,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x0e
         self._validOpc(opc, self.z80.ldCn, 1)
         for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 1, 4, i)
+            self._flagsFixed(opc, i)
             self._regEq(self.z80.c, i)
 
     def test_rrca(self):
@@ -313,7 +313,7 @@ class TestZ80(unittest.TestCase):
             self.z80.e.ld(i * 4)
             addr = (self.z80.d.val() << 8) + self.z80.e.val()
             self.assertEquals(self.mem.get8(addr), 0)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self.assertEquals(self.mem.get8(addr), self.z80.a.val())
 
     def test_incDE(self):
@@ -322,14 +322,14 @@ class TestZ80(unittest.TestCase):
         self._regEq(self.z80.d, 0)
         for i in range(0, 0x200):
             self._regEq(self.z80.e, i & 0xff)
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
         self._regEq(self.z80.d, 2)
 
     def test_incD(self):
         opc = 0x14
         self._validOpc(opc, self.z80.incD, 0)
         for i in range(1, 0x200):
-            self._incOp8(opc, self.z80.d, 1, 1, 4)
+            self._incOp8(opc, self.z80.d, 1)
             self._regEq(self.z80.d, i & 0xff)
 
     def test_decD(self):
@@ -339,7 +339,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x16
         self._validOpc(opc, self.z80.ldDn, 1)
         for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 1, 4, i)
+            self._flagsFixed(opc, i)
             self._regEq(self.z80.d, i)
 
     def test_rla(self):
@@ -408,7 +408,7 @@ class TestZ80(unittest.TestCase):
             val = (i * 3) & 0xff
             self.mem.set8(addr, val)
             self.z80.a.ld(0)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self._regEq(self.z80.a, val)
 
     def test_decDE(self):
@@ -419,7 +419,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x1c
         self._validOpc(opc, self.z80.incE, 0)
         for i in range(1, 0x200):
-            self._incOp8(opc, self.z80.e, 1, 1, 4)
+            self._incOp8(opc, self.z80.e, 1)
             self._regEq(self.z80.e, i & 0xff)
 
     def test_decE(self):
@@ -429,7 +429,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x1e
         self._validOpc(opc, self.z80.ldEn, 1)
         for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 1, 4, i)
+            self._flagsFixed(opc, i)
             self._regEq(self.z80.e, i)
 
     def test_rra(self):
@@ -484,7 +484,7 @@ class TestZ80(unittest.TestCase):
             self.z80.l.ld(i * 4)
             addr = (self.z80.h.val() << 8) + self.z80.l.val()
             self.assertEquals(self.mem.get8(addr), 0)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self.assertEquals(self.mem.get8(addr), self.z80.a.val())
             self._regEq(self.z80.l, (i * 4 + 1) & 0xff)
             self._regEq(self.z80.h, (i * 2) + ((i * 4 + 1) >> 8))
@@ -495,14 +495,14 @@ class TestZ80(unittest.TestCase):
         self._regEq(self.z80.h, 0)
         for i in range(0, 0x200):
             self._regEq(self.z80.l, i & 0xff)
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
         self._regEq(self.z80.h, 2)
 
     def test_incH(self):
         opc = 0x24
         self._validOpc(opc, self.z80.incH, 0)
         for i in range(1, 0x200):
-            self._incOp8(opc, self.z80.h, 1, 1, 4)
+            self._incOp8(opc, self.z80.h, 1)
             self._regEq(self.z80.h, i & 0xff)
 
     def test_decH(self):
@@ -512,7 +512,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x26
         self._validOpc(opc, self.z80.ldHn, 1)
         for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 1, 4, i)
+            self._flagsFixed(opc, i)
             self._regEq(self.z80.h, i)
 
     def test_daa(self):
@@ -561,7 +561,7 @@ class TestZ80(unittest.TestCase):
             val = (i * 3) & 0xff
             self.mem.set8(addr, val)
             self.z80.a.ld(0)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self._regEq(self.z80.a, val)
             if i * 4 == 0xff:
                 self._regEq(self.z80.h, i * 2 + 1)
@@ -571,7 +571,7 @@ class TestZ80(unittest.TestCase):
                 self._regEq(self.z80.l, i * 4 + 1)
         self.z80.h.ld(0x00)
         self.z80.l.ld(0xff)
-        self._flagsFixed(opc, 2, 8)
+        self._flagsFixed(opc)
         self._regEq(self.z80.h, 0x01)
         self._regEq(self.z80.l, 0x00)
 
@@ -583,7 +583,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x2c
         self._validOpc(opc, self.z80.incL, 0)
         for i in range(1, 0x200):
-            self._incOp8(opc, self.z80.l, 1, 1, 4)
+            self._incOp8(opc, self.z80.l, 1)
             self._regEq(self.z80.l, i & 0xff)
 
     def test_decL(self):
@@ -593,7 +593,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x2e
         self._validOpc(opc, self.z80.ldLn, 1)
         for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 1, 4, i)
+            self._flagsFixed(opc, i)
             self._regEq(self.z80.l, i)
 
     def test_cpl(self):
@@ -653,7 +653,7 @@ class TestZ80(unittest.TestCase):
         loReg.ld(param & 0xff)
         self.z80.a.ld(0xa5)
         self.mem.set8(param, 0)
-        self._flagsFixed(opc, 2, 8)
+        self._flagsFixed(opc)
         self.assertEquals(self.mem.get8(param), self.z80.a.val())
         self._regEq(hiReg, (value >> 8) & 0xff)
         self._regEq(loReg, value & 0xff)
@@ -665,7 +665,7 @@ class TestZ80(unittest.TestCase):
         self.z80.sp.ld(init)
         for i in range(0, 0x200):
             self._regEq(self.z80.sp, (init + i) & 0xffff)
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
 
     def test_incMemHL(self):
         opc = 0x34
@@ -702,7 +702,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x36
         self._validOpc(opc, self.z80.ldMemHLn, 1)
         for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 3, 12, i)
+            self._flagsFixed(opc, i)
             addr = (self.z80.h.val() << 8) + self.z80.l.val()
             self.assertEquals(self.mem.get8(addr), i)
 
@@ -764,7 +764,7 @@ class TestZ80(unittest.TestCase):
         loReg.ld(param & 0xff)
         self.z80.a.ld(0)
         self.mem.set8(param, 0xa5)
-        self._flagsFixed(opc, 2, 8)
+        self._flagsFixed(opc)
         self._regEq(self.z80.a, self.mem.get8(param))
         self._regEq(hiReg, (value >> 8) & 0xff)
         self._regEq(loReg, value & 0xff)
@@ -777,7 +777,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x3c
         self._validOpc(opc, self.z80.incA, 0)
         for i in range(1, 0x200):
-            self._incOp8(opc, self.z80.a, 1, 1, 4)
+            self._incOp8(opc, self.z80.a, 1)
             self._regEq(self.z80.a, i & 0xff)
 
     def test_decA(self):
@@ -787,7 +787,7 @@ class TestZ80(unittest.TestCase):
         opc = 0x3e
         self._validOpc(opc, self.z80.ldAn, 1)
         for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 1, 4, i)
+            self._flagsFixed(opc, i)
             self._regEq(self.z80.a, i)
 
     def test_ccf(self):
@@ -1022,19 +1022,19 @@ class TestZ80(unittest.TestCase):
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x47)
         self.z80.f.n.set()
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           False, False, 0xa + 0x7 > 0xf, 0x2a + 0x47 > 0xff)
         self._regEq(self.z80.a, 0x72)
         addr = 0xbeef
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0xff)
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           False, False, 0x2 + 0xf > 0xf, 0x72 + 0xff > 0xff)
         self._regEq(self.z80.a, 0x71)
         addr = 0xffff
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x8f)
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           True, False, 0xf + 0x1 > 0xf, 0x71 + 0x8f > 0xff)
         self._regEq(self.z80.a, 0x00)
 
@@ -1043,15 +1043,15 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.addAA, 0)
         self.z80.a.ld(0x47)
         self.z80.f.n.set()
-        self._expectFlags(opc, 1, 4,
+        self._expectFlags(opc,
                           False, False, 0x7 + 0x7 > 0xf, 0x47 + 0x47 > 0xff)
         self._regEq(self.z80.a, 0x8e)
         self.z80.a.ld(0xff)
-        self._expectFlags(opc, 1, 4,
+        self._expectFlags(opc,
                           False, False, 0xf + 0xf > 0xf, 0xff + 0xff > 0xff)
         self._regEq(self.z80.a, 0xfe)
         self.z80.a.ld(0x80)
-        self._expectFlags(opc, 1, 4,
+        self._expectFlags(opc,
                           True, False, 0x0 + 0x0 > 0xf, 0x80 + 0x80 > 0xff)
         self._regEq(self.z80.a, 0x00)
 
@@ -1081,19 +1081,19 @@ class TestZ80(unittest.TestCase):
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0xff)
         self.z80.f.n.set()
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           False, False, 0x3 + 0xf > 0xf, True)
         self._regEq(self.z80.a, 0x72)
         addr = 0xbeef
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x01)
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           False, False, 0x2 + 0x1 + 0x1 > 0xf, False)
         self._regEq(self.z80.a, 0x74)
         addr = 0xffff
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x8c)
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           True, False, 0x4 + 0xc > 0xf, 0x74 + 0x8c > 0xff)
         self._regEq(self.z80.a, 0x00)
 
@@ -1101,18 +1101,18 @@ class TestZ80(unittest.TestCase):
         opc = 0x8f
         self._validOpc(opc, self.z80.adcAA, 0)
         self.z80.a.ld(0x80)
-        self._expectFlags(opc, 1, 4, True, False, 0x0 + 0x0 > 0xf, True)
+        self._expectFlags(opc, True, False, 0x0 + 0x0 > 0xf, True)
         self._regEq(self.z80.a, 0x00)
         self.z80.f.n.set()
         self.z80.a.ld(0xff)
-        self._expectFlags(opc, 1, 4, False, False, 0xf + 0x1 + 0x1 > 0xf, True)
+        self._expectFlags(opc, False, False, 0xf + 0x1 + 0x1 > 0xf, True)
         self._regEq(self.z80.a, 0xff)
         self.z80.a.ld(0x01)
-        self._expectFlags(opc, 1, 4, False, False, 0x1 + 0x1 + 0x1 > 0xf,
+        self._expectFlags(opc, False, False, 0x1 + 0x1 + 0x1 > 0xf,
                           False)
         self._regEq(self.z80.a, 0x03)
         self.z80.a.ld(0x01)
-        self._expectFlags(opc, 1, 4, False, False, 0x1 + 0x1 > 0xf, False)
+        self._expectFlags(opc, False, False, 0x1 + 0x1 > 0xf, False)
         self._regEq(self.z80.a, 0x02)
 
     def test_subAB(self):
@@ -1141,17 +1141,17 @@ class TestZ80(unittest.TestCase):
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x2a)
         self.z80.f.n.reset()
-        self._expectFlags(opc, 2, 8, False, True, 0xc < 0xa, 0x9c < 0x2a)
+        self._expectFlags(opc, False, True, 0xc < 0xa, 0x9c < 0x2a)
         self._regEq(self.z80.a, 0x72)
         addr = 0xbeef
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0xff)
-        self._expectFlags(opc, 2, 8, False, True, 0x2 < 0xf, 0x72 < 0xff)
+        self._expectFlags(opc, False, True, 0x2 < 0xf, 0x72 < 0xff)
         self._regEq(self.z80.a, 0x73)
         addr = 0xbeef
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x73)
-        self._expectFlags(opc, 2, 8, True, True, 0x3 < 0x3, 0x73 < 0x73)
+        self._expectFlags(opc, True, True, 0x3 < 0x3, 0x73 < 0x73)
         self._regEq(self.z80.a, 0x00)
 
     def test_subAA(self):
@@ -1163,7 +1163,7 @@ class TestZ80(unittest.TestCase):
             self.z80.f.n.reset()
             self.z80.f.h.set()
             self.z80.f.c.set()
-            self._expectFlags(opc, 1, 4, True, True, False, False)
+            self._expectFlags(opc, True, True, False, False)
 
     def test_sbcAB(self):
         self._test_sbcAR(0x98, self.z80.sbcAB, self.z80.b)
@@ -1191,18 +1191,18 @@ class TestZ80(unittest.TestCase):
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x9c)
         self.z80.f.n.reset()
-        self._expectFlags(opc, 2, 8, False, True, 0xe < 0xc, True)
+        self._expectFlags(opc, False, True, 0xe < 0xc, True)
         self._regEq(self.z80.a, 0x72)
         addr = 0xbeef
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x01)
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           False, True, 0x2 < 0x1 + 0x1, False)
         self._regEq(self.z80.a, 0x70)
         addr = 0xbeef
         self.z80.ldHLnn(addr & 0xff, addr >> 8)
         self.mem.set8(addr, 0x70)
-        self._expectFlags(opc, 2, 8, True, True, 0x0 < 0x0, 0x70 < 0x70)
+        self._expectFlags(opc, True, True, 0x0 < 0x0, 0x70 < 0x70)
         self._regEq(self.z80.a, 0x00)
 
     def test_sbcAA(self):
@@ -1214,17 +1214,17 @@ class TestZ80(unittest.TestCase):
             self.z80.f.n.reset()
             self.z80.f.h.set()
             self.z80.f.c.reset()
-            self._expectFlags(opc, 1, 4, True, True, False, False)
+            self._expectFlags(opc, True, True, False, False)
             self._regEq(self.z80.a, 0x00)
         self.z80.a.ld(0x00)
         self.z80.f.z.reset()
         self.z80.f.n.reset()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, False, True, True, True)
+        self._expectFlags(opc, False, True, True, True)
         self._regEq(self.z80.a, 0xff)
         self.z80.f.c.reset()
-        self._expectFlags(opc, 1, 4, True, True, False, False)
+        self._expectFlags(opc, True, True, False, False)
         self._regEq(self.z80.a, 0x00)
 
     def test_andB(self):
@@ -1256,7 +1256,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, False, False, True, False)
+        self._expectFlags(opc, False, False, True, False)
         self._regEq(self.z80.a, 0b0001)
         self.assertEquals(self.mem.get8(addr), 0b0101)
         addr = 0xbeef
@@ -1266,7 +1266,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, True, False, True, False)
+        self._expectFlags(opc, True, False, True, False)
         self._regEq(self.z80.a, 0)
         self.assertEquals(self.mem.get8(addr), 0)
 
@@ -1278,14 +1278,14 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, False, False, True, False)
+        self._expectFlags(opc, False, False, True, False)
         self._regEq(self.z80.a, 0b01)
         self.z80.a.ld(0)
         self.z80.f.z.set()
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, True, False, True, False)
+        self._expectFlags(opc, True, False, True, False)
         self._regEq(self.z80.a, 0)
 
     def test_xorB(self):
@@ -1317,7 +1317,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, False, False, False, False)
+        self._expectFlags(opc, False, False, False, False)
         self._regEq(self.z80.a, 0b0110)
         self.assertEquals(self.mem.get8(addr), 0b0101)
         addr = 0xbeef
@@ -1328,7 +1328,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, True, False, False, False)
+        self._expectFlags(opc, True, False, False, False)
         self._regEq(self.z80.a, 0)
         self.assertEquals(self.mem.get8(addr), val)
 
@@ -1341,7 +1341,7 @@ class TestZ80(unittest.TestCase):
             self.z80.f.n.set()
             self.z80.f.h.set()
             self.z80.f.c.set()
-            self._expectFlags(opc, 1, 4, True, False, False, False)
+            self._expectFlags(opc, True, False, False, False)
             self._regEq(self.z80.a, 0)
 
     def test_orB(self):
@@ -1373,7 +1373,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, False, False, False, False)
+        self._expectFlags(opc, False, False, False, False)
         self._regEq(self.z80.a, 0b0111)
         self.assertEquals(self.mem.get8(addr), 0b0101)
         self.z80.a.ld(0)
@@ -1384,7 +1384,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, True, False, False, False)
+        self._expectFlags(opc, True, False, False, False)
         self._regEq(self.z80.a, 0)
         self.assertEquals(self.mem.get8(addr), 0)
 
@@ -1396,14 +1396,14 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, False, False, False, False)
+        self._expectFlags(opc, False, False, False, False)
         self._regEq(self.z80.a, 0b0011)
         self.z80.a.ld(0)
         self.z80.f.z.reset()
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, True, False, False, False)
+        self._expectFlags(opc, True, False, False, False)
         self._regEq(self.z80.a, 0)
 
     def test_cpB(self):
@@ -1436,7 +1436,7 @@ class TestZ80(unittest.TestCase):
             self.z80.ldHLnn(addr & 0xff, addr >> 8)
             self.mem.set8(addr, v)
             self.z80.f.n.reset()
-            self._expectFlags(opc, 2, 8,
+            self._expectFlags(opc,
                               a == v, True, (a & 0xf) < (v & 0xf), a < v)
             self._regEq(self.z80.a, a)
 
@@ -1446,7 +1446,7 @@ class TestZ80(unittest.TestCase):
         for a in range(0, self.NUM_TESTS):
             self.z80.a.ld(a)
             self.z80.f.n.reset()
-            self._expectFlags(opc, 1, 4, True, True, False, False)
+            self._expectFlags(opc, True, True, False, False)
             self._regEq(self.z80.a, a)
 
     def test_retNZ(self):
@@ -1494,15 +1494,15 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.addAn, 1)
         self.z80.a.ld(0x2b)
         self.z80.f.n.set()
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           False, False, 0xa + 0x7 > 0xf, 0x2a + 0x47 > 0xff,
                           0x47)
         self._regEq(self.z80.a, 0x72)
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           False, False, 0x2 + 0xf > 0xf, 0x72 + 0xff > 0xff,
                           0xff)
         self._regEq(self.z80.a, 0x71)
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           True, False, 0xf + 0x1 > 0xf, 0x71 + 0x8f > 0xff,
                           0x8f)
         self._regEq(self.z80.a, 0x00)
@@ -2447,12 +2447,12 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.adcAn, 1)
         self.z80.a.ld(0x73)
         self.z80.f.n.set()
-        self._expectFlags(opc, 2, 8, False, False, 0x3 + 0xf > 0xf, True, 0xff)
+        self._expectFlags(opc, False, False, 0x3 + 0xf > 0xf, True, 0xff)
         self._regEq(self.z80.a, 0x72)
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           False, False, 0x2 + 0x1 + 0x1 > 0xf, False, 0x01)
         self._regEq(self.z80.a, 0x74)
-        self._expectFlags(opc, 2, 8,
+        self._expectFlags(opc,
                           True, False, 0x4 + 0xc > 0xf, 0x74 + 0x8c > 0xff,
                           0x8c)
         self._regEq(self.z80.a, 0x00)
@@ -2499,13 +2499,13 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.subAn, 1)
         self.z80.a.ld(0x9c)
         self.z80.f.n.reset()
-        self._expectFlags(opc, 2, 8, False, True, 0xc < 0xa, 0x9c < 0x2a, 0x2a)
+        self._expectFlags(opc, False, True, 0xc < 0xa, 0x9c < 0x2a, 0x2a)
         self.z80.f.n.reset()
         self._regEq(self.z80.a, 0x72)
-        self._expectFlags(opc, 2, 8, False, True, 0x2 < 0xf, 0x72 < 0xff, 0xff)
+        self._expectFlags(opc, False, True, 0x2 < 0xf, 0x72 < 0xff, 0xff)
         self.z80.f.n.reset()
         self._regEq(self.z80.a, 0x73)
-        self._expectFlags(opc, 2, 8, True, True, 0x3 < 0x3, 0x73 < 0x73, 0x73)
+        self._expectFlags(opc, True, True, 0x3 < 0x3, 0x73 < 0x73, 0x73)
         self._regEq(self.z80.a, 0x00)
 
     def test_rst10(self):
@@ -2554,11 +2554,11 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.sbcAn, 1)
         self.z80.a.ld(0x9c)
         self.z80.f.n.reset()
-        self._expectFlags(opc, 2, 8, False, True, 0xc < 0xf, True, 0xff)
+        self._expectFlags(opc, False, True, 0xc < 0xf, True, 0xff)
         self._regEq(self.z80.a, 0x9d)
-        self._expectFlags(opc, 2, 8, False, True, 0xd < 0x1, False, 0x01)
+        self._expectFlags(opc, False, True, 0xd < 0x1, False, 0x01)
         self._regEq(self.z80.a, 0x9b)
-        self._expectFlags(opc, 2, 8, True, True, 0xb < 0xb, 0x9b < 0x9b, 0x9b)
+        self._expectFlags(opc, True, True, 0xb < 0xb, 0x9b < 0x9b, 0x9b)
         self._regEq(self.z80.a, 0x00)
 
     def test_rst18(self):
@@ -2571,7 +2571,7 @@ class TestZ80(unittest.TestCase):
             n = (i * 0xa5) & 0xff
             v = (i * 0x5a) & 0xff
             self.z80.a.ld(v)
-            self._flagsFixed(opc, 3, 12, n)
+            self._flagsFixed(opc, n)
             self.assertEquals(self.mem.get8(0xff00 + n), v)
 
     def test_popHL(self):
@@ -2585,7 +2585,7 @@ class TestZ80(unittest.TestCase):
             v = (i * 0x5a) & 0xff
             self.z80.a.ld(v)
             self.z80.c.ld(n)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self.assertEquals(self.mem.get8(0xff00 + n), v)
 
     def test_pushHL(self):
@@ -2599,13 +2599,13 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, False, False, True, False, 0b0101)
+        self._expectFlags(opc, False, False, True, False, 0b0101)
         self._regEq(self.z80.a, 0b0001)
         self.z80.f.z.set()
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, True, False, True, False, 0)
+        self._expectFlags(opc, True, False, True, False, 0)
         self._regEq(self.z80.a, 0)
 
     def test_rst20(self):
@@ -2615,16 +2615,16 @@ class TestZ80(unittest.TestCase):
         opc = 0xe8
         self._validOpc(opc, self.z80.addSPn, 1)
         self.z80.sp.ld(0xbeef)
-        self._flagsFixed(opc, 4, 16, 0x01)
+        self._flagsFixed(opc, 0x01)
         self._regEq(self.z80.sp, 0xbef0)
-        self._flagsFixed(opc, 4, 16, 0xff)
+        self._flagsFixed(opc, 0xff)
         self._regEq(self.z80.sp, 0xbeef)
 
     def test_jpMemHL(self):
         opc = 0xe9
         self._validOpc(opc, self.z80.jpMemHL, 0)
         for i in range(0, self.NUM_TESTS):
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
             self._regEq(self.z80.pc, self._hl())
 
     def test_ldMemnnA(self):
@@ -2635,7 +2635,7 @@ class TestZ80(unittest.TestCase):
             lsb = (i * 0xef) & 0xff
             v = (i * 0xa5) & 0xff
             self.z80.a.ld(v)
-            self._flagsFixed(opc, 4, 16, lsb, msb)
+            self._flagsFixed(opc, lsb, msb)
             self.assertEquals(self.mem.get8((msb << 8) + lsb), v)
 
     def test_xorn(self):
@@ -2646,13 +2646,13 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, False, False, False, False, 0b0101)
+        self._expectFlags(opc, False, False, False, False, 0b0101)
         self._regEq(self.z80.a, 0b0110)
         self.z80.f.z.reset()
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, True, False, False, False, 0b0110)
+        self._expectFlags(opc, True, False, False, False, 0b0110)
         self._regEq(self.z80.a, 0)
 
     def test_rst28(self):
@@ -2665,7 +2665,7 @@ class TestZ80(unittest.TestCase):
             n = (i * 0xa5) & 0xff
             v = (i * 0x5a) & 0xff
             self.mem.set8(0xff00 + n, v)
-            self._flagsFixed(opc, 3, 12, n)
+            self._flagsFixed(opc, n)
             self._regEq(self.z80.a, v)
 
     def test_popAF(self):
@@ -2689,7 +2689,7 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.di, 0)
         for i in range(0, self.NUM_TESTS):
             self.z80.intsEnabled = i % 2 == 0
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
             self.assertFalse(self.z80.intsEnabled)
 
     def test_pushAF(self):
@@ -2718,14 +2718,14 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, False, False, False, False, 0b0101)
+        self._expectFlags(opc, False, False, False, False, 0b0101)
         self._regEq(self.z80.a, 0b0111)
         self.z80.a.ld(0)
         self.z80.f.z.reset()
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 2, 8, True, False, False, False, 0)
+        self._expectFlags(opc, True, False, False, False, 0)
         self._regEq(self.z80.a, 0)
 
     def test_rst30(self):
@@ -2745,13 +2745,13 @@ class TestZ80(unittest.TestCase):
             else:
                 h = (0x8 + (n & 0xf)) > 0xf
                 c = (0x88 + n) > 0xff
-            self._expectFlags(opc, 3, 12, False, False, h, c, n)
+            self._expectFlags(opc, False, False, h, c, n)
             self._regEq(self.z80.sp, 0x8888 + self._sign(n))
         self.z80.sp.ld(0x0000)
-        self._expectFlags(opc, 3, 12, False, False, False, False, 0xff)
+        self._expectFlags(opc, False, False, False, False, 0xff)
         self._regEq(self.z80.sp, 0xffff)
         self.z80.sp.ld(0xffff)
-        self._expectFlags(opc, 3, 12, False, False, True, True, 0x01)
+        self._expectFlags(opc, False, False, True, True, 0x01)
         self._regEq(self.z80.sp, 0x0000)
 
     def test_ldSPHL(self):
@@ -2762,7 +2762,7 @@ class TestZ80(unittest.TestCase):
             self.z80.sp.ld(0)
             self.z80.h.ld(n >> 8)
             self.z80.l.ld(n & 0xff)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self._regEq(self.z80.sp, n)
 
     def test_ldAMemnn(self):
@@ -2773,7 +2773,7 @@ class TestZ80(unittest.TestCase):
             addr = (0xbeef * i) & 0xffff
             self.mem.set8(addr, n)
             self.z80.a.ld(0)
-            self._flagsFixed(opc, 4, 16, addr & 0xff, addr >> 8)
+            self._flagsFixed(opc, addr & 0xff, addr >> 8)
             self._regEq(self.z80.a, n)
 
     def test_ei(self):
@@ -2781,7 +2781,7 @@ class TestZ80(unittest.TestCase):
         self._validOpc(opc, self.z80.ei, 0)
         for i in range(0, self.NUM_TESTS):
             self.z80.intsEnabled = i % 2 == 0
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
             self.assertTrue(self.z80.intsEnabled)
 
     def test_cpn(self):
@@ -2791,7 +2791,7 @@ class TestZ80(unittest.TestCase):
             a, v = regVal
             self.z80.a.ld(a)
             self.z80.f.n.reset()
-            self._expectFlags(opc, 2, 8,
+            self._expectFlags(opc,
                               a == v, True, (a & 0xf) < (v & 0xf), a < v, v)
             self._regEq(self.z80.a, a)
 
@@ -2812,7 +2812,7 @@ class TestZ80(unittest.TestCase):
         vals.reverse()
         for val in vals:
             sp = self.z80.sp.val()
-            self._flagsFixed(opc, 3, 12)
+            self._flagsFixed(opc)
             self._regEq(self.z80.sp, sp + 2)
             self._regEq(loOrdReg, val >> 8)
             self._regEq(hiOrdReg, val & 0xff)
@@ -2825,7 +2825,7 @@ class TestZ80(unittest.TestCase):
             loOrdReg.ld(val >> 8)
             hiOrdReg.ld(val & 0xff)
             sp = self.z80.sp.val()
-            self._flagsFixed(opc, 4, 16)
+            self._flagsFixed(opc)
             self._regEq(self.z80.sp, sp - 2)
         vals.reverse()
         for val in vals:
@@ -3114,14 +3114,14 @@ class TestZ80(unittest.TestCase):
         for i in range(0, self.NUM_TESTS):
             pc = i * 0x5a
             self.z80.pc.ld(pc)
-            self._flagsFixed(opc, 8, 32)
+            self._flagsFixed(opc)
             self._regEq(self.z80.pc, n)
             self.assertEquals(self._pop16(), pc)
 
     def _test_callcnn(self, opc, cond, loOrdVal, hiOrdVal):
         pc = self.z80.pc.val()
         self._push8(0xa5)
-        self._flagsFixed(opc, 3, 12, loOrdVal, hiOrdVal)
+        self._flagsFixed(opc, loOrdVal, hiOrdVal)
         self._push8(0x5a)
         self._regEq(self.z80.pc, ((hiOrdVal << 8) + loOrdVal) if cond else pc)
         self.assertEquals(self._pop8(), 0x5a)
@@ -3138,7 +3138,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.z.setTo(z)
         if not changesInts:
             intsEn = self.z80.intsEnabled
-        self._flagsFixed(opc, 2, 8)
+        self._flagsFixed(opc)
         if cond:
             self._regEq(self.z80.pc, pc)
         else:
@@ -3181,7 +3181,7 @@ class TestZ80(unittest.TestCase):
                           "Instruction should take %d args, got %d" %
                           (argc, argc_))
 
-    def _incOp8(self, opc, reg, inc, m_, t_, a=None, b=None):
+    def _incOp8(self, opc, reg, inc, a=None, b=None):
         if inc == 0:
             raise ValueError("Can't increase register by 0")
         else:
@@ -3196,10 +3196,10 @@ class TestZ80(unittest.TestCase):
         self._flagEq(self.z80.f.h,
                      val & 0xf == 0xf if pos else val & 0xf == 0x0)
 
-    def _flagsFixed(self, opc, m_, t_, a=None, b=None):
+    def _flagsFixed(self, opc, a=None, b=None):
         """Flags are unaffected by running instruction opc with a and b"""
         f = self.z80.f
-        self._expectFlags(opc, m_, t_, f.z.val(), f.n.val(), f.h.val(),
+        self._expectFlags(opc, f.z.val(), f.n.val(), f.h.val(),
                           f.c.val(), a, b)
 
     def _runOp(self, opc, a=None, b=None):
@@ -3237,7 +3237,7 @@ class TestZ80(unittest.TestCase):
         for i in range(0, self.NUM_TESTS):
             val = i * 2
             srcReg.ld(val)
-            self._flagsFixed(opc, 1, 4)
+            self._flagsFixed(opc)
             self._regEq(dstReg, val)
 
     def _test_ldRMemHL(self, opc, func, reg):
@@ -3248,7 +3248,7 @@ class TestZ80(unittest.TestCase):
             addr = (self.z80.h.val() << 8) + self.z80.l.val()
             val = (i * 7) & 0xff
             self.mem.set8(addr, val)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self._regEq(reg, val)
 
     def _test_ldMemHLR(self, opc, func, reg):
@@ -3259,7 +3259,7 @@ class TestZ80(unittest.TestCase):
             self.z80.l.ld(val if reg == self.z80.l else i * 2)
             addr = (self.z80.h.val() << 8) + self.z80.l.val()
             reg.ld(val)
-            self._flagsFixed(opc, 2, 8)
+            self._flagsFixed(opc)
             self.assertEquals(self.mem.get8(addr), reg.val())
 
     def _test_addAR(self, opc, func, reg):
@@ -3267,15 +3267,15 @@ class TestZ80(unittest.TestCase):
         self.z80.a.ld(0x2b)
         self.z80.f.n.set()
         reg.ld(0x47)
-        self._expectFlags(opc, 1, 4,
+        self._expectFlags(opc,
                           False, False, 0xa + 0x7 > 0xf, 0x2a + 0x47 > 0xff)
         self._regEq(self.z80.a, 0x72)
         reg.ld(0xff)
-        self._expectFlags(opc, 1, 4,
+        self._expectFlags(opc,
                           False, False, 0x2 + 0xf > 0xf, 0x72 + 0xff > 0xff)
         self._regEq(self.z80.a, 0x71)
         reg.ld(0x8f)
-        self._expectFlags(opc, 1, 4,
+        self._expectFlags(opc,
                           True, False, 0xf + 0x1 > 0xf, 0x71 + 0x8f > 0xff)
         self._regEq(self.z80.a, 0x00)
 
@@ -3284,14 +3284,14 @@ class TestZ80(unittest.TestCase):
         self.z80.a.ld(0x73)
         self.z80.f.n.set()
         reg.ld(0xff)
-        self._expectFlags(opc, 1, 4, False, False, 0x3 + 0xf > 0xf, True)
+        self._expectFlags(opc, False, False, 0x3 + 0xf > 0xf, True)
         self._regEq(self.z80.a, 0x72)
         reg.ld(0x01)
-        self._expectFlags(opc, 1, 4,
+        self._expectFlags(opc,
                           False, False, 0x2 + 0x1 + 0x1 > 0xf, False)
         self._regEq(self.z80.a, 0x74)
         reg.ld(0x8c)
-        self._expectFlags(opc, 1, 4,
+        self._expectFlags(opc,
                           True, False, 0x4 + 0xc > 0xf, 0x74 + 0x8c > 0xff)
         self._regEq(self.z80.a, 0x00)
 
@@ -3300,13 +3300,13 @@ class TestZ80(unittest.TestCase):
         self.z80.a.ld(0x9c)
         self.z80.f.n.reset()
         reg.ld(0x2a)
-        self._expectFlags(opc, 1, 4, False, True, 0xc < 0xa, 0x9c < 0x2a)
+        self._expectFlags(opc, False, True, 0xc < 0xa, 0x9c < 0x2a)
         self._regEq(self.z80.a, 0x72)
         reg.ld(0xff)
-        self._expectFlags(opc, 1, 4, False, True, 0x2 < 0xf, 0x72 < 0xff)
+        self._expectFlags(opc, False, True, 0x2 < 0xf, 0x72 < 0xff)
         self._regEq(self.z80.a, 0x73)
         reg.ld(0x73)
-        self._expectFlags(opc, 1, 4, True, True, 0x3 < 0x3, 0x73 < 0x73)
+        self._expectFlags(opc, True, True, 0x3 < 0x3, 0x73 < 0x73)
         self._regEq(self.z80.a, 0x00)
 
     def _test_sbcAR(self, opc, func, reg):
@@ -3314,16 +3314,16 @@ class TestZ80(unittest.TestCase):
         self.z80.a.ld(0x9c)
         self.z80.f.n.reset()
         reg.ld(0xff)
-        self._expectFlags(opc, 1, 4, False, True, 0xc < 0xf, True)
+        self._expectFlags(opc, False, True, 0xc < 0xf, True)
         self._regEq(self.z80.a, 0x9d)
         reg.ld(0x01)
-        self._expectFlags(opc, 1, 4, False, True, 0xd < 0x1, False)
+        self._expectFlags(opc, False, True, 0xd < 0x1, False)
         self._regEq(self.z80.a, 0x9b)
         reg.ld(0x9b)
-        self._expectFlags(opc, 1, 4, True, True, 0xb < 0xb, 0x9b < 0x9b)
+        self._expectFlags(opc, True, True, 0xb < 0xb, 0x9b < 0x9b)
         self._regEq(self.z80.a, 0x00)
 
-    def _expectFlags(self, opc, m, t, z, n, h, c, a=None, b=None):
+    def _expectFlags(self, opc, z, n, h, c, a=None, b=None):
         self._runOp(opc, a, b)
         self._flagEq(self.z80.f.z, z)
         self._flagEq(self.z80.f.n, n)
@@ -3338,7 +3338,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, False, False, True, False)
+        self._expectFlags(opc, False, False, True, False)
         self._regEq(self.z80.a, 0b0001)
         self._regEq(reg, 0b0101)
         reg.ld(0)
@@ -3346,7 +3346,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.reset()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, True, False, True, False)
+        self._expectFlags(opc, True, False, True, False)
         self._regEq(self.z80.a, 0)
         self._regEq(reg, 0)
 
@@ -3358,7 +3358,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, False, False, False, False)
+        self._expectFlags(opc, False, False, False, False)
         self._regEq(self.z80.a, 0b0110)
         self._regEq(reg, 0b0101)
         val = self.z80.a.val()
@@ -3367,7 +3367,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, True, False, False, False)
+        self._expectFlags(opc, True, False, False, False)
         self._regEq(self.z80.a, 0)
         self._regEq(reg, val)
 
@@ -3379,7 +3379,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, False, False, False, False)
+        self._expectFlags(opc, False, False, False, False)
         self._regEq(self.z80.a, 0b0111)
         self._regEq(reg, 0b0101)
         self.z80.a.ld(0)
@@ -3388,7 +3388,7 @@ class TestZ80(unittest.TestCase):
         self.z80.f.n.set()
         self.z80.f.h.set()
         self.z80.f.c.set()
-        self._expectFlags(opc, 1, 4, True, False, False, False)
+        self._expectFlags(opc, True, False, False, False)
         self._regEq(self.z80.a, 0)
         self._regEq(reg, 0)
 
@@ -3398,30 +3398,30 @@ class TestZ80(unittest.TestCase):
             self.z80.a.ld(a)
             reg.ld(v)
             self.z80.f.n.reset()
-            self._expectFlags(opc, 1, 4,
+            self._expectFlags(opc,
                               a == v, True, (a & 0xf) < (v & 0xf), a < v)
             self._regEq(self.z80.a, a)
 
     def _test_jrcn(self, opc, cond):
         self.z80.pc.ld(0)
-        self._flagsFixed(opc, 2, 8, 0)
+        self._flagsFixed(opc, 0)
         self._regEq(self.z80.pc, 0)
         self.z80.pc.ld(0)
-        self._flagsFixed(opc, 2, 8, 1)
+        self._flagsFixed(opc, 1)
         self._regEq(self.z80.pc, 1 if cond else 0)
         self.z80.pc.ld(0)
-        self._flagsFixed(opc, 2, 8, 127)
+        self._flagsFixed(opc, 127)
         self._regEq(self.z80.pc, 127 if cond else 0)
         self.z80.pc.ld(128)
-        self._flagsFixed(opc, 2, 8, 128)
+        self._flagsFixed(opc, 128)
         self._regEq(self.z80.pc, 0 if cond else 128)
         self.z80.pc.ld(1)
-        self._flagsFixed(opc, 2, 8, 255)
+        self._flagsFixed(opc, 255)
         self._regEq(self.z80.pc, 0 if cond else 1)
 
     def _test_jpcnn(self, opc, cond, hiOrdByte, loOrdByte):
         pc = self.z80.pc.val()
-        self._flagsFixed(opc, 3, 12, loOrdByte, hiOrdByte)
+        self._flagsFixed(opc, loOrdByte, hiOrdByte)
         if cond:
             self._regEq(self.z80.pc, (hiOrdByte << 8) + loOrdByte)
         else:
