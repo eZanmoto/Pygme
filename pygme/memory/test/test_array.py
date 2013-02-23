@@ -6,6 +6,7 @@ import unittest
 
 from pygme.memory import array
 
+
 class TestArray(unittest.TestCase):
 
     numTests = 10
@@ -51,8 +52,8 @@ class TestArray(unittest.TestCase):
 
     def expect8(self, addr, v):
         b = self.mem.get8(addr)
-        self.assertEquals(b, v, "Expected 0x%02x(%d), got 0x%02x(%d) at 0x%x"
-            % (v, v, b, b, addr))
+        self.assertEquals(b, v, "Expected 0x%02x(%d), got 0x%02x(%d) at 0x%x" %
+                          (v, v, b, b, addr))
 
     def tearDown(self):
         self.mem = None
