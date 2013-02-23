@@ -3214,7 +3214,7 @@ class TestZ80(unittest.TestCase):
         instr = instr_funcf(opc)
         if a is None:
             self.assertIsNone(
-                    b, "First parameter to multi-param method cannot be 'None'"
+                b, "First parameter to multi-param method cannot be 'None'"
             )
             instr()
         else:
