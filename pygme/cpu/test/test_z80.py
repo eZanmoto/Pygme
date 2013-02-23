@@ -24,30 +24,30 @@ class TestZ80(unittest.TestCase):
     # The default number of times each test should be run
     NUM_TESTS = 10
 
+    # These instructions shouldn't be implemented
+    NOT_INSTRS = [
+        0xcb,
+        0xd3,
+        0xdb,
+        0xdd,
+        0xe3,
+        0xe4,
+        0xeb,
+        0xec,
+        0xed,
+        0xf2,
+        0xf4,
+        0xfc,
+        0xfd,
+    ]
+
     def setUp(self):
         self.mem = array.Array(1 << 16)
         self.z80 = z80.Z80(self.mem)
 
     def test_notInstrs(self):
-        opcs = [0xcb,
-                0xd3,
-                0xdb,
-                0xdd,
-                0xe3,
-                0xe4,
-                0xeb,
-                0xec,
-                0xed,
-                0xf2,
-                0xf4,
-                0xfc,
-                0xfd,
-                ]
-        for opc in opcs:
-            with self.assertRaises(RuntimeError):
-                func, argc = self.z80.instr[opc]
-                self.assertEquals(argc, 0)
-                func()
+        for opc in self.NOT_INSTRS:
+            self.assertRaises(RuntimeError, self._runOp, opc)
 
     def test_nop(self):
         opc = 0x00
@@ -3167,19 +3167,21 @@ class TestZ80(unittest.TestCase):
         return self.mem.get8(sp)
 
     def _validOpc(self, opc, func, argc):
-        self._validInstrOpc(self.z80.instr, opc, func, argc)
+        self.z80.instr_time(opc)
+        self.z80.instr_argc(opc)
+        self._assert_opc_matches_instr(self.z80.instr_func, opc, func)
 
     def _validExtOpc(self, opc, func, argc):
-        self._validInstrOpc(self.z80.extInstr, opc, func, argc)
+        self.z80.extinstr_time(opc)
+        self._assert_opc_matches_instr(self.z80.extinstr_func, opc, func)
 
-    def _validInstrOpc(self, instrs, opc, func, argc):
-        self.assertTrue(opc < len(instrs), "Opcode out of instruction range")
-        func_, argc_ = instrs[opc]
-        self.assertEquals(func, func_,
-                          "Opcode should be 0x%02x(%d)" % (opc, opc))
-        self.assertEquals(argc, argc_,
-                          "Instruction should take %d args, got %d" %
-                          (argc, argc_))
+    def _assert_opc_matches_instr(self, instr_funcf, opc, expected_instr):
+        instr = instr_funcf(opc)
+        self.assertEquals(
+            expected_instr, instr,
+            "Opcode 0x%02x should map to instruction '%s', maps to '%s'" %
+            (opc, expected_instr.__name__, instr.__name__)
+        )
 
     def _incOp8(self, opc, reg, inc, a=None, b=None):
         if inc == 0:
@@ -3203,25 +3205,23 @@ class TestZ80(unittest.TestCase):
                           f.c.val(), a, b)
 
     def _runOp(self, opc, a=None, b=None):
-        self._runAnyOp(self.z80.instr, opc, a, b)
+        self._runop(self.z80.instr_func, opc, a, b)
 
     def _runExtOp(self, opc, a=None, b=None):
-        self._runAnyOp(self.z80.extInstr, opc, a, b)
+        self._runop(self.z80.extinstr_func, opc, a, b)
 
-    def _runAnyOp(self, instrs, opc, a=None, b=None):
-        op, n = instrs[opc]
-        if n == 0:
-            self.assertIsNone(a, "Expect 0 instructions, got 'a'")
-            self.assertIsNone(b, "Expect 0 instructions, got 'b'")
-            op()
+    def _runop(self, instr_funcf, opc, a=None, b=None):
+        instr = instr_funcf(opc)
+        if a is None:
+            self.assertIsNone(
+                    b, "First parameter to multi-param method cannot be 'None'"
+            )
+            instr()
         else:
-            self.assertIsNotNone(a, "Expect %d instructions, need 'a'" % n)
-            if n == 1:
-                self.assertIsNone(b, "Expect %d instructions, got 'b'" % n)
-                op(a)
+            if b is None:
+                instr(a)
             else:
-                self.assertIsNotNone(b, "Expect %d instructions, need 'b'" % n)
-                op(a, b)
+                instr(a, b)
 
     def _flagEq(self, flag, val):
         self.assertEquals(flag.val(), val, "Flag %s is 0x%d, should be 0x%d" %
