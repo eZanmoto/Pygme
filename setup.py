@@ -18,5 +18,11 @@ setup(
     author="Sean Kelleher",
     author_email='ezanmoto@gmail.com',
     license="GPL",
-    packages=['pygme', 'pygme.cpu', 'pygme.cpu.test', ],
+    packages=[
+        'pygme',
+        'pygme.cpu',
+        'pygme.cpu.test',
+        'pygme.memory',
+        'pygme.memory.test',
+    ],
 )
