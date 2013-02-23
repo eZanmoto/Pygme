@@ -2,6 +2,7 @@
 # Use of this source code is governed by a GPL
 # license that can be found in the LICENSE file.
 
+
 class Reg8:
 
     def __init__(self, name):
@@ -17,5 +18,5 @@ class Reg8:
     def ld(self, n):
         if n < 0 or n > 0xff:
             raise ValueError("Cannot assign 0x%x(%d) to 8-bit register '%s'" %
-                    (n, n, self.name()))
+                             (n, n, self.name()))
         self._val = n
