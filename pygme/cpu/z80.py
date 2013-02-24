@@ -14,7 +14,6 @@ class Flags:
         self.h = reg_flag.RegFlag("H")
 
 
-# PC should be incremented before processing each argument to an instruction.
 class Z80:
     """
     The Z80 class emulates a gameboy CPU.
