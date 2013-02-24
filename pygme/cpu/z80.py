@@ -288,7 +288,7 @@ class Z80:
             (self.pushHL, 16, 0),
             (self.andn, 8, 1),
             (self.rst20, 32, 0),
-            (self.addSPn, 8, 1),
+            (self.addSPn, 16, 1),
             (self.jpMemHL, 12, 0),
             (self.ldMemnnA, 8, 2),
             (self._notInstr(0xeb), 0, 0),
