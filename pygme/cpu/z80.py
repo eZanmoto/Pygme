@@ -306,7 +306,7 @@ class Z80:
             (self.rst30, 32, 0),
             (self.ldhlSPn, 12, 1),
             (self.ldSPHL, 8, 0),
-            (self.ldAMemnn, 8, 2),
+            (self.ldAMemnn, 16, 2),
             (self.ei, 4, 0),
             (self._notInstr(0xfc), 0, 0),
             (self._notInstr(0xfd), 0, 0),
