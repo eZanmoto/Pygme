@@ -290,7 +290,7 @@ class Z80:
             (self.rst20, 32, 0),
             (self.addSPn, 16, 1),
             (self.jpMemHL, 12, 0),
-            (self.ldMemnnA, 8, 2),
+            (self.ldMemnnA, 16, 2),
             (self._notInstr(0xeb), 0, 0),
             (self._notInstr(0xec), 0, 0),
             (self._notInstr(0xed), 0, 0),
