@@ -35,3 +35,8 @@ the variable management scheme:
 + Adding side effects/modifications (possibly for debugging purposes, such as
   incrementing an access count or having a debugging hook) is impossible with
   raw variables.
+
+The obvious disadvantage of this approach is the fact that the read methods are
+said to be invoked far more often than the write methods, so a distinct
+performance hit is likely incurred. However, the primary aim of this emulator is
+readability and maintainability - optimization, if necessary, can come later.
