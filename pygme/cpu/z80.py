@@ -65,8 +65,8 @@ class Z80:
         self.f.c.set()
         self._instr = [
             (self._nop, 0, 0),
-            (partial(self._ld, self._b, self._c), 12, 2),
-            (self.ldMemBCA, 8, 0),
+            (partial(self._ldrrnn, self._b, self._c), 12, 2),
+            (partial(self._ldmemrra, self._b, self._c), 8, 0),
             (self.incBC, 8, 0),
             (self.incB, 4, 0),
             (self.decB, 4, 0),
@@ -634,14 +634,14 @@ class Z80:
     def _nop(self):
         """The CPU performs no operation during this machine cycle."""
 
-    def _ld(self, msr, lsr, lsb, msb):
+    def _ldrrnn(self, msr, lsr, lsb, msb):
         """Loads `msb` into `msr` and `lsb` into `lsr`."""
         lsr.ld(lsb)
         msr.ld(msb)
 
-    def ldMemBCA(self):
-        """Loads the contents of A into the memory address specified by BC."""
-        self._ldMemRRA(self._b, self._c)
+    def _ldmemrra(self, msr, lsr):
+        """Loads A into the memory address specified by `msr` and `lsr`."""
+        self._mem.set8((msr.val() << 8) + lsr.val(), self._a.val())
 
     def incBC(self):
         """Increments the contents of BC."""
