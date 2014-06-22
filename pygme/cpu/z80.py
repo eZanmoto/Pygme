@@ -635,12 +635,12 @@ class Z80:
         """The CPU performs no operation during this machine cycle."""
 
     def _ldrrnn(self, msr, lsr, lsb, msb):
-        """Loads `msb` into `msr` and `lsb` into `lsr`."""
+        """Load `msb` into `msr` and `lsb` into `lsr`."""
         lsr.ld(lsb)
         msr.ld(msb)
 
     def _ldmemrra(self, msr, lsr):
-        """Loads A into the memory address specified by `msr` and `lsr`."""
+        """Load A into the memory address specified by `msr` and `lsr`."""
         self._mem.set8((msr.val() << 8) + lsr.val(), self._a.val())
 
     def incBC(self):
