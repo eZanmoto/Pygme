@@ -5,9 +5,9 @@
 
 class Reg8:
 
-    def __init__(self, name):
+    def __init__(self, name, val):
         self._name = name
-        self.ld(0)
+        self.ld(val)
 
     def name(self):
         return self._name

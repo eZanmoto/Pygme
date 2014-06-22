@@ -42,16 +42,18 @@ class Z80:
     INDEX_INSTR_TIME = 1
     INDEX_INSTR_ARGC = 2
 
-    def __init__(self, mem):
-        self.a = reg8.Reg8("A")
-        self.b = reg8.Reg8("B")
-        self.c = reg8.Reg8("C")
-        self.d = reg8.Reg8("D")
-        self.e = reg8.Reg8("E")
-        self.h = reg8.Reg8("H")
-        self.l = reg8.Reg8("L")
-        self.pc = reg16.Reg16("PC")
-        self.sp = reg16.Reg16("SP")
+    def __init__(self, mem, gpu):
+        self._halted = False
+        self._intsEnabled = False
+        self.a = reg8.Reg8("A", 0x01)
+        self.b = reg8.Reg8("B", 0x00)
+        self.c = reg8.Reg8("C", 0x13)
+        self.d = reg8.Reg8("D", 0x00)
+        self.e = reg8.Reg8("E", 0xd8)
+        self.h = reg8.Reg8("H", 0x01)
+        self.l = reg8.Reg8("L", 0x4d)
+        self.pc = reg16.Reg16("PC", 0x0100)
+        self.sp = reg16.Reg16("SP", 0xfffe)
         self.f = Flags()
         self._mem = mem
         self.intsEnabled = False
