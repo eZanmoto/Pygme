@@ -62,7 +62,7 @@ class Z80:
         self.f.h.set()
         self.f.c.set()
         self._instr = [
-            (self.nop, 0, 0),
+            (self._nop, 0, 0),
             (self.ldBCnn, 12, 2),
             (self.ldMemBCA, 8, 0),
             (self.incBC, 8, 0),
@@ -608,7 +608,7 @@ class Z80:
         self.pc.ld(self.pc.val() + 1)
         return val
 
-    def nop(self):
+    def _nop(self):
         """The CPU performs no operation during this machine cycle."""
 
     def ldBCnn(self, lsb, msb):
