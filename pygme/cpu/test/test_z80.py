@@ -81,10 +81,52 @@ class TestZ80(unittest.TestCase):
         # Act
         cpu.step()
         # Assert
-        self.assertEquals(((cpu.b() << 8) + cpu.c(), cpu.a()), mem.last_write)
+        self.assertEquals((cpu.bc(), cpu.a()), mem.last_write)
 
     def test_WithDefaultCPU_LDMemBCA_DoesntAffectFlags(self):
         self._test_Instr_DoesntAffectFlags([0x02])
+
+    def test_With0x0000InBC_AfterIncBC_0x0001InBC(self):
+        # Arrange
+        mem = MockMem([0x03])
+        cpu = Z80(mem, MockGPU())
+        cpu.bc(0x0000)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.bc(), 0x0001)
+        self.assertEquals(cpu.zero(), 0)
+        self.assertEquals(cpu.neg(), 0)
+        self.assertEquals(cpu.half_carry(), 0)
+        self.assertEquals(cpu.carry(), 0)
+
+    def test_With0x00ffInBC_AfterIncBC_0x0100InBC(self):
+        # Arrange
+        mem = MockMem([0x03])
+        cpu = Z80(mem, MockGPU())
+        cpu.bc(0x00ff)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.bc(), 0x0100)
+        self.assertEquals(cpu.zero(), 0)
+        self.assertEquals(cpu.neg(), 0)
+        self.assertEquals(cpu.half_carry(), 1)
+        self.assertEquals(cpu.carry(), 0)
+
+    def test_With0xffffInBC_AfterIncBC_0x0000InBC(self):
+        # Arrange
+        mem = MockMem([0x03])
+        cpu = Z80(mem, MockGPU())
+        cpu.bc(0xffff)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.bc(), 0x0000)
+        self.assertEquals(cpu.zero(), 1)
+        self.assertEquals(cpu.neg(), 0)
+        self.assertEquals(cpu.half_carry(), 0)
+        self.assertEquals(cpu.carry(), 1)
 
 
 if __name__ == '__main__':

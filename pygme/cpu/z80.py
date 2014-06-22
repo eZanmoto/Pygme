@@ -67,7 +67,7 @@ class Z80:
             (self._nop, 0, 0),
             (partial(self._ldrrnn, self._b, self._c), 12, 2),
             (partial(self._ldmemrra, self._b, self._c), 8, 0),
-            (self.incBC, 8, 0),
+            (partial(self._incrr, self._b, self._c), 8, 0),
             (self.incB, 4, 0),
             (self.decB, 4, 0),
             (self.ldBn, 8, 1),
@@ -589,6 +589,12 @@ class Z80:
     def c(self):
         return self._c.val()
 
+    def bc(self, val=None):
+        if val is not None:
+            self._b.ld(val >> 8)
+            self._c.ld(val & 0xff)
+        return (self._b.val() << 8) | self._c.val()
+
     def d(self):
         return self._d.val()
 
@@ -643,9 +649,11 @@ class Z80:
         """Load A into the memory address specified by `msr` and `lsr`."""
         self._mem.set8((msr.val() << 8) + lsr.val(), self._a.val())
 
-    def incBC(self):
-        """Increments the contents of BC."""
-        self._incRR(self._b, self._c)
+    def _incrr(self, msr, lsr):
+        """Increments the contents of `msr` and `lsr`."""
+        lsr.ld((lsr.val() + 1) & 0xff)
+        if lsr.val() == 0:
+            msr.ld((msr.val() + 1) & 0xff)
 
     def incB(self):
         """Increments the contents of B."""
