@@ -83,6 +83,9 @@ class TestZ80(unittest.TestCase):
         # Assert
         self.assertEquals(((cpu.b() << 8) + cpu.c(), cpu.a()), mem.last_write)
 
+    def test_WithDefaultCPU_LDMemBCA_DoesntAffectFlags(self):
+        self._test_Instr_DoesntAffectFlags([0x02])
+
 
 if __name__ == '__main__':
     unittest.main()
