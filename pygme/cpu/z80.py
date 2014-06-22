@@ -652,8 +652,16 @@ class Z80:
     def _incrr(self, msr, lsr):
         """Increments the contents of `msr` and `lsr`."""
         lsr.ld((lsr.val() + 1) & 0xff)
+        self.f.z.reset()
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.reset()
         if lsr.val() == 0:
+            self.f.h.set()
             msr.ld((msr.val() + 1) & 0xff)
+            if msr.val() == 0:
+                self.f.c.set()
+                self.f.z.set()
 
     def incB(self):
         """Increments the contents of B."""

@@ -125,7 +125,7 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.bc(), 0x0000)
         self.assertEquals(cpu.zero(), 1)
         self.assertEquals(cpu.neg(), 0)
-        self.assertEquals(cpu.half_carry(), 0)
+        self.assertEquals(cpu.half_carry(), 1)
         self.assertEquals(cpu.carry(), 1)
 
 
