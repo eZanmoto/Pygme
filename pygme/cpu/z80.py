@@ -60,7 +60,6 @@ class Z80:
         self.f.h.set()
         self.f.c.set()
         self._mem = mem
-        self.intsEnabled = False
         self.instr = [
             (self.nop, 0, 0),
             (self.ldBCnn, 12, 2),
@@ -2682,7 +2681,7 @@ class Z80:
 
     def di(self):
         """Disables interrupts."""
-        self.intsEnabled = False
+        self._intsEnabled = False
 
     def pushAF(self):
         """Pushes A onto the stack and then pushes the flags register."""
@@ -2721,7 +2720,7 @@ class Z80:
 
     def ei(self):
         """Enables interrupts."""
-        self.intsEnabled = True
+        self._intsEnabled = True
 
     def cpn(self, n):
         """Updates the flags with the result of subtracting n from A."""
