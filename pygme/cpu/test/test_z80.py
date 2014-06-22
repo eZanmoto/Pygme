@@ -12,9 +12,13 @@ class MockMem:
 
     def __init__(self, opcodes):
         self._opcodes = opcodes
+        self.last_write = None
 
     def get8(self, addr):
         return self._opcodes[addr - self.PC_OFFSET]
+
+    def set8(self, addr, val):
+        self.last_write = (addr, val)
 
 
 class MockGPU:
@@ -69,6 +73,15 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.neg(), n)
         self.assertEquals(cpu.half_carry(), h)
         self.assertEquals(cpu.carry(), c)
+
+    def test_WithDefaultCPU_LDMemBCA_LoadsAIntoMemBC(self):
+        # Arrange
+        mem = MockMem([0x02])
+        cpu = Z80(mem, MockGPU())
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(((cpu.b() << 8) + cpu.c(), cpu.a()), mem.last_write)
 
 
 if __name__ == '__main__':
