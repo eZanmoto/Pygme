@@ -42,7 +42,9 @@ class Z80:
     INDEX_INSTR_TIME = 1
     INDEX_INSTR_ARGC = 2
 
-    def __init__(self, mem):
+    def __init__(self, mem, gpu):
+        self._mem = mem
+        self._gpu = gpu
         self._halted = False
         self._intsEnabled = False
         self.a = reg8.Reg8("A", 0x01)
@@ -59,8 +61,7 @@ class Z80:
         self.f.n.reset()
         self.f.h.set()
         self.f.c.set()
-        self._mem = mem
-        self.instr = [
+        self._instr = [
             (self.nop, 0, 0),
             (self.ldBCnn, 12, 2),
             (self.ldMemBCA, 8, 0),
@@ -318,7 +319,7 @@ class Z80:
             (self.cpn, 8, 1),
             (self.rst38, 32, 0),
         ]
-        self.extInstr = [
+        self._extInstr = map(lambda (op, cycles): (op, cycles, 0), [
             (self.rlcB, 8),
             (self.rlcC, 8),
             (self.rlcD, 8),
@@ -575,22 +576,37 @@ class Z80:
             (self.set7L, 8),
             (self.set7MemHL, 16),
             (self.set7A, 8),
-        ]
+        ])
 
-    def extinstr_func(self, opc):
-        return self.extInstr[opc][self.INDEX_INSTR_FUNC]
+    def zero(self):
+        return self.f.z.val()
 
-    def extinstr_time(self, opc):
-        return self.extInstr[opc][self.INDEX_INSTR_TIME]
+    def neg(self):
+        return self.f.n.val()
 
-    def instr_func(self, opc):
-        return self.instr[opc][self.INDEX_INSTR_FUNC]
+    def half_carry(self):
+        return self.f.h.val()
 
-    def instr_time(self, opc):
-        return self.instr[opc][self.INDEX_INSTR_TIME]
+    def carry(self):
+        return self.f.c.val()
 
-    def instr_argc(self, opc):
-        return self.instr[opc][self.INDEX_INSTR_ARGC]
+    def step(self):
+        opc = self._fetch()
+        table = self._instr
+        if opc == 0xCB:
+            opc = self._fetch()
+            table = self._extInstr
+        op, cycles, argc = table[opc]
+        args = []
+        for _ in xrange(argc):
+            args.append(self._fetch())
+        op(*args)
+        return cycles
+
+    def _fetch(self):
+        val = self._mem.get8(self.pc.val())
+        self.pc.ld(self.pc.val() + 1)
+        return val
 
     def nop(self):
         """The CPU performs no operation during this machine cycle."""
