@@ -2,6 +2,8 @@
 # Use of this source code is governed by a GPL
 # license that can be found in the LICENSE file.
 
+from functools import partial
+
 from pygme.cpu import reg8, reg16, reg_flag
 
 
@@ -63,7 +65,7 @@ class Z80:
         self.f.c.set()
         self._instr = [
             (self._nop, 0, 0),
-            (self.ldBCnn, 12, 2),
+            (partial(self._ld, self.b, self.c), 12, 2),
             (self.ldMemBCA, 8, 0),
             (self.incBC, 8, 0),
             (self.incB, 4, 0),
@@ -611,9 +613,10 @@ class Z80:
     def _nop(self):
         """The CPU performs no operation during this machine cycle."""
 
-    def ldBCnn(self, lsb, msb):
-        """Loads a byte into B and a byte into C."""
-        self._ldRRnn(self.b, msb, self.c, lsb)
+    def _ld(self, msr, lsr, lsb, msb):
+        """Loads `msb` into `msr` and `lsb` into `lsr`."""
+        lsr.ld(lsb)
+        msr.ld(msb)
 
     def ldMemBCA(self):
         """Loads the contents of A into the memory address specified by BC."""
