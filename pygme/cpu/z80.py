@@ -55,6 +55,10 @@ class Z80:
         self.pc = reg16.Reg16("PC", 0x0100)
         self.sp = reg16.Reg16("SP", 0xfffe)
         self.f = Flags()
+        self.f.z.set()
+        self.f.n.reset()
+        self.f.h.set()
+        self.f.c.set()
         self._mem = mem
         self.intsEnabled = False
         self.instr = [
