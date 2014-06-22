@@ -52,6 +52,24 @@ class TestZ80(unittest.TestCase):
         # Assert
         self.assertEquals(cpu.c.val(), c)
 
+    def test_WithDefaultCPU_LDBC0xA5A5_DoesntAffectFlags(self):
+        self._test_Instr_DoesntAffectFlags([0x01, 0xa5, 0xA5])
+
+    def _test_Instr_DoesntAffectFlags(self, mem):
+        # Arrange
+        cpu = Z80(MockMem(mem), MockGPU())
+        z = cpu.f.z.val()
+        n = cpu.f.n.val()
+        h = cpu.f.h.val()
+        c = cpu.f.c.val()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.f.z.val(), z)
+        self.assertEquals(cpu.f.n.val(), n)
+        self.assertEquals(cpu.f.h.val(), h)
+        self.assertEquals(cpu.f.c.val(), c)
+
 
 if __name__ == '__main__':
     unittest.main()
