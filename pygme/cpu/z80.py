@@ -49,13 +49,13 @@ class Z80:
         self._gpu = gpu
         self._halted = False
         self._intsEnabled = False
-        self.a = reg8.Reg8("A", 0x01)
-        self.b = reg8.Reg8("B", 0x00)
-        self.c = reg8.Reg8("C", 0x13)
-        self.d = reg8.Reg8("D", 0x00)
-        self.e = reg8.Reg8("E", 0xd8)
-        self.h = reg8.Reg8("H", 0x01)
-        self.l = reg8.Reg8("L", 0x4d)
+        self._a = reg8.Reg8("A", 0x01)
+        self._b = reg8.Reg8("B", 0x00)
+        self._c = reg8.Reg8("C", 0x13)
+        self._d = reg8.Reg8("D", 0x00)
+        self._e = reg8.Reg8("E", 0xd8)
+        self._h = reg8.Reg8("H", 0x01)
+        self._l = reg8.Reg8("L", 0x4d)
         self.pc = reg16.Reg16("PC", 0x0100)
         self.sp = reg16.Reg16("SP", 0xfffe)
         self.f = Flags()
@@ -65,7 +65,7 @@ class Z80:
         self.f.c.set()
         self._instr = [
             (self._nop, 0, 0),
-            (partial(self._ld, self.b, self.c), 12, 2),
+            (partial(self._ld, self._b, self._c), 12, 2),
             (self.ldMemBCA, 8, 0),
             (self.incBC, 8, 0),
             (self.incB, 4, 0),
@@ -580,6 +580,27 @@ class Z80:
             (self.set7A, 8),
         ])
 
+    def a(self):
+        return self._a.val()
+
+    def b(self):
+        return self._b.val()
+
+    def c(self):
+        return self._c.val()
+
+    def d(self):
+        return self._d.val()
+
+    def e(self):
+        return self._e.val()
+
+    def h(self):
+        return self._h.val()
+
+    def l(self):
+        return self._l.val()
+
     def zero(self):
         return self.f.z.val()
 
@@ -620,23 +641,23 @@ class Z80:
 
     def ldMemBCA(self):
         """Loads the contents of A into the memory address specified by BC."""
-        self._ldMemRRA(self.b, self.c)
+        self._ldMemRRA(self._b, self._c)
 
     def incBC(self):
         """Increments the contents of BC."""
-        self._incRR(self.b, self.c)
+        self._incRR(self._b, self._c)
 
     def incB(self):
         """Increments the contents of B."""
-        self._incR(self.b)
+        self._incR(self._b)
 
     def decB(self):
         """Decrements the contents of B."""
-        self._decR(self.b)
+        self._decR(self._b)
 
     def ldBn(self, b):
         """Loads a byte into B."""
-        self._ldRn(self.b, b)
+        self._ldRn(self._b, b)
 
     def rlca(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
@@ -647,27 +668,27 @@ class Z80:
 
     def addHLBC(self):
         """Adds BC to HL and stores the result in HL."""
-        self._addHLRR(self.b, self.c)
+        self._addHLRR(self._b, self._c)
 
     def ldAMemBC(self):
         """Loads the contents of the memory address specified by BC into A."""
-        self._ldAMemRR(self.b, self.c)
+        self._ldAMemRR(self._b, self._c)
 
     def decBC(self):
         """Decrements the contents of BC."""
-        self._decRR(self.b, self.c)
+        self._decRR(self._b, self._c)
 
     def incC(self):
         """Increments the contents of C."""
-        self._incR(self.c)
+        self._incR(self._c)
 
     def decC(self):
         """Decrements the contents of C."""
-        self._decR(self.c)
+        self._decR(self._c)
 
     def ldCn(self, c):
         """Loads a byte into C."""
-        self._ldRn(self.c, c)
+        self._ldRn(self._c, c)
 
     def rrca(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
@@ -678,27 +699,27 @@ class Z80:
 
     def ldDEnn(self, lsb, msb):
         """Loads a byte into D and a byte into E."""
-        self._ldRRnn(self.d, msb, self.e, lsb)
+        self._ldRRnn(self._d, msb, self._e, lsb)
 
     def ldMemDEA(self):
         """Loads the contents of A into the memory address specified by DE."""
-        self._ldMemRRA(self.d, self.e)
+        self._ldMemRRA(self._d, self._e)
 
     def incDE(self):
         """Increments the contents of DE."""
-        self._incRR(self.d, self.e)
+        self._incRR(self._d, self._e)
 
     def incD(self):
         """Increments the contents of D."""
-        self._incR(self.d)
+        self._incR(self._d)
 
     def decD(self):
         """Decrements the contents of D."""
-        self._decR(self.d)
+        self._decR(self._d)
 
     def ldDn(self, d):
         """Loads a byte into D."""
-        self._ldRn(self.d, d)
+        self._ldRn(self._d, d)
 
     def rla(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
@@ -711,27 +732,27 @@ class Z80:
 
     def addHLDE(self):
         """Adds DE to HL and stores the result in HL."""
-        self._addHLRR(self.d, self.e)
+        self._addHLRR(self._d, self._e)
 
     def ldAMemDE(self):
         """Loads the contents of the memory address specified by DE into A."""
-        self._ldAMemRR(self.d, self.e)
+        self._ldAMemRR(self._d, self._e)
 
     def decDE(self):
         """Decrements the contents of DE."""
-        self._decRR(self.d, self.e)
+        self._decRR(self._d, self._e)
 
     def incE(self):
         """Increments the contents of E."""
-        self._incR(self.e)
+        self._incR(self._e)
 
     def decE(self):
         """Decrements the contents of E."""
-        self._decR(self.e)
+        self._decR(self._e)
 
     def ldEn(self, e):
         """Loads a byte into E."""
-        self._ldRn(self.e, e)
+        self._ldRn(self._e, e)
 
     def rra(self):
         """A is rotated right 1-bit position - bit 0 goes into C and C goes
@@ -744,28 +765,28 @@ class Z80:
 
     def ldHLnn(self, lsb, msb):
         """Loads a byte into H and a byte into L."""
-        self._ldRRnn(self.h, msb, self.l, lsb)
+        self._ldRRnn(self._h, msb, self._l, lsb)
 
     def ldiMemHLA(self):
         """Loads A into the memory address in HL and increments HL."""
-        self._ldMemRRA(self.h, self.l)
+        self._ldMemRRA(self._h, self._l)
         self.incHL()
 
     def incHL(self):
         """Increments the contents of HL."""
-        self._incRR(self.h, self.l)
+        self._incRR(self._h, self._l)
 
     def incH(self):
         """Increments the contents of H."""
-        self._incR(self.h)
+        self._incR(self._h)
 
     def decH(self):
         """Decrements the contents of H."""
-        self._decR(self.h)
+        self._decR(self._h)
 
     def ldHn(self, h):
         """Loads a byte into H."""
-        self._ldRn(self.h, h)
+        self._ldRn(self._h, h)
 
     def daa(self):
         raise NotImplementedError("'DAA' has not been implemented")
@@ -776,32 +797,32 @@ class Z80:
 
     def addHLHL(self):
         """Adds HL to HL and stores the result in HL."""
-        self._addHLRR(self.h, self.l)
+        self._addHLRR(self._h, self._l)
 
     def ldiAMemHL(self):
         """Loads byte at memory address in HL into A and increments HL."""
-        self._ldRMemHL(self.a)
+        self._ldRMemHL(self._a)
         self.incHL()
 
     def decHL(self):
         """Decrements the contents of HL."""
-        self._decRR(self.h, self.l)
+        self._decRR(self._h, self._l)
 
     def incL(self):
         """Increments the contents of L."""
-        self._incR(self.l)
+        self._incR(self._l)
 
     def decL(self):
         """Decrements the contents of L."""
-        self._decR(self.l)
+        self._decR(self._l)
 
     def ldLn(self, l):
         """Loads a byte into L."""
-        self._ldRn(self.l, l)
+        self._ldRn(self._l, l)
 
     def cpl(self):
         """Complements the A register."""
-        self.a.ld(0xff - self.a.val())
+        self._a.ld(0xff - self._a.val())
         self.f.n.set()
         self.f.h.set()
 
@@ -815,7 +836,7 @@ class Z80:
 
     def lddMemHLA(self):
         """Loads A into the memory address in HL and decrements HL."""
-        self._ldMemRRA(self.h, self.l)
+        self._ldMemRRA(self._h, self._l)
         self.decHL()
 
     def incSP(self):
@@ -856,17 +877,17 @@ class Z80:
 
     def addHLSP(self):
         """Adds SP to HL and stores the result in HL."""
-        hl = (self.h.val() << 8) + self.l.val()
+        hl = (self._h.val() << 8) + self._l.val()
         result = hl + self.sp.val()
-        self.h.ld((result >> 8) & 0xff)
-        self.l.ld(result & 0xff)
+        self._h.ld((result >> 8) & 0xff)
+        self._l.ld(result & 0xff)
         self.f.n.reset()
         self.f.h.setTo((hl & 0xfff) + (self.sp.val() & 0xfff) > 0xfff)
         self.f.c.setTo(result > 0xffff)
 
     def lddAMemHL(self):
         """Loads the value at memory address in HL into A and decrements HL."""
-        self._ldRMemHL(self.a)
+        self._ldRMemHL(self._a)
         self.decHL()
 
     def decSP(self):
@@ -875,15 +896,15 @@ class Z80:
 
     def incA(self):
         """Increments the contents of A."""
-        self._incR(self.a)
+        self._incR(self._a)
 
     def decA(self):
         """Decrements the contents of A."""
-        self._decR(self.a)
+        self._decR(self._a)
 
     def ldAn(self, a):
         """Loads a byte into A."""
-        self._ldRn(self.a, a)
+        self._ldRn(self._a, a)
 
     def ccf(self):
         """Complements the C flag."""
@@ -893,282 +914,282 @@ class Z80:
 
     def ldBB(self):
         """Loads the contents of B into B."""
-        self._ldRR(self.b, self.b)
+        self._ldRR(self._b, self._b)
 
     def ldBC(self):
         """Loads the contents of C into B."""
-        self._ldRR(self.b, self.c)
+        self._ldRR(self._b, self._c)
 
     def ldBD(self):
         """Loads the contents of D into B."""
-        self._ldRR(self.b, self.d)
+        self._ldRR(self._b, self._d)
 
     def ldBE(self):
         """Loads the contents of E into B."""
-        self._ldRR(self.b, self.e)
+        self._ldRR(self._b, self._e)
 
     def ldBH(self):
         """Loads the contents of H into B."""
-        self._ldRR(self.b, self.h)
+        self._ldRR(self._b, self._h)
 
     def ldBL(self):
         """Loads the contents of L into B."""
-        self._ldRR(self.b, self.l)
+        self._ldRR(self._b, self._l)
 
     def ldBMemHL(self):
         """Loads the value at memory address in HL into B."""
-        self._ldRMemHL(self.b)
+        self._ldRMemHL(self._b)
 
     def ldBA(self):
         """Loads the contents of A into B."""
-        self._ldRR(self.b, self.a)
+        self._ldRR(self._b, self._a)
 
     def ldCB(self):
         """Loads the contents of B into C."""
-        self._ldRR(self.c, self.b)
+        self._ldRR(self._c, self._b)
 
     def ldCC(self):
         """Loads the contents of C into C."""
-        self._ldRR(self.c, self.c)
+        self._ldRR(self._c, self._c)
 
     def ldCD(self):
         """Loads the contents of D into C."""
-        self._ldRR(self.c, self.d)
+        self._ldRR(self._c, self._d)
 
     def ldCE(self):
         """Loads the contents of E into C."""
-        self._ldRR(self.c, self.e)
+        self._ldRR(self._c, self._e)
 
     def ldCH(self):
         """Loads the contents of H into C."""
-        self._ldRR(self.c, self.h)
+        self._ldRR(self._c, self._h)
 
     def ldCL(self):
         """Loads the contents of L into C."""
-        self._ldRR(self.c, self.l)
+        self._ldRR(self._c, self._l)
 
     def ldCMemHL(self):
         """Loads the value at memory address in HL into C."""
-        self._ldRMemHL(self.c)
+        self._ldRMemHL(self._c)
 
     def ldCA(self):
         """Loads the contents of A into C."""
-        self._ldRR(self.c, self.a)
+        self._ldRR(self._c, self._a)
 
     def ldDB(self):
         """Loads the contents of B into D."""
-        self._ldRR(self.d, self.b)
+        self._ldRR(self._d, self._b)
 
     def ldDC(self):
         """Loads the contents of C into D."""
-        self._ldRR(self.d, self.c)
+        self._ldRR(self._d, self._c)
 
     def ldDD(self):
         """Loads the contents of D into D."""
-        self._ldRR(self.d, self.d)
+        self._ldRR(self._d, self._d)
 
     def ldDE(self):
         """Loads the contents of E into D."""
-        self._ldRR(self.d, self.e)
+        self._ldRR(self._d, self._e)
 
     def ldDH(self):
         """Loads the contents of H into D."""
-        self._ldRR(self.d, self.h)
+        self._ldRR(self._d, self._h)
 
     def ldDL(self):
         """Loads the contents of L into D."""
-        self._ldRR(self.d, self.l)
+        self._ldRR(self._d, self._l)
 
     def ldDMemHL(self):
         """Loads the value at memory address in HL into D."""
-        self._ldRMemHL(self.d)
+        self._ldRMemHL(self._d)
 
     def ldDA(self):
         """Loads the contents of A into D."""
-        self._ldRR(self.d, self.a)
+        self._ldRR(self._d, self._a)
 
     def ldEB(self):
         """Loads the contents of B into E."""
-        self._ldRR(self.e, self.b)
+        self._ldRR(self._e, self._b)
 
     def ldEC(self):
         """Loads the contents of C into E."""
-        self._ldRR(self.e, self.c)
+        self._ldRR(self._e, self._c)
 
     def ldED(self):
         """Loads the contents of D into E."""
-        self._ldRR(self.e, self.d)
+        self._ldRR(self._e, self._d)
 
     def ldEE(self):
         """Loads the contents of E into E."""
-        self._ldRR(self.e, self.e)
+        self._ldRR(self._e, self._e)
 
     def ldEH(self):
         """Loads the contents of H into E."""
-        self._ldRR(self.e, self.h)
+        self._ldRR(self._e, self._h)
 
     def ldEL(self):
         """Loads the contents of L into E."""
-        self._ldRR(self.e, self.l)
+        self._ldRR(self._e, self._l)
 
     def ldEMemHL(self):
         """Loads the value at memory address in HL into E."""
-        self._ldRMemHL(self.e)
+        self._ldRMemHL(self._e)
 
     def ldEA(self):
         """Loads the contents of A into E."""
-        self._ldRR(self.e, self.a)
+        self._ldRR(self._e, self._a)
 
     def ldHB(self):
         """Loads the contents of B into H."""
-        self._ldRR(self.h, self.b)
+        self._ldRR(self._h, self._b)
 
     def ldHC(self):
         """Loads the contents of C into H."""
-        self._ldRR(self.h, self.c)
+        self._ldRR(self._h, self._c)
 
     def ldHD(self):
         """Loads the contents of D into H."""
-        self._ldRR(self.h, self.d)
+        self._ldRR(self._h, self._d)
 
     def ldHE(self):
         """Loads the contents of E into H."""
-        self._ldRR(self.h, self.e)
+        self._ldRR(self._h, self._e)
 
     def ldHH(self):
         """Loads the contents of H into H."""
-        self._ldRR(self.h, self.h)
+        self._ldRR(self._h, self._h)
 
     def ldHL(self):
         """Loads the contents of L into H."""
-        self._ldRR(self.h, self.l)
+        self._ldRR(self._h, self._l)
 
     def ldHMemHL(self):
         """Loads the value at memory address in HL into H."""
-        self._ldRMemHL(self.h)
+        self._ldRMemHL(self._h)
 
     def ldHA(self):
         """Loads the contents of A into H."""
-        self._ldRR(self.h, self.a)
+        self._ldRR(self._h, self._a)
 
     def ldLB(self):
         """Loads the contents of B into L."""
-        self._ldRR(self.l, self.b)
+        self._ldRR(self._l, self._b)
 
     def ldLC(self):
         """Loads the contents of C into L."""
-        self._ldRR(self.l, self.c)
+        self._ldRR(self._l, self._c)
 
     def ldLD(self):
         """Loads the contents of D into L."""
-        self._ldRR(self.l, self.d)
+        self._ldRR(self._l, self._d)
 
     def ldLE(self):
         """Loads the contents of E into L."""
-        self._ldRR(self.l, self.e)
+        self._ldRR(self._l, self._e)
 
     def ldLH(self):
         """Loads the contents of H into L."""
-        self._ldRR(self.l, self.h)
+        self._ldRR(self._l, self._h)
 
     def ldLL(self):
         """Loads the contents of L into L."""
-        self._ldRR(self.l, self.l)
+        self._ldRR(self._l, self._l)
 
     def ldLMemHL(self):
         """Loads the value at memory address in HL into L."""
-        self._ldRMemHL(self.l)
+        self._ldRMemHL(self._l)
 
     def ldLA(self):
         """Loads the contents of A into L."""
-        self._ldRR(self.l, self.a)
+        self._ldRR(self._l, self._a)
 
     def ldMemHLB(self):
         """Loads B into the memory address in HL."""
-        self._ldMemHLR(self.b)
+        self._ldMemHLR(self._b)
 
     def ldMemHLC(self):
         """Loads C into the memory address in HL."""
-        self._ldMemHLR(self.c)
+        self._ldMemHLR(self._c)
 
     def ldMemHLD(self):
         """Loads D into the memory address in HL."""
-        self._ldMemHLR(self.d)
+        self._ldMemHLR(self._d)
 
     def ldMemHLE(self):
         """Loads E into the memory address in HL."""
-        self._ldMemHLR(self.e)
+        self._ldMemHLR(self._e)
 
     def ldMemHLH(self):
         """Loads H into the memory address in HL."""
-        self._ldMemHLR(self.h)
+        self._ldMemHLR(self._h)
 
     def ldMemHLL(self):
         """Loads L into the memory address in HL."""
-        self._ldMemHLR(self.l)
+        self._ldMemHLR(self._l)
 
     def halt(self):
         raise NotImplementedError("'HALT' has not been implemented")
 
     def ldMemHLA(self):
         """Loads A into the memory address in HL."""
-        self._ldMemHLR(self.a)
+        self._ldMemHLR(self._a)
 
     def ldAB(self):
         """Loads the contents of B into A."""
-        self._ldRR(self.a, self.b)
+        self._ldRR(self._a, self._b)
 
     def ldAC(self):
         """Loads the contents of C into A."""
-        self._ldRR(self.a, self.c)
+        self._ldRR(self._a, self._c)
 
     def ldAD(self):
         """Loads the contents of D into A."""
-        self._ldRR(self.a, self.d)
+        self._ldRR(self._a, self._d)
 
     def ldAE(self):
         """Loads the contents of E into A."""
-        self._ldRR(self.a, self.e)
+        self._ldRR(self._a, self._e)
 
     def ldAH(self):
         """Loads the contents of H into A."""
-        self._ldRR(self.a, self.h)
+        self._ldRR(self._a, self._h)
 
     def ldAL(self):
         """Loads the contents of L into A."""
-        self._ldRR(self.a, self.l)
+        self._ldRR(self._a, self._l)
 
     def ldAMemHL(self):
         """Loads the value at memory address in HL into A."""
-        self._ldRMemHL(self.a)
+        self._ldRMemHL(self._a)
 
     def ldAA(self):
         """Loads the contents of A into A."""
-        self._ldRR(self.a, self.a)
+        self._ldRR(self._a, self._a)
 
     def addAB(self):
         """Adds A and B and stores the result in A."""
-        self._addAR(self.b)
+        self._addAR(self._b)
 
     def addAC(self):
         """Adds A and C and stores the result in A."""
-        self._addAR(self.c)
+        self._addAR(self._c)
 
     def addAD(self):
         """Adds A and D and stores the result in A."""
-        self._addAR(self.d)
+        self._addAR(self._d)
 
     def addAE(self):
         """Adds A and E and stores the result in A."""
-        self._addAR(self.e)
+        self._addAR(self._e)
 
     def addAH(self):
         """Adds A and H and stores the result in A."""
-        self._addAR(self.h)
+        self._addAR(self._h)
 
     def addAL(self):
         """Adds A and L and stores the result in A."""
-        self._addAR(self.l)
+        self._addAR(self._l)
 
     def addAMemHL(self):
         """Adds A and value stored at address in HL and stores result in A."""
@@ -1176,31 +1197,31 @@ class Z80:
 
     def addAA(self):
         """Adds A and A and stores the result in A."""
-        self._addAR(self.a)
+        self._addAR(self._a)
 
     def adcAB(self):
         """Adds A, Carry and B and stores the result in A."""
-        self._adcAR(self.b)
+        self._adcAR(self._b)
 
     def adcAC(self):
         """Adds A, Carry and C and stores the result in A."""
-        self._adcAR(self.c)
+        self._adcAR(self._c)
 
     def adcAD(self):
         """Adds A, Carry and D and stores the result in A."""
-        self._adcAR(self.d)
+        self._adcAR(self._d)
 
     def adcAE(self):
         """Adds A, Carry and E and stores the result in A."""
-        self._adcAR(self.e)
+        self._adcAR(self._e)
 
     def adcAH(self):
         """Adds A, Carry and H and stores the result in A."""
-        self._adcAR(self.h)
+        self._adcAR(self._h)
 
     def adcAL(self):
         """Adds A, Carry and L and stores the result in A."""
-        self._adcAR(self.l)
+        self._adcAR(self._l)
 
     def adcAMemHL(self):
         """Adds A, Carry and value at address in HL, stores result in A."""
@@ -1208,31 +1229,31 @@ class Z80:
 
     def adcAA(self):
         """Adds A, Carry and A and stores the result in A."""
-        self._adcAR(self.a)
+        self._adcAR(self._a)
 
     def subAB(self):
         """Subtracts B from A and stores the result in A."""
-        self._subAR(self.b)
+        self._subAR(self._b)
 
     def subAC(self):
         """Subtracts C from A and stores the result in A."""
-        self._subAR(self.c)
+        self._subAR(self._c)
 
     def subAD(self):
         """Subtracts D from A and stores the result in A."""
-        self._subAR(self.d)
+        self._subAR(self._d)
 
     def subAE(self):
         """Subtracts E from A and stores the result in A."""
-        self._subAR(self.e)
+        self._subAR(self._e)
 
     def subAH(self):
         """Subtracts H from A and stores the result in A."""
-        self._subAR(self.h)
+        self._subAR(self._h)
 
     def subAL(self):
         """Subtracts L from A and stores the result in A."""
-        self._subAR(self.l)
+        self._subAR(self._l)
 
     def subAMemHL(self):
         """Subtracts value at address in HL from A and stores result in A."""
@@ -1240,31 +1261,31 @@ class Z80:
 
     def subAA(self):
         """Subtracts A from A and stores the result in A."""
-        self._subAR(self.a)
+        self._subAR(self._a)
 
     def sbcAB(self):
         """Subtracts B + Carry from A and stores the result in A."""
-        self._sbcAR(self.b)
+        self._sbcAR(self._b)
 
     def sbcAC(self):
         """Subtracts C + Carry from A and stores the result in A."""
-        self._sbcAR(self.c)
+        self._sbcAR(self._c)
 
     def sbcAD(self):
         """Subtracts D + Carry from A and stores the result in A."""
-        self._sbcAR(self.d)
+        self._sbcAR(self._d)
 
     def sbcAE(self):
         """Subtracts E + Carry from A and stores the result in A."""
-        self._sbcAR(self.e)
+        self._sbcAR(self._e)
 
     def sbcAH(self):
         """Subtracts H + Carry from A and stores the result in A."""
-        self._sbcAR(self.h)
+        self._sbcAR(self._h)
 
     def sbcAL(self):
         """Subtracts L + Carry from A and stores the result in A."""
-        self._sbcAR(self.l)
+        self._sbcAR(self._l)
 
     def sbcAMemHL(self):
         """Subtracts value at address in HL + C from A, stores result in A."""
@@ -1272,31 +1293,31 @@ class Z80:
 
     def sbcAA(self):
         """Subtracts A + Carry from A and stores the result in A."""
-        self._sbcAR(self.a)
+        self._sbcAR(self._a)
 
     def andB(self):
         """Bitwise ANDs A and B and stores the result in A."""
-        self._bitwiseR(self.AND, self.b)
+        self._bitwiseR(self.AND, self._b)
 
     def andC(self):
         """Bitwise ANDs A and C and stores the result in A."""
-        self._bitwiseR(self.AND, self.c)
+        self._bitwiseR(self.AND, self._c)
 
     def andD(self):
         """Bitwise ANDs A and D and stores the result in A."""
-        self._bitwiseR(self.AND, self.d)
+        self._bitwiseR(self.AND, self._d)
 
     def andE(self):
         """Bitwise ANDs A and E and stores the result in A."""
-        self._bitwiseR(self.AND, self.e)
+        self._bitwiseR(self.AND, self._e)
 
     def andH(self):
         """Bitwise ANDs A and H and stores the result in A."""
-        self._bitwiseR(self.AND, self.h)
+        self._bitwiseR(self.AND, self._h)
 
     def andL(self):
         """Bitwise ANDs A and L and stores the result in A."""
-        self._bitwiseR(self.AND, self.l)
+        self._bitwiseR(self.AND, self._l)
 
     def andMemHL(self):
         """Bitwise ANDs A and value at address in HL and stores result in A."""
@@ -1304,31 +1325,31 @@ class Z80:
 
     def andA(self):
         """Bitwise ANDs A and A and stores the result in A."""
-        self._bitwiseR(self.AND, self.a)
+        self._bitwiseR(self.AND, self._a)
 
     def xorB(self):
         """Bitwise XORs A and B and stores the result in A."""
-        self._bitwiseR(self.XOR, self.b)
+        self._bitwiseR(self.XOR, self._b)
 
     def xorC(self):
         """Bitwise XORs A and C and stores the result in A."""
-        self._bitwiseR(self.XOR, self.c)
+        self._bitwiseR(self.XOR, self._c)
 
     def xorD(self):
         """Bitwise XORs A and D and stores the result in A."""
-        self._bitwiseR(self.XOR, self.d)
+        self._bitwiseR(self.XOR, self._d)
 
     def xorE(self):
         """Bitwise XORs A and E and stores the result in A."""
-        self._bitwiseR(self.XOR, self.e)
+        self._bitwiseR(self.XOR, self._e)
 
     def xorH(self):
         """Bitwise XORs A and H and stores the result in A."""
-        self._bitwiseR(self.XOR, self.h)
+        self._bitwiseR(self.XOR, self._h)
 
     def xorL(self):
         """Bitwise XORs A and L and stores the result in A."""
-        self._bitwiseR(self.XOR, self.l)
+        self._bitwiseR(self.XOR, self._l)
 
     def xorMemHL(self):
         """Bitwise XORs A and value at address in HL and stores result in A."""
@@ -1336,31 +1357,31 @@ class Z80:
 
     def xorA(self):
         """Bitwise XORs A and A and stores the result in A."""
-        self._bitwiseR(self.XOR, self.a)
+        self._bitwiseR(self.XOR, self._a)
 
     def orB(self):
         """Bitwise ORs A and B and stores the result in A."""
-        self._bitwiseR(self.OR, self.b)
+        self._bitwiseR(self.OR, self._b)
 
     def orC(self):
         """Bitwise ORs A and C and stores the result in A."""
-        self._bitwiseR(self.OR, self.c)
+        self._bitwiseR(self.OR, self._c)
 
     def orD(self):
         """Bitwise ORs A and D and stores the result in A."""
-        self._bitwiseR(self.OR, self.d)
+        self._bitwiseR(self.OR, self._d)
 
     def orE(self):
         """Bitwise ORs A and E and stores the result in A."""
-        self._bitwiseR(self.OR, self.e)
+        self._bitwiseR(self.OR, self._e)
 
     def orH(self):
         """Bitwise ORs A and H and stores the result in A."""
-        self._bitwiseR(self.OR, self.h)
+        self._bitwiseR(self.OR, self._h)
 
     def orL(self):
         """Bitwise ORs A and L and stores the result in A."""
-        self._bitwiseR(self.OR, self.l)
+        self._bitwiseR(self.OR, self._l)
 
     def orMemHL(self):
         """Bitwise ORs A and value at address in HL and stores result in A."""
@@ -1368,31 +1389,31 @@ class Z80:
 
     def orA(self):
         """Bitwise ORs A and A and stores the result in A."""
-        self._bitwiseR(self.OR, self.a)
+        self._bitwiseR(self.OR, self._a)
 
     def cpB(self):
         """Updates the flags with the result of subtracting B from A."""
-        self._cpR(self.b)
+        self._cpR(self._b)
 
     def cpC(self):
         """Updates the flags with the result of subtracting C from A."""
-        self._cpR(self.c)
+        self._cpR(self._c)
 
     def cpD(self):
         """Updates the flags with the result of subtracting D from A."""
-        self._cpR(self.d)
+        self._cpR(self._d)
 
     def cpE(self):
         """Updates the flags with the result of subtracting E from A."""
-        self._cpR(self.e)
+        self._cpR(self._e)
 
     def cpH(self):
         """Updates the flags with the result of subtracting H from A."""
-        self._cpR(self.h)
+        self._cpR(self._h)
 
     def cpL(self):
         """Updates the flags with the result of subtracting L from A."""
-        self._cpR(self.l)
+        self._cpR(self._l)
 
     def cpMemHL(self):
         """Updates flags after subtracting value at address in HL from A."""
@@ -1400,7 +1421,7 @@ class Z80:
 
     def cpA(self):
         """Updates the flags with the result of subtracting A from A."""
-        self._cpR(self.a)
+        self._cpR(self._a)
 
     def retNZ(self):
         """Pops the top two bytes of the stack into the PC if Z is not set."""
@@ -1409,7 +1430,7 @@ class Z80:
 
     def popBC(self):
         """Pops the top two bytes of the stack into BC."""
-        self._popRR(self.b, self.c)
+        self._popRR(self._b, self._c)
 
     def jpNZnn(self, loOrdByte, hiOrdByte):
         """Loads little-endian word into PC if Z is not set."""
@@ -1425,7 +1446,7 @@ class Z80:
 
     def pushBC(self):
         """Pushes the contents of BC onto the top of the stack."""
-        self._pushRR(self.b, self.c)
+        self._pushRR(self._b, self._c)
 
     def addAn(self, n):
         """Adds A and n and stores the result in A."""
@@ -1450,27 +1471,27 @@ class Z80:
 
     def rlcB(self):
         """B is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rlcR(self.b)
+        self._rlcR(self._b)
 
     def rlcC(self):
         """C is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rlcR(self.c)
+        self._rlcR(self._c)
 
     def rlcD(self):
         """D is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rlcR(self.d)
+        self._rlcR(self._d)
 
     def rlcE(self):
         """E is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rlcR(self.e)
+        self._rlcR(self._e)
 
     def rlcH(self):
         """H is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rlcR(self.h)
+        self._rlcR(self._h)
 
     def rlcL(self):
         """L is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rlcR(self.l)
+        self._rlcR(self._l)
 
     def rlcMemHL(self):
         """
@@ -1488,31 +1509,31 @@ class Z80:
 
     def rlcA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
-        self._rlcR(self.a)
+        self._rlcR(self._a)
 
     def rrcB(self):
         """B is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        self._rrcR(self.b)
+        self._rrcR(self._b)
 
     def rrcC(self):
         """C is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        self._rrcR(self.c)
+        self._rrcR(self._c)
 
     def rrcD(self):
         """D is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        self._rrcR(self.d)
+        self._rrcR(self._d)
 
     def rrcE(self):
         """E is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        self._rrcR(self.e)
+        self._rrcR(self._e)
 
     def rrcH(self):
         """H is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        self._rrcR(self.h)
+        self._rrcR(self._h)
 
     def rrcL(self):
         """L is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        self._rrcR(self.l)
+        self._rrcR(self._l)
 
     def rrcMemHL(self):
         """
@@ -1530,37 +1551,37 @@ class Z80:
 
     def rrcA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and bit 7."""
-        self._rrcR(self.a)
+        self._rrcR(self._a)
 
     def rlB(self):
         """B is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        self._rlR(self.b)
+        self._rlR(self._b)
 
     def rlC(self):
         """C is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        self._rlR(self.c)
+        self._rlR(self._c)
 
     def rlD(self):
         """D is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        self._rlR(self.d)
+        self._rlR(self._d)
 
     def rlE(self):
         """E is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        self._rlR(self.e)
+        self._rlR(self._e)
 
     def rlH(self):
         """H is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        self._rlR(self.h)
+        self._rlR(self._h)
 
     def rlL(self):
         """L is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        self._rlR(self.l)
+        self._rlR(self._l)
 
     def rlMemHL(self):
         """
@@ -1579,37 +1600,37 @@ class Z80:
     def rlA(self):
         """A is rotated left 1-bit position - bit 7 goes into C and C goes into
         bit 0."""
-        self._rlR(self.a)
+        self._rlR(self._a)
 
     def rrB(self):
         """B is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        self._rrR(self.b)
+        self._rrR(self._b)
 
     def rrC(self):
         """C is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        self._rrR(self.c)
+        self._rrR(self._c)
 
     def rrD(self):
         """D is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        self._rrR(self.d)
+        self._rrR(self._d)
 
     def rrE(self):
         """E is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        self._rrR(self.e)
+        self._rrR(self._e)
 
     def rrH(self):
         """H is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        self._rrR(self.h)
+        self._rrR(self._h)
 
     def rrL(self):
         """L is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        self._rrR(self.l)
+        self._rrR(self._l)
 
     def rrMemHL(self):
         """
@@ -1627,37 +1648,37 @@ class Z80:
     def rrA(self):
         """A is rotated right 1-bit position - bit 0 goes into C and C goes
         into bit 7."""
-        self._rrR(self.a)
+        self._rrR(self._a)
 
     def slaB(self):
         """B is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
         into bit 0."""
-        self._slaR(self.b)
+        self._slaR(self._b)
 
     def slaC(self):
         """C is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
         into bit 0."""
-        self._slaR(self.c)
+        self._slaR(self._c)
 
     def slaD(self):
         """D is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
         into bit 0."""
-        self._slaR(self.d)
+        self._slaR(self._d)
 
     def slaE(self):
         """E is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
         into bit 0."""
-        self._slaR(self.e)
+        self._slaR(self._e)
 
     def slaH(self):
         """H is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
         into bit 0."""
-        self._slaR(self.h)
+        self._slaR(self._h)
 
     def slaL(self):
         """L is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
         into bit 0."""
-        self._slaR(self.l)
+        self._slaR(self._l)
 
     def slaMemHL(self):
         """
@@ -1670,37 +1691,37 @@ class Z80:
     def slaA(self):
         """A is rotated left 1-bit position - bit 7 goes into Carry and 0 goes
         into bit 0."""
-        self._slaR(self.a)
+        self._slaR(self._a)
 
     def sraB(self):
         """B is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         retains its value."""
-        self._sraR(self.b)
+        self._sraR(self._b)
 
     def sraC(self):
         """C is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         retains its value."""
-        self._sraR(self.c)
+        self._sraR(self._c)
 
     def sraD(self):
         """D is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         retains its value."""
-        self._sraR(self.d)
+        self._sraR(self._d)
 
     def sraE(self):
         """E is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         retains its value."""
-        self._sraR(self.e)
+        self._sraR(self._e)
 
     def sraH(self):
         """H is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         retains its value."""
-        self._sraR(self.h)
+        self._sraR(self._h)
 
     def sraL(self):
         """L is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         retains its value."""
-        self._sraR(self.l)
+        self._sraR(self._l)
 
     def sraMemHL(self):
         """
@@ -1713,31 +1734,31 @@ class Z80:
     def sraA(self):
         """A is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         retains its value."""
-        self._sraR(self.a)
+        self._sraR(self._a)
 
     def swapB(self):
         """Swaps the most significant and least significant nibbles of B."""
-        self._swapR(self.b)
+        self._swapR(self._b)
 
     def swapC(self):
         """Swaps the most significant and least significant nibbles of C."""
-        self._swapR(self.c)
+        self._swapR(self._c)
 
     def swapD(self):
         """Swaps the most significant and least significant nibbles of D."""
-        self._swapR(self.d)
+        self._swapR(self._d)
 
     def swapE(self):
         """Swaps the most significant and least significant nibbles of E."""
-        self._swapR(self.e)
+        self._swapR(self._e)
 
     def swapH(self):
         """Swaps the most significant and least significant nibbles of H."""
-        self._swapR(self.h)
+        self._swapR(self._h)
 
     def swapL(self):
         """Swaps the most significant and least significant nibbles of L."""
-        self._swapR(self.l)
+        self._swapR(self._l)
 
     def swapMemHL(self):
         """
@@ -1749,37 +1770,37 @@ class Z80:
 
     def swapA(self):
         """Swaps the most significant and least significant nibbles of A."""
-        self._swapR(self.a)
+        self._swapR(self._a)
 
     def srlB(self):
         """B is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         is reset."""
-        self._srlR(self.b)
+        self._srlR(self._b)
 
     def srlC(self):
         """C is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         is reset."""
-        self._srlR(self.c)
+        self._srlR(self._c)
 
     def srlD(self):
         """D is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         is reset."""
-        self._srlR(self.d)
+        self._srlR(self._d)
 
     def srlE(self):
         """E is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         is reset."""
-        self._srlR(self.e)
+        self._srlR(self._e)
 
     def srlH(self):
         """H is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         is reset."""
-        self._srlR(self.h)
+        self._srlR(self._h)
 
     def srlL(self):
         """L is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         is reset."""
-        self._srlR(self.l)
+        self._srlR(self._l)
 
     def srlMemHL(self):
         """
@@ -1792,31 +1813,31 @@ class Z80:
     def srlA(self):
         """A is rotated right 1-bit position - bit 0 goes into Carry and bit 7
         is reset."""
-        self._srlR(self.a)
+        self._srlR(self._a)
 
     def bit0B(self):
         """Sets flag Z if bit 0 of B is reset."""
-        self._bitBR(0, self.b)
+        self._bitBR(0, self._b)
 
     def bit0C(self):
         """Sets flag Z if bit 0 of C is reset."""
-        self._bitBR(0, self.c)
+        self._bitBR(0, self._c)
 
     def bit0D(self):
         """Sets flag Z if bit 0 of D is reset."""
-        self._bitBR(0, self.d)
+        self._bitBR(0, self._d)
 
     def bit0E(self):
         """Sets flag Z if bit 0 of E is reset."""
-        self._bitBR(0, self.e)
+        self._bitBR(0, self._e)
 
     def bit0H(self):
         """Sets flag Z if bit 0 of H is reset."""
-        self._bitBR(0, self.h)
+        self._bitBR(0, self._h)
 
     def bit0L(self):
         """Sets flag Z if bit 0 of L is reset."""
-        self._bitBR(0, self.l)
+        self._bitBR(0, self._l)
 
     def bit0MemHL(self):
         """Sets flag Z if bit 0 of value at address in HL is reset."""
@@ -1824,31 +1845,31 @@ class Z80:
 
     def bit0A(self):
         """Sets flag Z if bit 0 of A is reset."""
-        self._bitBR(0, self.a)
+        self._bitBR(0, self._a)
 
     def bit1B(self):
         """Sets flag Z if bit 1 of B is reset."""
-        self._bitBR(1, self.b)
+        self._bitBR(1, self._b)
 
     def bit1C(self):
         """Sets flag Z if bit 1 of C is reset."""
-        self._bitBR(1, self.c)
+        self._bitBR(1, self._c)
 
     def bit1D(self):
         """Sets flag Z if bit 1 of D is reset."""
-        self._bitBR(1, self.d)
+        self._bitBR(1, self._d)
 
     def bit1E(self):
         """Sets flag Z if bit 1 of E is reset."""
-        self._bitBR(1, self.e)
+        self._bitBR(1, self._e)
 
     def bit1H(self):
         """Sets flag Z if bit 1 of H is reset."""
-        self._bitBR(1, self.h)
+        self._bitBR(1, self._h)
 
     def bit1L(self):
         """Sets flag Z if bit 1 of L is reset."""
-        self._bitBR(1, self.l)
+        self._bitBR(1, self._l)
 
     def bit1MemHL(self):
         """Sets flag Z if bit 1 of value at address in HL is reset."""
@@ -1856,31 +1877,31 @@ class Z80:
 
     def bit1A(self):
         """Sets flag Z if bit 1 of A is reset."""
-        self._bitBR(1, self.a)
+        self._bitBR(1, self._a)
 
     def bit2B(self):
         """Sets flag Z if bit 2 of B is reset."""
-        self._bitBR(2, self.b)
+        self._bitBR(2, self._b)
 
     def bit2C(self):
         """Sets flag Z if bit 2 of C is reset."""
-        self._bitBR(2, self.c)
+        self._bitBR(2, self._c)
 
     def bit2D(self):
         """Sets flag Z if bit 2 of D is reset."""
-        self._bitBR(2, self.d)
+        self._bitBR(2, self._d)
 
     def bit2E(self):
         """Sets flag Z if bit 2 of E is reset."""
-        self._bitBR(2, self.e)
+        self._bitBR(2, self._e)
 
     def bit2H(self):
         """Sets flag Z if bit 2 of H is reset."""
-        self._bitBR(2, self.h)
+        self._bitBR(2, self._h)
 
     def bit2L(self):
         """Sets flag Z if bit 2 of L is reset."""
-        self._bitBR(2, self.l)
+        self._bitBR(2, self._l)
 
     def bit2MemHL(self):
         """Sets flag Z if bit 2 of value at address in HL is reset."""
@@ -1888,31 +1909,31 @@ class Z80:
 
     def bit2A(self):
         """Sets flag Z if bit 2 of A is reset."""
-        self._bitBR(2, self.a)
+        self._bitBR(2, self._a)
 
     def bit3B(self):
         """Sets flag Z if bit 3 of B is reset."""
-        self._bitBR(3, self.b)
+        self._bitBR(3, self._b)
 
     def bit3C(self):
         """Sets flag Z if bit 3 of C is reset."""
-        self._bitBR(3, self.c)
+        self._bitBR(3, self._c)
 
     def bit3D(self):
         """Sets flag Z if bit 3 of D is reset."""
-        self._bitBR(3, self.d)
+        self._bitBR(3, self._d)
 
     def bit3E(self):
         """Sets flag Z if bit 3 of E is reset."""
-        self._bitBR(3, self.e)
+        self._bitBR(3, self._e)
 
     def bit3H(self):
         """Sets flag Z if bit 3 of H is reset."""
-        self._bitBR(3, self.h)
+        self._bitBR(3, self._h)
 
     def bit3L(self):
         """Sets flag Z if bit 3 of L is reset."""
-        self._bitBR(3, self.l)
+        self._bitBR(3, self._l)
 
     def bit3MemHL(self):
         """Sets flag Z if bit 3 of value at address in HL is reset."""
@@ -1920,31 +1941,31 @@ class Z80:
 
     def bit3A(self):
         """Sets flag Z if bit 3 of A is reset."""
-        self._bitBR(3, self.a)
+        self._bitBR(3, self._a)
 
     def bit4B(self):
         """Sets flag Z if bit 4 of B is reset."""
-        self._bitBR(4, self.b)
+        self._bitBR(4, self._b)
 
     def bit4C(self):
         """Sets flag Z if bit 4 of C is reset."""
-        self._bitBR(4, self.c)
+        self._bitBR(4, self._c)
 
     def bit4D(self):
         """Sets flag Z if bit 4 of D is reset."""
-        self._bitBR(4, self.d)
+        self._bitBR(4, self._d)
 
     def bit4E(self):
         """Sets flag Z if bit 4 of E is reset."""
-        self._bitBR(4, self.e)
+        self._bitBR(4, self._e)
 
     def bit4H(self):
         """Sets flag Z if bit 4 of H is reset."""
-        self._bitBR(4, self.h)
+        self._bitBR(4, self._h)
 
     def bit4L(self):
         """Sets flag Z if bit 4 of L is reset."""
-        self._bitBR(4, self.l)
+        self._bitBR(4, self._l)
 
     def bit4MemHL(self):
         """Sets flag Z if bit 4 of value at address in HL is reset."""
@@ -1952,31 +1973,31 @@ class Z80:
 
     def bit4A(self):
         """Sets flag Z if bit 4 of A is reset."""
-        self._bitBR(4, self.a)
+        self._bitBR(4, self._a)
 
     def bit5B(self):
         """Sets flag Z if bit 5 of B is reset."""
-        self._bitBR(5, self.b)
+        self._bitBR(5, self._b)
 
     def bit5C(self):
         """Sets flag Z if bit 5 of C is reset."""
-        self._bitBR(5, self.c)
+        self._bitBR(5, self._c)
 
     def bit5D(self):
         """Sets flag Z if bit 5 of D is reset."""
-        self._bitBR(5, self.d)
+        self._bitBR(5, self._d)
 
     def bit5E(self):
         """Sets flag Z if bit 5 of E is reset."""
-        self._bitBR(5, self.e)
+        self._bitBR(5, self._e)
 
     def bit5H(self):
         """Sets flag Z if bit 5 of H is reset."""
-        self._bitBR(5, self.h)
+        self._bitBR(5, self._h)
 
     def bit5L(self):
         """Sets flag Z if bit 5 of L is reset."""
-        self._bitBR(5, self.l)
+        self._bitBR(5, self._l)
 
     def bit5MemHL(self):
         """Sets flag Z if bit 5 of value at address in HL is reset."""
@@ -1984,31 +2005,31 @@ class Z80:
 
     def bit5A(self):
         """Sets flag Z if bit 5 of A is reset."""
-        self._bitBR(5, self.a)
+        self._bitBR(5, self._a)
 
     def bit6B(self):
         """Sets flag Z if bit 6 of B is reset."""
-        self._bitBR(6, self.b)
+        self._bitBR(6, self._b)
 
     def bit6C(self):
         """Sets flag Z if bit 6 of C is reset."""
-        self._bitBR(6, self.c)
+        self._bitBR(6, self._c)
 
     def bit6D(self):
         """Sets flag Z if bit 6 of D is reset."""
-        self._bitBR(6, self.d)
+        self._bitBR(6, self._d)
 
     def bit6E(self):
         """Sets flag Z if bit 6 of E is reset."""
-        self._bitBR(6, self.e)
+        self._bitBR(6, self._e)
 
     def bit6H(self):
         """Sets flag Z if bit 6 of H is reset."""
-        self._bitBR(6, self.h)
+        self._bitBR(6, self._h)
 
     def bit6L(self):
         """Sets flag Z if bit 6 of L is reset."""
-        self._bitBR(6, self.l)
+        self._bitBR(6, self._l)
 
     def bit6MemHL(self):
         """Sets flag Z if bit 6 of value at address in HL is reset."""
@@ -2016,31 +2037,31 @@ class Z80:
 
     def bit6A(self):
         """Sets flag Z if bit 6 of A is reset."""
-        self._bitBR(6, self.a)
+        self._bitBR(6, self._a)
 
     def bit7B(self):
         """Sets flag Z if bit 7 of B is reset."""
-        self._bitBR(7, self.b)
+        self._bitBR(7, self._b)
 
     def bit7C(self):
         """Sets flag Z if bit 7 of C is reset."""
-        self._bitBR(7, self.c)
+        self._bitBR(7, self._c)
 
     def bit7D(self):
         """Sets flag Z if bit 7 of D is reset."""
-        self._bitBR(7, self.d)
+        self._bitBR(7, self._d)
 
     def bit7E(self):
         """Sets flag Z if bit 7 of E is reset."""
-        self._bitBR(7, self.e)
+        self._bitBR(7, self._e)
 
     def bit7H(self):
         """Sets flag Z if bit 7 of H is reset."""
-        self._bitBR(7, self.h)
+        self._bitBR(7, self._h)
 
     def bit7L(self):
         """Sets flag Z if bit 7 of L is reset."""
-        self._bitBR(7, self.l)
+        self._bitBR(7, self._l)
 
     def bit7MemHL(self):
         """Sets flag Z if bit 7 of value at address in HL is reset."""
@@ -2048,31 +2069,31 @@ class Z80:
 
     def bit7A(self):
         """Sets flag Z if bit 7 of A is reset."""
-        self._bitBR(7, self.a)
+        self._bitBR(7, self._a)
 
     def res0B(self):
         """Reset bit 0 of B."""
-        self._resBR(0, self.b)
+        self._resBR(0, self._b)
 
     def res0C(self):
         """Reset bit 0 of C."""
-        self._resBR(0, self.c)
+        self._resBR(0, self._c)
 
     def res0D(self):
         """Reset bit 0 of D."""
-        self._resBR(0, self.d)
+        self._resBR(0, self._d)
 
     def res0E(self):
         """Reset bit 0 of E."""
-        self._resBR(0, self.e)
+        self._resBR(0, self._e)
 
     def res0H(self):
         """Reset bit 0 of H."""
-        self._resBR(0, self.h)
+        self._resBR(0, self._h)
 
     def res0L(self):
         """Reset bit 0 of L."""
-        self._resBR(0, self.l)
+        self._resBR(0, self._l)
 
     def res0MemHL(self):
         """Reset bit 0 of value at address in HL."""
@@ -2080,31 +2101,31 @@ class Z80:
 
     def res0A(self):
         """Reset bit 0 of A."""
-        self._resBR(0, self.a)
+        self._resBR(0, self._a)
 
     def res1B(self):
         """Reset bit 1 of B."""
-        self._resBR(1, self.b)
+        self._resBR(1, self._b)
 
     def res1C(self):
         """Reset bit 1 of C."""
-        self._resBR(1, self.c)
+        self._resBR(1, self._c)
 
     def res1D(self):
         """Reset bit 1 of D."""
-        self._resBR(1, self.d)
+        self._resBR(1, self._d)
 
     def res1E(self):
         """Reset bit 1 of E."""
-        self._resBR(1, self.e)
+        self._resBR(1, self._e)
 
     def res1H(self):
         """Reset bit 1 of H."""
-        self._resBR(1, self.h)
+        self._resBR(1, self._h)
 
     def res1L(self):
         """Reset bit 1 of L."""
-        self._resBR(1, self.l)
+        self._resBR(1, self._l)
 
     def res1MemHL(self):
         """Reset bit 1 of value at address in HL."""
@@ -2112,31 +2133,31 @@ class Z80:
 
     def res1A(self):
         """Reset bit 1 of A."""
-        self._resBR(1, self.a)
+        self._resBR(1, self._a)
 
     def res2B(self):
         """Reset bit 2 of B."""
-        self._resBR(2, self.b)
+        self._resBR(2, self._b)
 
     def res2C(self):
         """Reset bit 2 of C."""
-        self._resBR(2, self.c)
+        self._resBR(2, self._c)
 
     def res2D(self):
         """Reset bit 2 of D."""
-        self._resBR(2, self.d)
+        self._resBR(2, self._d)
 
     def res2E(self):
         """Reset bit 2 of E."""
-        self._resBR(2, self.e)
+        self._resBR(2, self._e)
 
     def res2H(self):
         """Reset bit 2 of H."""
-        self._resBR(2, self.h)
+        self._resBR(2, self._h)
 
     def res2L(self):
         """Reset bit 2 of L."""
-        self._resBR(2, self.l)
+        self._resBR(2, self._l)
 
     def res2MemHL(self):
         """Reset bit 2 of value at address in HL."""
@@ -2144,31 +2165,31 @@ class Z80:
 
     def res2A(self):
         """Reset bit 2 of A."""
-        self._resBR(2, self.a)
+        self._resBR(2, self._a)
 
     def res3B(self):
         """Reset bit 3 of B."""
-        self._resBR(3, self.b)
+        self._resBR(3, self._b)
 
     def res3C(self):
         """Reset bit 3 of C."""
-        self._resBR(3, self.c)
+        self._resBR(3, self._c)
 
     def res3D(self):
         """Reset bit 3 of D."""
-        self._resBR(3, self.d)
+        self._resBR(3, self._d)
 
     def res3E(self):
         """Reset bit 3 of E."""
-        self._resBR(3, self.e)
+        self._resBR(3, self._e)
 
     def res3H(self):
         """Reset bit 3 of H."""
-        self._resBR(3, self.h)
+        self._resBR(3, self._h)
 
     def res3L(self):
         """Reset bit 3 of L."""
-        self._resBR(3, self.l)
+        self._resBR(3, self._l)
 
     def res3MemHL(self):
         """Reset bit 3 of value at address in HL."""
@@ -2176,31 +2197,31 @@ class Z80:
 
     def res3A(self):
         """Reset bit 3 of A."""
-        self._resBR(3, self.a)
+        self._resBR(3, self._a)
 
     def res4B(self):
         """Reset bit 4 of B."""
-        self._resBR(4, self.b)
+        self._resBR(4, self._b)
 
     def res4C(self):
         """Reset bit 4 of C."""
-        self._resBR(4, self.c)
+        self._resBR(4, self._c)
 
     def res4D(self):
         """Reset bit 4 of D."""
-        self._resBR(4, self.d)
+        self._resBR(4, self._d)
 
     def res4E(self):
         """Reset bit 4 of E."""
-        self._resBR(4, self.e)
+        self._resBR(4, self._e)
 
     def res4H(self):
         """Reset bit 4 of H."""
-        self._resBR(4, self.h)
+        self._resBR(4, self._h)
 
     def res4L(self):
         """Reset bit 4 of L."""
-        self._resBR(4, self.l)
+        self._resBR(4, self._l)
 
     def res4MemHL(self):
         """Reset bit 4 of value at address in HL."""
@@ -2208,31 +2229,31 @@ class Z80:
 
     def res4A(self):
         """Reset bit 4 of A."""
-        self._resBR(4, self.a)
+        self._resBR(4, self._a)
 
     def res5B(self):
         """Reset bit 5 of B."""
-        self._resBR(5, self.b)
+        self._resBR(5, self._b)
 
     def res5C(self):
         """Reset bit 5 of C."""
-        self._resBR(5, self.c)
+        self._resBR(5, self._c)
 
     def res5D(self):
         """Reset bit 5 of D."""
-        self._resBR(5, self.d)
+        self._resBR(5, self._d)
 
     def res5E(self):
         """Reset bit 5 of E."""
-        self._resBR(5, self.e)
+        self._resBR(5, self._e)
 
     def res5H(self):
         """Reset bit 5 of H."""
-        self._resBR(5, self.h)
+        self._resBR(5, self._h)
 
     def res5L(self):
         """Reset bit 5 of L."""
-        self._resBR(5, self.l)
+        self._resBR(5, self._l)
 
     def res5MemHL(self):
         """Reset bit 5 of value at address in HL."""
@@ -2240,31 +2261,31 @@ class Z80:
 
     def res5A(self):
         """Reset bit 5 of A."""
-        self._resBR(5, self.a)
+        self._resBR(5, self._a)
 
     def res6B(self):
         """Reset bit 6 of B."""
-        self._resBR(6, self.b)
+        self._resBR(6, self._b)
 
     def res6C(self):
         """Reset bit 6 of C."""
-        self._resBR(6, self.c)
+        self._resBR(6, self._c)
 
     def res6D(self):
         """Reset bit 6 of D."""
-        self._resBR(6, self.d)
+        self._resBR(6, self._d)
 
     def res6E(self):
         """Reset bit 6 of E."""
-        self._resBR(6, self.e)
+        self._resBR(6, self._e)
 
     def res6H(self):
         """Reset bit 6 of H."""
-        self._resBR(6, self.h)
+        self._resBR(6, self._h)
 
     def res6L(self):
         """Reset bit 6 of L."""
-        self._resBR(6, self.l)
+        self._resBR(6, self._l)
 
     def res6MemHL(self):
         """Reset bit 6 of value at address in HL."""
@@ -2272,31 +2293,31 @@ class Z80:
 
     def res6A(self):
         """Reset bit 6 of A."""
-        self._resBR(6, self.a)
+        self._resBR(6, self._a)
 
     def res7B(self):
         """Reset bit 7 of B."""
-        self._resBR(7, self.b)
+        self._resBR(7, self._b)
 
     def res7C(self):
         """Reset bit 7 of C."""
-        self._resBR(7, self.c)
+        self._resBR(7, self._c)
 
     def res7D(self):
         """Reset bit 7 of D."""
-        self._resBR(7, self.d)
+        self._resBR(7, self._d)
 
     def res7E(self):
         """Reset bit 7 of E."""
-        self._resBR(7, self.e)
+        self._resBR(7, self._e)
 
     def res7H(self):
         """Reset bit 7 of H."""
-        self._resBR(7, self.h)
+        self._resBR(7, self._h)
 
     def res7L(self):
         """Reset bit 7 of L."""
-        self._resBR(7, self.l)
+        self._resBR(7, self._l)
 
     def res7MemHL(self):
         """Reset bit 7 of value at address in HL."""
@@ -2304,31 +2325,31 @@ class Z80:
 
     def res7A(self):
         """Reset bit 7 of A."""
-        self._resBR(7, self.a)
+        self._resBR(7, self._a)
 
     def set0B(self):
         """Set bit 0 of B."""
-        self._setBR(0, self.b)
+        self._setBR(0, self._b)
 
     def set0C(self):
         """Set bit 0 of C."""
-        self._setBR(0, self.c)
+        self._setBR(0, self._c)
 
     def set0D(self):
         """Set bit 0 of D."""
-        self._setBR(0, self.d)
+        self._setBR(0, self._d)
 
     def set0E(self):
         """Set bit 0 of E."""
-        self._setBR(0, self.e)
+        self._setBR(0, self._e)
 
     def set0H(self):
         """Set bit 0 of H."""
-        self._setBR(0, self.h)
+        self._setBR(0, self._h)
 
     def set0L(self):
         """Set bit 0 of L."""
-        self._setBR(0, self.l)
+        self._setBR(0, self._l)
 
     def set0MemHL(self):
         """Set bit 0 of value at address in HL."""
@@ -2336,31 +2357,31 @@ class Z80:
 
     def set0A(self):
         """Set bit 0 of A."""
-        self._setBR(0, self.a)
+        self._setBR(0, self._a)
 
     def set1B(self):
         """Set bit 1 of B."""
-        self._setBR(1, self.b)
+        self._setBR(1, self._b)
 
     def set1C(self):
         """Set bit 1 of C."""
-        self._setBR(1, self.c)
+        self._setBR(1, self._c)
 
     def set1D(self):
         """Set bit 1 of D."""
-        self._setBR(1, self.d)
+        self._setBR(1, self._d)
 
     def set1E(self):
         """Set bit 1 of E."""
-        self._setBR(1, self.e)
+        self._setBR(1, self._e)
 
     def set1H(self):
         """Set bit 1 of H."""
-        self._setBR(1, self.h)
+        self._setBR(1, self._h)
 
     def set1L(self):
         """Set bit 1 of L."""
-        self._setBR(1, self.l)
+        self._setBR(1, self._l)
 
     def set1MemHL(self):
         """Set bit 1 of value at address in HL."""
@@ -2368,31 +2389,31 @@ class Z80:
 
     def set1A(self):
         """Set bit 1 of A."""
-        self._setBR(1, self.a)
+        self._setBR(1, self._a)
 
     def set2B(self):
         """Set bit 2 of B."""
-        self._setBR(2, self.b)
+        self._setBR(2, self._b)
 
     def set2C(self):
         """Set bit 2 of C."""
-        self._setBR(2, self.c)
+        self._setBR(2, self._c)
 
     def set2D(self):
         """Set bit 2 of D."""
-        self._setBR(2, self.d)
+        self._setBR(2, self._d)
 
     def set2E(self):
         """Set bit 2 of E."""
-        self._setBR(2, self.e)
+        self._setBR(2, self._e)
 
     def set2H(self):
         """Set bit 2 of H."""
-        self._setBR(2, self.h)
+        self._setBR(2, self._h)
 
     def set2L(self):
         """Set bit 2 of L."""
-        self._setBR(2, self.l)
+        self._setBR(2, self._l)
 
     def set2MemHL(self):
         """Set bit 2 of value at address in HL."""
@@ -2400,31 +2421,31 @@ class Z80:
 
     def set2A(self):
         """Set bit 2 of A."""
-        self._setBR(2, self.a)
+        self._setBR(2, self._a)
 
     def set3B(self):
         """Set bit 3 of B."""
-        self._setBR(3, self.b)
+        self._setBR(3, self._b)
 
     def set3C(self):
         """Set bit 3 of C."""
-        self._setBR(3, self.c)
+        self._setBR(3, self._c)
 
     def set3D(self):
         """Set bit 3 of D."""
-        self._setBR(3, self.d)
+        self._setBR(3, self._d)
 
     def set3E(self):
         """Set bit 3 of E."""
-        self._setBR(3, self.e)
+        self._setBR(3, self._e)
 
     def set3H(self):
         """Set bit 3 of H."""
-        self._setBR(3, self.h)
+        self._setBR(3, self._h)
 
     def set3L(self):
         """Set bit 3 of L."""
-        self._setBR(3, self.l)
+        self._setBR(3, self._l)
 
     def set3MemHL(self):
         """Set bit 3 of value at address in HL."""
@@ -2432,31 +2453,31 @@ class Z80:
 
     def set3A(self):
         """Set bit 3 of A."""
-        self._setBR(3, self.a)
+        self._setBR(3, self._a)
 
     def set4B(self):
         """Set bit 4 of B."""
-        self._setBR(4, self.b)
+        self._setBR(4, self._b)
 
     def set4C(self):
         """Set bit 4 of C."""
-        self._setBR(4, self.c)
+        self._setBR(4, self._c)
 
     def set4D(self):
         """Set bit 4 of D."""
-        self._setBR(4, self.d)
+        self._setBR(4, self._d)
 
     def set4E(self):
         """Set bit 4 of E."""
-        self._setBR(4, self.e)
+        self._setBR(4, self._e)
 
     def set4H(self):
         """Set bit 4 of H."""
-        self._setBR(4, self.h)
+        self._setBR(4, self._h)
 
     def set4L(self):
         """Set bit 4 of L."""
-        self._setBR(4, self.l)
+        self._setBR(4, self._l)
 
     def set4MemHL(self):
         """Set bit 4 of value at address in HL."""
@@ -2464,31 +2485,31 @@ class Z80:
 
     def set4A(self):
         """Set bit 4 of A."""
-        self._setBR(4, self.a)
+        self._setBR(4, self._a)
 
     def set5B(self):
         """Set bit 5 of B."""
-        self._setBR(5, self.b)
+        self._setBR(5, self._b)
 
     def set5C(self):
         """Set bit 5 of C."""
-        self._setBR(5, self.c)
+        self._setBR(5, self._c)
 
     def set5D(self):
         """Set bit 5 of D."""
-        self._setBR(5, self.d)
+        self._setBR(5, self._d)
 
     def set5E(self):
         """Set bit 5 of E."""
-        self._setBR(5, self.e)
+        self._setBR(5, self._e)
 
     def set5H(self):
         """Set bit 5 of H."""
-        self._setBR(5, self.h)
+        self._setBR(5, self._h)
 
     def set5L(self):
         """Set bit 5 of L."""
-        self._setBR(5, self.l)
+        self._setBR(5, self._l)
 
     def set5MemHL(self):
         """Set bit 5 of value at address in HL."""
@@ -2496,31 +2517,31 @@ class Z80:
 
     def set5A(self):
         """Set bit 5 of A."""
-        self._setBR(5, self.a)
+        self._setBR(5, self._a)
 
     def set6B(self):
         """Set bit 6 of B."""
-        self._setBR(6, self.b)
+        self._setBR(6, self._b)
 
     def set6C(self):
         """Set bit 6 of C."""
-        self._setBR(6, self.c)
+        self._setBR(6, self._c)
 
     def set6D(self):
         """Set bit 6 of D."""
-        self._setBR(6, self.d)
+        self._setBR(6, self._d)
 
     def set6E(self):
         """Set bit 6 of E."""
-        self._setBR(6, self.e)
+        self._setBR(6, self._e)
 
     def set6H(self):
         """Set bit 6 of H."""
-        self._setBR(6, self.h)
+        self._setBR(6, self._h)
 
     def set6L(self):
         """Set bit 6 of L."""
-        self._setBR(6, self.l)
+        self._setBR(6, self._l)
 
     def set6MemHL(self):
         """Set bit 6 of value at address in HL."""
@@ -2528,31 +2549,31 @@ class Z80:
 
     def set6A(self):
         """Set bit 6 of A."""
-        self._setBR(6, self.a)
+        self._setBR(6, self._a)
 
     def set7B(self):
         """Set bit 7 of B."""
-        self._setBR(7, self.b)
+        self._setBR(7, self._b)
 
     def set7C(self):
         """Set bit 7 of C."""
-        self._setBR(7, self.c)
+        self._setBR(7, self._c)
 
     def set7D(self):
         """Set bit 7 of D."""
-        self._setBR(7, self.d)
+        self._setBR(7, self._d)
 
     def set7E(self):
         """Set bit 7 of E."""
-        self._setBR(7, self.e)
+        self._setBR(7, self._e)
 
     def set7H(self):
         """Set bit 7 of H."""
-        self._setBR(7, self.h)
+        self._setBR(7, self._h)
 
     def set7L(self):
         """Set bit 7 of L."""
-        self._setBR(7, self.l)
+        self._setBR(7, self._l)
 
     def set7MemHL(self):
         """Set bit 7 of value at address in HL."""
@@ -2560,7 +2581,7 @@ class Z80:
 
     def set7A(self):
         """Set bit 7 of A."""
-        self._setBR(7, self.a)
+        self._setBR(7, self._a)
 
     def extErr(self):
         """Raises an exception, as method shouldn't be called."""
@@ -2590,7 +2611,7 @@ class Z80:
 
     def popDE(self):
         """Pops the top two bytes of the stack into DE."""
-        self._popRR(self.d, self.e)
+        self._popRR(self._d, self._e)
 
     def jpNCnn(self, lsb, msb):
         """Loads little-endian word into PC if C is not set."""
@@ -2602,7 +2623,7 @@ class Z80:
 
     def pushDE(self):
         """Pushes the contents of DE onto the top of the stack."""
-        self._pushRR(self.d, self.e)
+        self._pushRR(self._d, self._e)
 
     def subAn(self, n):
         """Subtracts n from A and stores result in A."""
@@ -2641,19 +2662,19 @@ class Z80:
     def ldhMemnA(self, n):
         """Loads A into the memory location 0xFF00 + n."""
         self._assertByte(n)
-        self._mem.set8(0xff00 + n, self.a.val())
+        self._mem.set8(0xff00 + n, self._a.val())
 
     def popHL(self):
         """Pops the top two bytes of the stack into HL."""
-        self._popRR(self.h, self.l)
+        self._popRR(self._h, self._l)
 
     def ldhMemCA(self):
         """Loads A into the memory location 0xFF00 + C."""
-        self._mem.set8(0xff00 + self.c.val(), self.a.val())
+        self._mem.set8(0xff00 + self._c.val(), self._a.val())
 
     def pushHL(self):
         """Pushes the contents of HL onto the top of the stack."""
-        self._pushRR(self.h, self.l)
+        self._pushRR(self._h, self._l)
 
     def andn(self, n):
         """Bitwise ANDs A and a byte and stores the result in A."""
@@ -2670,11 +2691,11 @@ class Z80:
 
     def jpMemHL(self):
         """Loads the value of HL into PC."""
-        self._jpcnn(True, self.l.val(), self.h.val())
+        self._jpcnn(True, self._l.val(), self._h.val())
 
     def ldMemnnA(self, lsb, msb):
         """Loads A into the specified memory location."""
-        self._mem.set8((msb << 8) + lsb, self.a.val())
+        self._mem.set8((msb << 8) + lsb, self._a.val())
 
     def xorn(self, n):
         """Bitwise XORs A and a byte and stores the result in A."""
@@ -2687,7 +2708,7 @@ class Z80:
     def ldhAMemn(self, n):
         """Loads the value at the memory location 0xFF00 + n into A."""
         self._assertByte(n)
-        self.a.ld(self._mem.get8(0xff00 + n))
+        self._a.ld(self._mem.get8(0xff00 + n))
 
     def popAF(self):
         """Pops top byte of stack into flags register and next byte into A."""
@@ -2696,7 +2717,7 @@ class Z80:
         self.f.n.setTo((f >> 6) & 1 == 1)
         self.f.h.setTo((f >> 5) & 1 == 1)
         self.f.c.setTo((f >> 4) & 1 == 1)
-        self.a.ld(self._pop8())
+        self._a.ld(self._pop8())
 
     def di(self):
         """Disables interrupts."""
@@ -2704,7 +2725,7 @@ class Z80:
 
     def pushAF(self):
         """Pushes A onto the stack and then pushes the flags register."""
-        self._push8(self.a.val())
+        self._push8(self._a.val())
         self._push8(((1 if self.f.z.val() else 0) << 7) |
                     ((1 if self.f.n.val() else 0) << 6) |
                     ((1 if self.f.h.val() else 0) << 5) |
@@ -2735,7 +2756,7 @@ class Z80:
         self.sp.ld(self._hl())
 
     def ldAMemnn(self, lsb, msb):
-        self.a.ld(self._mem.get8((msb << 8) + lsb))
+        self._a.ld(self._mem.get8((msb << 8) + lsb))
 
     def ei(self):
         """Enables interrupts."""
@@ -2846,7 +2867,7 @@ class Z80:
         self._ldRn(loOrdReg, loOrdVal)
 
     def _ldMemRRA(self, hiOrdReg, loOrdReg):
-        self._mem.set8((hiOrdReg.val() << 8) + loOrdReg.val(), self.a.val())
+        self._mem.set8((hiOrdReg.val() << 8) + loOrdReg.val(), self._a.val())
 
     def _incRR(self, hiOrdReg, loOrdReg):
         loOrdReg.ld((loOrdReg.val() + 1) & 0xff)
@@ -2867,7 +2888,7 @@ class Z80:
         reg.ld(val)
 
     def _rotA(self, rotLeft, withCarry):
-        self._rotR(self.a, rotLeft, withCarry)
+        self._rotR(self._a, rotLeft, withCarry)
 
     def _rotR(self, reg, rotLeft, withCarry):
         r = reg.val()
@@ -2882,17 +2903,17 @@ class Z80:
         self._chkZ(reg)  # NOTE Z is unaffected on Z80
 
     def _addHLRR(self, hiOrdReg, loOrdReg):
-        hl = (self.h.val() << 8) + self.l.val()
+        hl = (self._h.val() << 8) + self._l.val()
         rr = (hiOrdReg.val() << 8) + loOrdReg.val()
         result = hl + rr
-        self.h.ld((result >> 8) & 0xff)
-        self.l.ld(result & 0xff)
+        self._h.ld((result >> 8) & 0xff)
+        self._l.ld(result & 0xff)
         self.f.n.reset()
         self.f.h.setTo((hl & 0xfff) + (rr & 0xfff) > 0xfff)
         self.f.c.setTo(result > 0xffff)
 
     def _ldAMemRR(self, hiOrdReg, loOrdReg):
-        self.a.ld(self._mem.get8((hiOrdReg.val() << 8) + loOrdReg.val()))
+        self._a.ld(self._mem.get8((hiOrdReg.val() << 8) + loOrdReg.val()))
 
     def _decRR(self, hiOrdReg, loOrdReg):
         loOrdReg.ld((loOrdReg.val() - 1) & 0xff)
@@ -2930,7 +2951,7 @@ class Z80:
         self._arithAn(v, self.NEGATIVE, self.WITH_CARRY)
 
     def _arithAn(self, v, isPositive, withCarry):
-        self._arithRn(self.a, v, isPositive, withCarry)
+        self._arithRn(self._a, v, isPositive, withCarry)
 
     def _arithRn(self, reg, v, isPositive, withCarry):
         self._assertByte(v)
@@ -2959,19 +2980,19 @@ class Z80:
             f = lambda a, b: a | b
         elif op == self.XOR:
             f = lambda a, b: a ^ b
-        self.a.ld(f(self.a.val(), val))
+        self._a.ld(f(self._a.val(), val))
         self.f.n.reset()
         self.f.h.setTo(op == self.AND)
         self.f.c.reset()
-        self._chkZ(self.a)
+        self._chkZ(self._a)
 
     def _cpR(self, reg):
         self._cpn(reg.val())
 
     def _cpn(self, val):
-        a = self.a.val()
+        a = self._a.val()
         self._subAn(val)
-        self.a.ld(a)
+        self._a.ld(a)
 
     def _popRR(self, hiOrdReg, loOrdReg):
         v = self._pop16()
@@ -3025,4 +3046,4 @@ class Z80:
         self.f.z.setTo(reg.val() == 0)
 
     def _hl(self):
-        return (self.h.val() << 8) + self.l.val()
+        return (self._h.val() << 8) + self._l.val()

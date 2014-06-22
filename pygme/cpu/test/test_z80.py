@@ -28,11 +28,11 @@ class TestZ80(unittest.TestCase):
     def test_WithDefaultCPU_NOP_DoesntChangeA(self):
         # Arrange
         cpu = Z80(MockMem([0x00]), MockGPU())
-        a = cpu.a.val()
+        a = cpu.a()
         # Act
         cpu.step()
         # Assert
-        self.assertEquals(cpu.a.val(), a)
+        self.assertEquals(cpu.a(), a)
 
     def test_WithDefaultCPU_LDBC0x00A5_Loads0xA5IntoB(self):
         # Arrange
@@ -41,7 +41,7 @@ class TestZ80(unittest.TestCase):
         # Act
         cpu.step()
         # Assert
-        self.assertEquals(cpu.b.val(), b)
+        self.assertEquals(cpu.b(), b)
 
     def test_WithDefaultCPU_LDBC0xA500_Loads0xA5IntoC(self):
         # Arrange
@@ -50,7 +50,7 @@ class TestZ80(unittest.TestCase):
         # Act
         cpu.step()
         # Assert
-        self.assertEquals(cpu.c.val(), c)
+        self.assertEquals(cpu.c(), c)
 
     def test_WithDefaultCPU_LDBC0xA5A5_DoesntAffectFlags(self):
         self._test_Instr_DoesntAffectFlags([0x01, 0xA5, 0xA5])
