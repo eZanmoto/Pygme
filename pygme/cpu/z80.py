@@ -42,7 +42,7 @@ class Z80:
     INDEX_INSTR_TIME = 1
     INDEX_INSTR_ARGC = 2
 
-    def __init__(self, mem, gpu):
+    def __init__(self, mem):
         self._halted = False
         self._intsEnabled = False
         self.a = reg8.Reg8("A", 0x01)
