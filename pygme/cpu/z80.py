@@ -70,7 +70,7 @@ class Z80:
             (partial(self._incrr, self._b, self._c), 8, 0),
             (partial(self._incr, self._b), 4, 0),
             (partial(self._decr, self._b), 4, 0),
-            (self.ldBn, 8, 1),
+            (partial(self._ldrn, self._b), 8, 1),
             (self.rlca, 4, 0),
             (self.ldMemnnSP, 20, 2),
             (self.addHLBC, 8, 0),
@@ -675,9 +675,9 @@ class Z80:
         self._arithRn(r, 1, self.NEGATIVE, self.WITHOUT_CARRY)
         self.f.c.setTo(c)
 
-    def ldBn(self, b):
-        """Loads a byte into B."""
-        self._ldRn(self._b, b)
+    def _ldrn(self, r, n):
+        """Load `n` into `r`."""
+        r.ld(n)
 
     def rlca(self):
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
