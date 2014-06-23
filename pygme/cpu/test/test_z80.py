@@ -331,6 +331,17 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(mem._bytes[0x205C], 0xA5)
         self.assertFlagsEqual(cpu, f)
 
+    def test_IfDEIs0x235F_AfterIncDE_DEContains0x2360(self):
+        # Arrange
+        cpu = Z80(MockMem([0x13]), MockGPU())
+        cpu.de(0x235F)
+        f = self._flags(cpu)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.de(), 0x2360)
+        self.assertFlagsEqual(cpu, f)
+
 
 if __name__ == '__main__':
     unittest.main()
