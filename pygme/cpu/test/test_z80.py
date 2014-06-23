@@ -11,11 +11,12 @@ class MockMem:
     PC_OFFSET = 0x0100
 
     def __init__(self, opcodes):
-        self._opcodes = opcodes
         self._bytes = {}
+        for i in xrange(len(opcodes)):
+            self._bytes[self.PC_OFFSET+i] = opcodes[i]
 
     def get8(self, addr):
-        return self._opcodes[addr - self.PC_OFFSET]
+        return self._bytes[addr]
 
     def set8(self, addr, val):
         self._bytes[addr] = val
@@ -237,6 +238,19 @@ class TestZ80(unittest.TestCase):
         # Assert
         self.assertEquals(cpu.hl(), 0x9028)
         self.assertFlagsEqual(cpu, z=z, n=0, h=1, c=0)
+
+    def test_IfMemBCIs0x2F_AfterLDAMemBC_AContains0x2F(self):
+        # Arrange
+        mem = MockMem([0x0A])
+        cpu = Z80(mem, MockGPU())
+        cpu.bc(0x1C00)
+        mem.set8(cpu.bc(), 0x2F)
+        f = self._flags(cpu)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x2F)
+        self.assertFlagsEqual(cpu, f)
 
 
 if __name__ == '__main__':
