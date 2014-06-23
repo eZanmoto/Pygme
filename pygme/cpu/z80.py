@@ -616,6 +616,9 @@ class Z80:
     def l(self):
         return self._l.val()
 
+    def hl(self, val=None):
+        return self._double_reg(self._h, self._l, val)
+
     def zero(self):
         return self.f.z.val()
 
