@@ -628,7 +628,9 @@ class Z80:
     def half_carry(self):
         return self.f.h.val()
 
-    def carry(self):
+    def carry(self, val=None):
+        if val is not None:
+            self.f.c.setTo(val != 0)
         return self.f.c.val()
 
     def sp(self, val=None):

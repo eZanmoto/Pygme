@@ -296,6 +296,17 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.c(), 0x24)
         self.assertFlagsEqual(cpu, f)
 
+    def test_IfAIs0x3BAndCarryIs0_AfterRRCA_AIs0x9D(self):
+        # Arrange
+        cpu = Z80(MockMem([0x0F]), MockGPU())
+        cpu.a(0x3B)
+        cpu.carry(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x9D)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=1)
+
 
 if __name__ == '__main__':
     unittest.main()
