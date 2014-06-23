@@ -592,8 +592,8 @@ class Z80:
             r.ld(val)
         return r.val()
 
-    def c(self):
-        return self._c.val()
+    def c(self, val=None):
+        return self._reg(self._c, val)
 
     def bc(self, val=None):
         return self._double_reg(self._b, self._c, val)
