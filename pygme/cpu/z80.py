@@ -68,7 +68,7 @@ class Z80:
             (partial(self._ldrrnn, self._b, self._c), 12, 2),
             (partial(self._ldmemrra, self._b, self._c), 8, 0),
             (partial(self._incrr, self._b, self._c), 8, 0),
-            (self.incB, 4, 0),
+            (partial(self._incr, self._b), 4, 0),
             (self.decB, 4, 0),
             (self.ldBn, 8, 1),
             (self.rlca, 4, 0),
@@ -658,14 +658,16 @@ class Z80:
         self._mem.set8((msr.val() << 8) + lsr.val(), self._a.val())
 
     def _incrr(self, msr, lsr):
-        """Increments the contents of the combined `msr` and `lsr` register."""
+        """Increment the contents of the combined `msr` and `lsr` register."""
         lsr.ld((lsr.val() + 1) & 0xff)
         if lsr.val() == 0:
             msr.ld((msr.val() + 1) & 0xff)
 
-    def incB(self):
-        """Increments the contents of B."""
-        self._incR(self._b)
+    def _incr(self, r):
+        """Increment the contents of `r`."""
+        c = self.f.c.val()
+        self._arithRn(r, 1, self.POSITIVE, self.WITHOUT_CARRY)
+        self.f.c.setTo(c)
 
     def decB(self):
         """Decrements the contents of B."""
