@@ -252,6 +252,17 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.a(), 0x2F)
         self.assertFlagsEqual(cpu, f)
 
+    def test_IfBCIs0x235F_AfterDecBC_BCContains0x235E(self):
+        # Arrange
+        cpu = Z80(MockMem([0x0B]), MockGPU())
+        cpu.bc(0x235F)
+        f = self._flags(cpu)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.bc(), 0x235E)
+        self.assertFlagsEqual(cpu, f)
+
 
 if __name__ == '__main__':
     unittest.main()
