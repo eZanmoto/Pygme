@@ -604,11 +604,11 @@ class Z80:
             lsr.ld(val & 0xff)
         return (msr.val() << 8) | lsr.val()
 
-    def d(self):
-        return self._d.val()
+    def d(self, val=None):
+        return self._reg(self._d, val)
 
-    def e(self):
-        return self._e.val()
+    def e(self, val=None):
+        return self._reg(self._e, val)
 
     def de(self, val=None):
         return self._double_reg(self._d, self._e, val)
