@@ -583,17 +583,25 @@ class Z80:
     def a(self):
         return self._a.val()
 
-    def b(self):
-        return self._b.val()
+    def b(self, val=None):
+        return self._reg8(self._b, val)
+
+    def _reg8(self, r, val):
+        if val is not None:
+            r.ld(val)
+        return r.val()
 
     def c(self):
         return self._c.val()
 
     def bc(self, val=None):
+        return self._reg16(self._b, self._c, val)
+
+    def _reg16(self, msr, lsr, val):
         if val is not None:
-            self._b.ld(val >> 8)
-            self._c.ld(val & 0xff)
-        return (self._b.val() << 8) | self._c.val()
+            msr.ld(val >> 8)
+            lsr.ld(val & 0xff)
+        return (msr.val() << 8) | lsr.val()
 
     def d(self):
         return self._d.val()
@@ -650,18 +658,10 @@ class Z80:
         self._mem.set8((msr.val() << 8) + lsr.val(), self._a.val())
 
     def _incrr(self, msr, lsr):
-        """Increments the contents of `msr` and `lsr`."""
+        """Increments the contents of the combined `msr` and `lsr` register."""
         lsr.ld((lsr.val() + 1) & 0xff)
-        self.f.z.reset()
-        self.f.n.reset()
-        self.f.h.reset()
-        self.f.c.reset()
         if lsr.val() == 0:
-            self.f.h.set()
             msr.ld((msr.val() + 1) & 0xff)
-            if msr.val() == 0:
-                self.f.c.set()
-                self.f.z.set()
 
     def incB(self):
         """Increments the contents of B."""

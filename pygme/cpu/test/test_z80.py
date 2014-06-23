@@ -33,100 +33,128 @@ class TestZ80(unittest.TestCase):
         # Arrange
         cpu = Z80(MockMem([0x00]), MockGPU())
         a = cpu.a()
+        f = self._get_flags(cpu)
         # Act
         cpu.step()
         # Assert
         self.assertEquals(cpu.a(), a)
+        self.assertFlagsEqual(cpu, f)
 
-    def test_WithDefaultCPU_LDBC0x00A5_Loads0xA5IntoB(self):
-        # Arrange
-        b = 0xA5
-        cpu = Z80(MockMem([0x01, 0x00, b]), MockGPU())
-        # Act
-        cpu.step()
-        # Assert
-        self.assertEquals(cpu.b(), b)
+    def _get_flags(self, cpu):
+        return (cpu.zero(), cpu.neg(), cpu.half_carry(), cpu.carry())
 
-    def test_WithDefaultCPU_LDBC0xA500_Loads0xA5IntoC(self):
-        # Arrange
-        c = 0xA5
-        cpu = Z80(MockMem([0x01, c, 0x00]), MockGPU())
-        # Act
-        cpu.step()
-        # Assert
-        self.assertEquals(cpu.c(), c)
-
-    def test_WithDefaultCPU_LDBC0xA5A5_DoesntAffectFlags(self):
-        self._test_Instr_DoesntAffectFlags([0x01, 0xA5, 0xA5])
-
-    def _test_Instr_DoesntAffectFlags(self, mem):
-        # Arrange
-        cpu = Z80(MockMem(mem), MockGPU())
-        z = cpu.zero()
-        n = cpu.neg()
-        h = cpu.half_carry()
-        c = cpu.carry()
-        # Act
-        cpu.step()
-        # Assert
+    def assertFlagsEqual(self, cpu, f=None, z=0, n=0, h=0, c=0):
+        if f:
+            z, n, h, c = f
         self.assertEquals(cpu.zero(), z)
         self.assertEquals(cpu.neg(), n)
         self.assertEquals(cpu.half_carry(), h)
         self.assertEquals(cpu.carry(), c)
 
+    def test_WithDefaultCPU_LDBC0x00A5_Loads0xA5IntoB(self):
+        # Arrange
+        b = 0xA5
+        cpu = Z80(MockMem([0x01, 0x00, b]), MockGPU())
+        f = self._get_flags(cpu)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.b(), b)
+        self.assertFlagsEqual(cpu, f)
+
+    def test_WithDefaultCPU_LDBC0xA500_Loads0xA5IntoC(self):
+        # Arrange
+        c = 0xA5
+        cpu = Z80(MockMem([0x01, c, 0x00]), MockGPU())
+        f = self._get_flags(cpu)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.c(), c)
+        self.assertFlagsEqual(cpu, f)
+
     def test_WithDefaultCPU_LDMemBCA_LoadsAIntoMemBC(self):
         # Arrange
         mem = MockMem([0x02])
         cpu = Z80(mem, MockGPU())
+        f = self._get_flags(cpu)
         # Act
         cpu.step()
         # Assert
         self.assertEquals((cpu.bc(), cpu.a()), mem.last_write)
-
-    def test_WithDefaultCPU_LDMemBCA_DoesntAffectFlags(self):
-        self._test_Instr_DoesntAffectFlags([0x02])
+        self.assertFlagsEqual(cpu, f)
 
     def test_With0x0000InBC_AfterIncBC_0x0001InBC(self):
         # Arrange
         mem = MockMem([0x03])
         cpu = Z80(mem, MockGPU())
         cpu.bc(0x0000)
+        f = self._get_flags(cpu)
         # Act
         cpu.step()
         # Assert
         self.assertEquals(cpu.bc(), 0x0001)
-        self.assertEquals(cpu.zero(), 0)
-        self.assertEquals(cpu.neg(), 0)
-        self.assertEquals(cpu.half_carry(), 0)
-        self.assertEquals(cpu.carry(), 0)
+        self.assertFlagsEqual(cpu, f)
 
     def test_With0x00ffInBC_AfterIncBC_0x0100InBC(self):
         # Arrange
         mem = MockMem([0x03])
         cpu = Z80(mem, MockGPU())
         cpu.bc(0x00ff)
+        f = self._get_flags(cpu)
         # Act
         cpu.step()
         # Assert
         self.assertEquals(cpu.bc(), 0x0100)
-        self.assertEquals(cpu.zero(), 0)
-        self.assertEquals(cpu.neg(), 0)
-        self.assertEquals(cpu.half_carry(), 1)
-        self.assertEquals(cpu.carry(), 0)
+        self.assertFlagsEqual(cpu, f)
 
     def test_With0xffffInBC_AfterIncBC_0x0000InBC(self):
         # Arrange
         mem = MockMem([0x03])
         cpu = Z80(mem, MockGPU())
         cpu.bc(0xffff)
+        f = self._get_flags(cpu)
         # Act
         cpu.step()
         # Assert
         self.assertEquals(cpu.bc(), 0x0000)
-        self.assertEquals(cpu.zero(), 1)
-        self.assertEquals(cpu.neg(), 0)
-        self.assertEquals(cpu.half_carry(), 1)
-        self.assertEquals(cpu.carry(), 1)
+        self.assertFlagsEqual(cpu, f)
+
+    def test_With0x00InB_AfterIncB(self):
+        # Arrange
+        mem = MockMem([0x04])
+        cpu = Z80(mem, MockGPU())
+        cpu.b(0x00)
+        carry = cpu.carry()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.b(), 0x01)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=carry)
+
+    def test_With0x0FInB_AfterIncB(self):
+        # Arrange
+        mem = MockMem([0x04])
+        cpu = Z80(mem, MockGPU())
+        cpu.b(0x0F)
+        carry = cpu.carry()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.b(), 0x10)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=1, c=carry)
+
+    def test_With0xFFInB_AfterIncB(self):
+        # Arrange
+        mem = MockMem([0x04])
+        cpu = Z80(mem, MockGPU())
+        cpu.b(0xFF)
+        carry = cpu.carry()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.b(), 0x00)
+        self.assertFlagsEqual(cpu, z=1, n=0, h=1, c=carry)
 
 
 if __name__ == '__main__':
