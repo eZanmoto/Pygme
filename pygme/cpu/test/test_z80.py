@@ -274,6 +274,17 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.c(), 0x00)
         self.assertFlagsEqual(cpu, z=1, n=0, h=1, c=c)
 
+    def test_IfCIs0x01_AfterDECC_CIs0x00(self):
+        # Arrange
+        cpu = Z80(MockMem([0x0D]), MockGPU())
+        cpu.c(0x01)
+        c = cpu.carry()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.c(), 0x00)
+        self.assertFlagsEqual(cpu, z=1, n=1, h=0, c=c)
+
 
 if __name__ == '__main__':
     unittest.main()
