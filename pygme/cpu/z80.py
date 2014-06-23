@@ -4,6 +4,7 @@
 
 from functools import partial
 
+from pygme import bits
 from pygme.cpu import reg8, reg16, reg_flag
 
 
@@ -57,7 +58,7 @@ class Z80:
         self._h = reg8.Reg8("H", 0x01)
         self._l = reg8.Reg8("L", 0x4d)
         self.pc = reg16.Reg16("PC", 0x0100)
-        self.sp = reg16.Reg16("SP", 0xfffe)
+        self._sp = reg16.Reg16("SP", 0xfffe)
         self.f = Flags()
         self.f.z.set()
         self.f.n.reset()
@@ -580,13 +581,13 @@ class Z80:
             (self.set7A, 8),
         ])
 
-    def a(self):
-        return self._a.val()
+    def a(self, val=None):
+        return self._reg(self._a, val)
 
     def b(self, val=None):
-        return self._reg8(self._b, val)
+        return self._reg(self._b, val)
 
-    def _reg8(self, r, val):
+    def _reg(self, r, val):
         if val is not None:
             r.ld(val)
         return r.val()
@@ -595,9 +596,9 @@ class Z80:
         return self._c.val()
 
     def bc(self, val=None):
-        return self._reg16(self._b, self._c, val)
+        return self._double_reg(self._b, self._c, val)
 
-    def _reg16(self, msr, lsr, val):
+    def _double_reg(self, msr, lsr, val):
         if val is not None:
             msr.ld(val >> 8)
             lsr.ld(val & 0xff)
@@ -626,6 +627,9 @@ class Z80:
 
     def carry(self):
         return self.f.c.val()
+
+    def sp(self, val=None):
+        return self._reg(self._sp, val)
 
     def step(self):
         opc = self._fetch()
@@ -683,8 +687,11 @@ class Z80:
         """A is rotated left 1-bit position - bit 7 goes into C and bit 0."""
         self._rotA(self.LEFT, self.WITH_CARRY)
 
-    def ldMemnnSP(self, n, m):
-        raise NotImplementedError("'LD (nn), SP' has not been implemented")
+    def ldMemnnSP(self, lsb, msb):
+        addr = bits.join(8, msb, lsb)
+        sp = self.sp()
+        self._mem.set8(addr, sp & 0xFF)
+        self._mem.set8(addr + 1, sp >> 8)
 
     def addHLBC(self):
         """Adds BC to HL and stores the result in HL."""
@@ -852,7 +859,7 @@ class Z80:
 
     def ldSPnn(self, lsb, msb):
         """Loads a byte into S and a byte into P."""
-        self.sp.ld((msb << 8) + lsb)
+        self._sp.ld((msb << 8) + lsb)
 
     def lddMemHLA(self):
         """Loads A into the memory address in HL and decrements HL."""
@@ -861,7 +868,7 @@ class Z80:
 
     def incSP(self):
         """Increments the contents of SP."""
-        self.sp.ld((self.sp.val() + 1) & 0xffff)
+        self._sp.ld((self._sp.val() + 1) & 0xffff)
 
     def incMemHL(self):
         """Increments the contents of the memory address specified by HL."""
@@ -898,11 +905,11 @@ class Z80:
     def addHLSP(self):
         """Adds SP to HL and stores the result in HL."""
         hl = (self._h.val() << 8) + self._l.val()
-        result = hl + self.sp.val()
+        result = hl + self._sp.val()
         self._h.ld((result >> 8) & 0xff)
         self._l.ld(result & 0xff)
         self.f.n.reset()
-        self.f.h.setTo((hl & 0xfff) + (self.sp.val() & 0xfff) > 0xfff)
+        self.f.h.setTo((hl & 0xfff) + (self._sp.val() & 0xfff) > 0xfff)
         self.f.c.setTo(result > 0xffff)
 
     def lddAMemHL(self):
@@ -912,7 +919,7 @@ class Z80:
 
     def decSP(self):
         """Decrements the contents of SP."""
-        self.sp.ld((self.sp.val() - 1) & 0xffff)
+        self._sp.ld((self._sp.val() - 1) & 0xffff)
 
     def incA(self):
         """Increments the contents of A."""
@@ -2707,7 +2714,7 @@ class Z80:
     def addSPn(self, n):
         """Adds signed byte to SP and stores the result in SP."""
         self._assertByte(n)
-        self.sp.ld(self.sp.val() + self._to2sComp(n))
+        self._sp.ld(self._sp.val() + self._to2sComp(n))
 
     def jpMemHL(self):
         """Loads the value of HL into PC."""
@@ -2761,7 +2768,7 @@ class Z80:
 
     def ldhlSPn(self, n):
         self._assertByte(n)
-        sp = self.sp.val()
+        sp = self._sp.val()
         self.f.z.reset()
         self.f.n.reset()
         if n > 127:
@@ -2770,10 +2777,10 @@ class Z80:
         else:
             self.f.h.setTo((sp & 0xf) + (n & 0xf) > 0xf)
             self.f.c.setTo((sp & 0xff) + n > 0xff)
-        self.sp.ld((sp + self._to2sComp(n)) & 0xffff)
+        self._sp.ld((sp + self._to2sComp(n)) & 0xffff)
 
     def ldSPHL(self):
-        self.sp.ld(self._hl())
+        self._sp.ld(self._hl())
 
     def ldAMemnn(self, lsb, msb):
         self._a.ld(self._mem.get8((msb << 8) + lsb))
@@ -3025,8 +3032,8 @@ class Z80:
         return (msb << 8) + lsb
 
     def _pop8(self):
-        addr = self.sp.val()
-        self.sp.ld(addr + 1)
+        addr = self._sp.val()
+        self._sp.ld(addr + 1)
         return self._mem.get8(addr)
 
     def _pushRR(self, hiOrdReg, loOrdReg):
@@ -3037,9 +3044,9 @@ class Z80:
         self._push8(val & 0xff)
 
     def _push8(self, val):
-        sp = self.sp.val() - 1
+        sp = self._sp.val() - 1
         self._mem.set8(sp, val)
-        self.sp.ld(sp)
+        self._sp.ld(sp)
 
     def _jrcn(self, cond, n):
         self._assertByte(n)
