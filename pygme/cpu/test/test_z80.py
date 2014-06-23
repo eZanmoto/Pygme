@@ -156,6 +156,42 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.b(), 0x00)
         self.assertFlagsEqual(cpu, z=1, n=0, h=1, c=carry)
 
+    def test_With0x00InB_AfterDecB(self):
+        # Arrange
+        mem = MockMem([0x05])
+        cpu = Z80(mem, MockGPU())
+        cpu.b(0x00)
+        carry = cpu.carry()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.b(), 0xFF)
+        self.assertFlagsEqual(cpu, z=0, n=1, h=1, c=carry)
+
+    def test_With0x01InB_AfterDecB(self):
+        # Arrange
+        mem = MockMem([0x05])
+        cpu = Z80(mem, MockGPU())
+        cpu.b(0x01)
+        carry = cpu.carry()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.b(), 0x00)
+        self.assertFlagsEqual(cpu, z=1, n=1, h=0, c=carry)
+
+    def test_With0x10InB_AfterDecB(self):
+        # Arrange
+        mem = MockMem([0x05])
+        cpu = Z80(mem, MockGPU())
+        cpu.b(0x10)
+        carry = cpu.carry()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.b(), 0x0F)
+        self.assertFlagsEqual(cpu, z=0, n=1, h=1, c=carry)
+
 
 if __name__ == '__main__':
     unittest.main()
