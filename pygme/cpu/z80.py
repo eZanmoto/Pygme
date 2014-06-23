@@ -69,7 +69,7 @@ class Z80:
             (partial(self._ldmemrra, self._b, self._c), 8, 0),
             (partial(self._incrr, self._b, self._c), 8, 0),
             (partial(self._incr, self._b), 4, 0),
-            (self.decB, 4, 0),
+            (partial(self._decr, self._b), 4, 0),
             (self.ldBn, 8, 1),
             (self.rlca, 4, 0),
             (self.ldMemnnSP, 20, 2),
@@ -669,9 +669,11 @@ class Z80:
         self._arithRn(r, 1, self.POSITIVE, self.WITHOUT_CARRY)
         self.f.c.setTo(c)
 
-    def decB(self):
-        """Decrements the contents of B."""
-        self._decR(self._b)
+    def _decr(self, r):
+        """Decrements the contents of `r`."""
+        c = self.f.c.val()
+        self._arithRn(r, 1, self.NEGATIVE, self.WITHOUT_CARRY)
+        self.f.c.setTo(c)
 
     def ldBn(self, b):
         """Loads a byte into B."""
