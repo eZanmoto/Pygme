@@ -418,6 +418,18 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.pc(), 0x0082)
         self.assertFlagsEqual(cpu, f)
 
+    def test_WhenHLIs0x8A23AndDEIs0x0605_AfterADDHLDE_HLContains0x9028(self):
+        # Arrange
+        cpu = Z80(MockMem([0x19]), MockGPU())
+        cpu.hl(0x8A23)
+        cpu.de(0x0605)
+        z = cpu.zero()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.hl(), 0x9028)
+        self.assertFlagsEqual(cpu, z=z, n=0, h=1, c=0)
+
 
 if __name__ == '__main__':
     unittest.main()
