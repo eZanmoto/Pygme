@@ -37,6 +37,9 @@ class Z80:
     WITH_CARRY = True
     WITHOUT_CARRY = not WITH_CARRY
 
+    THRU_CARRY = True
+    IGNR_CARRY = not THRU_CARRY
+
     AND = 0
     OR = 1
     XOR = 2
@@ -96,7 +99,7 @@ class Z80:
             (self.incE, 4, 0),
             (self.decE, 4, 0),
             (self.ldEn, 8, 1),
-            (self.rra, 4, 0),
+            (partial(self._rotr, self._a, self.RIGHT, self.THRU_CARRY), 4, 0),
             (self.jrNZn, 8, 1),
             (self.ldHLnn, 12, 2),
             (self.ldiMemHLA, 8, 0),
@@ -792,10 +795,18 @@ class Z80:
         """Loads a byte into E."""
         self._ldRn(self._e, e)
 
-    def rra(self):
-        """A is rotated right 1-bit position - bit 0 goes into C and C goes
-        into bit 7."""
-        self._rotA(self.RIGHT, self.WITHOUT_CARRY)
+    def _rotr(self, r, rot_left, through_carry):
+        """Rotate `r`."""
+        val = r.val()
+        new_carry = bits.get(val, 7 if rot_left else 0)
+        rot_bit = self.carry() if through_carry else new_carry
+        if not rot_left:
+             rot_bit <<= 7
+        r.ld(((val << 1 if rot_left else val >> 1) & 0xff) | rot_bit)
+        self.f.n.reset()
+        self.f.h.reset()
+        self.f.c.setTo(new_carry != 0)
+        self.f.z.reset()
 
     def jrNZn(self, n):
         """Decrements/increments PC by the signed byte n if Z is reset."""
