@@ -616,11 +616,11 @@ class Z80:
     def de(self, val=None):
         return self._double_reg(self._d, self._e, val)
 
-    def h(self):
-        return self._h.val()
+    def h(self, val=None):
+        return self._reg(self._h, val)
 
-    def l(self):
-        return self._l.val()
+    def l(self, val=None):
+        return self._reg(self._l, val)
 
     def hl(self, val=None):
         return self._double_reg(self._h, self._l, val)

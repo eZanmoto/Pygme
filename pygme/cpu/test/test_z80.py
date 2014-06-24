@@ -558,6 +558,17 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.hl(), 0x2360)
         self.assertFlagsEqual(cpu, f)
 
+    def test_IfHIs0xFF_AfterINCH_HIs0x00(self):
+        # Arrange
+        cpu = Z80(MockMem([0x24]), MockGPU())
+        cpu.h(0xFF)
+        c = cpu.carry()
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.h(), 0x00)
+        self.assertFlagsEqual(cpu, z=1, n=0, h=1, c=c)
+
 
 if __name__ == '__main__':
     unittest.main()
