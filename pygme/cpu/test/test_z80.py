@@ -430,6 +430,19 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.hl(), 0x9028)
         self.assertFlagsEqual(cpu, z=z, n=0, h=1, c=0)
 
+    def test_IfMemDEIs0x2F_AfterLDAMemDE_AContains0x2F(self):
+        # Arrange
+        mem = MockMem([0x1A])
+        cpu = Z80(mem, MockGPU())
+        cpu.de(0x1C00)
+        mem.set8(cpu.de(), 0x2F)
+        f = self._flags(cpu)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x2F)
+        self.assertFlagsEqual(cpu, f)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -57,7 +57,7 @@ class Z80:
         self._e = reg8.Reg8("E", 0xd8)
         self._h = reg8.Reg8("H", 0x01)
         self._l = reg8.Reg8("L", 0x4d)
-        self.pc = reg16.Reg16("PC", 0x0100)
+        self._pc = reg16.Reg16("PC", 0x0100)
         self._sp = reg16.Reg16("SP", 0xfffe)
         self.f = Flags()
         self.f.z.set()
@@ -622,6 +622,12 @@ class Z80:
     def hl(self, val=None):
         return self._double_reg(self._h, self._l, val)
 
+    def pc(self, val=None):
+        return self._reg(self._pc, val)
+
+    def sp(self, val=None):
+        return self._reg(self._sp, val)
+
     def zero(self):
         return self.f.z.val()
 
@@ -635,9 +641,6 @@ class Z80:
         if val is not None:
             self.f.c.setTo(val != 0)
         return self.f.c.val()
-
-    def sp(self, val=None):
-        return self._reg(self._sp, val)
 
     def step(self):
         opc = self._fetch()
@@ -653,8 +656,8 @@ class Z80:
         return cycles
 
     def _fetch(self):
-        val = self._mem.get8(self.pc.val())
-        self.pc.ld(self.pc.val() + 1)
+        val = self._mem.get8(self._pc.val())
+        self._pc.ld(self._pc.val() + 1)
         return val
 
     def _nop(self):
@@ -1461,7 +1464,7 @@ class Z80:
     def retNZ(self):
         """Pops the top two bytes of the stack into the PC if Z is not set."""
         if not self.f.z.val():
-            self.pc.ld(self._pop16())
+            self._pc.ld(self._pop16())
 
     def popBC(self):
         """Pops the top two bytes of the stack into BC."""
@@ -1494,11 +1497,11 @@ class Z80:
     def retZ(self):
         """Pops the top two bytes of the stack into the PC if Z is set."""
         if self.f.z.val():
-            self.pc.ld(self._pop16())
+            self._pc.ld(self._pop16())
 
     def ret(self):
         """Pops the top two bytes of the stack into the PC."""
-        self.pc.ld(self._pop16())
+        self._pc.ld(self._pop16())
 
     def jpZnn(self, loOrdByte, hiOrdByte):
         """Loads little-endian word into PC if Z is set."""
@@ -2642,7 +2645,7 @@ class Z80:
     def retNC(self):
         """Pops the top two bytes of the stack into the PC if C is not set."""
         if not self.f.c.val():
-            self.pc.ld(self._pop16())
+            self._pc.ld(self._pop16())
 
     def popDE(self):
         """Pops the top two bytes of the stack into DE."""
@@ -2671,7 +2674,7 @@ class Z80:
     def retC(self):
         """Pops the top two bytes of the stack into the PC if C is set."""
         if self.f.c.val():
-            self.pc.ld(self._pop16())
+            self._pc.ld(self._pop16())
 
     def reti(self):
         """Pops two bytes off the stack into the PC and enables interrupts."""
@@ -2812,12 +2815,12 @@ class Z80:
         return lambda: raiseEx(opc)
 
     def _rstn(self, n):
-        self._push16(self.pc.val())
+        self._push16(self._pc.val())
         self.jpnn(n, 0)
 
     def _callcnn(self, cond, lsb, msb):
         if cond:
-            self._push16(self.pc.val())
+            self._push16(self._pc.val())
             self.jpnn(lsb, msb)
 
     def _resBR(self, bitNum, reg):
@@ -3059,8 +3062,8 @@ class Z80:
     def _jrcn(self, cond, n):
         self._assertByte(n)
         if cond:
-            pc = self.pc.val() + self._to2sComp(n)
-            self.pc.ld(pc & 0xffff)
+            pc = self._pc.val() + self._to2sComp(n)
+            self._pc.ld(pc & 0xffff)
 
     def _to2sComp(self, n):
         self._assertByte(n)
@@ -3071,7 +3074,7 @@ class Z80:
     def _jpcnn(self, cond, loOrdByte, hiOrdByte):
         self._assertByte(loOrdByte)
         if cond:
-            self.pc.ld((hiOrdByte << 8) + loOrdByte)
+            self._pc.ld((hiOrdByte << 8) + loOrdByte)
 
     def _assertByte(self, n):
         if n < 0 or n > 0xff:
