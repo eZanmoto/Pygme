@@ -375,6 +375,16 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.d(), 0x24)
         self.assertFlagsEqual(cpu, f)
 
+    def test_IfAIs0x95_AfterRLA_AIs0x2B(self):
+        # Arrange
+        cpu = Z80(MockMem([0x17]), MockGPU())
+        cpu.a(0x95)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x2B)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=1)
+
 
 if __name__ == '__main__':
     unittest.main()
