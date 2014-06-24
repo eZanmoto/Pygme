@@ -522,6 +522,17 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.pc(), 0x0102)
         self.assertFlagsEqual(cpu, f)
 
+    def test_IfHLIs0x0000_AfterLDHL0x3A5B_HLIs0x3A5B(self):
+        # Arrange
+        cpu = Z80(MockMem([0x21, 0x5B, 0x3A]), MockGPU())
+        cpu.hl(0x0000)
+        f = self._flags(cpu)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.hl(), 0x3A5B)
+        self.assertFlagsEqual(cpu, f)
+
 
 if __name__ == '__main__':
     unittest.main()
