@@ -631,19 +631,22 @@ class Z80:
     def sp(self, val=None):
         return self._reg(self._sp, val)
 
-    def zero(self):
-        return self.f.z.val()
+    def zero(self, val=None):
+        return self._flag(self.f.z, val)
 
-    def neg(self):
-        return self.f.n.val()
+    def _flag(self, flag, val):
+        if val is not None:
+            flag.setTo(val != 0)
+        return flag.val()
 
-    def half_carry(self):
-        return self.f.h.val()
+    def neg(self, val=None):
+        return self._flag(self.f.n, val)
+
+    def half_carry(self, val=None):
+        return self._flag(self.f.h, val)
 
     def carry(self, val=None):
-        if val is not None:
-            self.f.c.setTo(val != 0)
-        return self.f.c.val()
+        return self._flag(self.f.c, val)
 
     def step(self):
         opc = self._fetch()
