@@ -591,18 +591,187 @@ class TestZ80(unittest.TestCase):
         self.assertEquals(cpu.h(), 0x24)
         self.assertFlagsEqual(cpu, f)
 
+    def testIfAIs0x00AndCarryIs0AndHalfCarryIs0_AfterDAA_AIs0x00(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0x00)
+        cpu.carry(0)
+        cpu.half_carry(0)
+        cpu.neg(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x00)
+        self.assertFlagsEqual(cpu, z=1, n=0, h=0, c=0)
+
     def testIfAIs0x99AndCarryIs0AndHalfCarryIs0_AfterDAA_AIs0x99(self):
         # Arrange
         cpu = Z80(MockMem([0x27]), MockGPU())
         cpu.a(0x99)
         cpu.carry(0)
         cpu.half_carry(0)
-        n = cpu.neg()
+        cpu.neg(0)
         # Act
         cpu.step()
         # Assert
         self.assertEquals(cpu.a(), 0x99)
-        self.assertFlagsEqual(cpu, z=0, n=n, h=0, c=0)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=0)
+
+    def testIfAIs0x8FAndCarryIs0AndHalfCarryIs0_AfterDAA_AIs0x95(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0x8F)
+        cpu.carry(0)
+        cpu.half_carry(0)
+        cpu.neg(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x95)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=0)
+
+    def testIfAIs0x93AndCarryIs0AndHalfCarryIs1_AfterDAA_AIs0x99(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0x93)
+        cpu.carry(0)
+        cpu.half_carry(1)
+        cpu.neg(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x99)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=0)
+
+    def testIfAIs0xF9AndCarryIs0AndHalfCarryIs0_AfterDAA_AIs0x59(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0xF9)
+        cpu.carry(0)
+        cpu.half_carry(0)
+        cpu.neg(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x59)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=1)
+
+    def testIfAIs0xFFAndCarryIs0AndHalfCarryIs0_AfterDAA_AIs0x55(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0xFF)
+        cpu.carry(0)
+        cpu.half_carry(0)
+        cpu.neg(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x65)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=1)
+
+    def testIfAIs0xF3AndCarryIs0AndHalfCarryIs1_AfterDAA_AIs0x59(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0xF3)
+        cpu.carry(0)
+        cpu.half_carry(1)
+        cpu.neg(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x59)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=1)
+
+    def testIfAIs0x29AndCarryIs1AndHalfCarryIs0_AfterDAA_AIs0x89(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0x29)
+        cpu.carry(1)
+        cpu.half_carry(0)
+        cpu.neg(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x89)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=1)
+
+    def testIfAIs0x2FAndCarryIs1AndHalfCarryIs0_AfterDAA_AIs0x95(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0x2F)
+        cpu.carry(1)
+        cpu.half_carry(0)
+        cpu.neg(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x95)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=1)
+
+    def testIfAIs0x33AndCarryIs1AndHalfCarryIs1_AfterDAA_AIs0x99(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0x33)
+        cpu.carry(1)
+        cpu.half_carry(1)
+        cpu.neg(0)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x99)
+        self.assertFlagsEqual(cpu, z=0, n=0, h=0, c=1)
+
+    def testIfAIs0x00AndCarryIs0AndHalfCarryIs0AndNegIs1_AfterDAA_AIs0x00(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0x00)
+        cpu.carry(0)
+        cpu.half_carry(0)
+        cpu.neg(1)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x00)
+        self.assertFlagsEqual(cpu, z=1, n=1, h=0, c=0)
+
+    def testIfAIs0x8FAndCarryIs0AndHalfCarryIs1AndNegIs1_AfterDAA_AIs0x00(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0x8F)
+        cpu.carry(0)
+        cpu.half_carry(1)
+        cpu.neg(1)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x89)
+        self.assertFlagsEqual(cpu, z=0, n=1, h=0, c=0)
+
+    def testIfAIs0xF9AndCarryIs1AndHalfCarryIs0AndNegIs1_AfterDAA_AIs0x99(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0xF9)
+        cpu.carry(1)
+        cpu.half_carry(0)
+        cpu.neg(1)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x99)
+        self.assertFlagsEqual(cpu, z=0, n=1, h=0, c=1)
+
+    def testIfAIs0xFFAndCarryIs1AndHalfCarryIs1AndNegIs1_AfterDAA_AIs0x99(self):
+        # Arrange
+        cpu = Z80(MockMem([0x27]), MockGPU())
+        cpu.a(0xFF)
+        cpu.carry(1)
+        cpu.half_carry(1)
+        cpu.neg(1)
+        # Act
+        cpu.step()
+        # Assert
+        self.assertEquals(cpu.a(), 0x99)
+        self.assertFlagsEqual(cpu, z=0, n=1, h=0, c=1)
 
 
 if __name__ == '__main__':
