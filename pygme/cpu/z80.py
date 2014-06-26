@@ -48,6 +48,22 @@ class Z80:
     INDEX_INSTR_TIME = 1
     INDEX_INSTR_ARGC = 2
 
+    DAA_SPEC = [
+        (0, 0, 0, 0x0, 0x9, 0x0, 0x9, 0, 0x00),
+        (0, 0, 0, 0x0, 0x8, 0xA, 0xF, 0, 0x06),
+        (0, 0, 1, 0x0, 0x9, 0x0, 0x3, 0, 0x06),
+        (0, 0, 0, 0xA, 0xF, 0x0, 0x9, 1, 0x60),
+        (0, 0, 0, 0x9, 0xF, 0xA, 0xF, 1, 0x66),
+        (0, 0, 1, 0xA, 0xF, 0x0, 0x3, 1, 0x66),
+        (0, 1, 0, 0x0, 0x2, 0x0, 0x9, 1, 0x60),
+        (0, 1, 0, 0x0, 0x2, 0xA, 0xF, 1, 0x66),
+        (0, 1, 1, 0x0, 0x3, 0x0, 0x3, 1, 0x66),
+        (1, 0, 0, 0x0, 0x9, 0x0, 0x9, 0, 0x00),
+        (1, 0, 1, 0x0, 0x8, 0x6, 0xF, 0, 0xFA),
+        (1, 1, 0, 0x7, 0xF, 0x0, 0x9, 1, 0xA0),
+        (1, 1, 1, 0x6, 0xF, 0x6, 0xF, 1, 0x9A),
+    ]
+
     def __init__(self, mem, gpu):
         self._mem = mem
         self._gpu = gpu
@@ -107,7 +123,7 @@ class Z80:
             (self.incH, 4, 0),
             (self.decH, 4, 0),
             (self.ldHn, 8, 1),
-            (self.daa, 4, 0),
+            (self._daa, 4, 0),
             (self.jrZn, 8, 1),
             (self.addHLHL, 8, 0),
             (self.ldiAMemHL, 8, 0),
@@ -840,8 +856,22 @@ class Z80:
         """Loads a byte into H."""
         self._ldRn(self._h, h)
 
-    def daa(self):
-        raise NotImplementedError("'DAA' has not been implemented")
+    def _daa(self):
+        """Set A to a binary coded decimal number."""
+        a = self.a()
+        msb = bits.get(a, 7, 4)
+        lsb = bits.get(a, 3, 4)
+        for (n, c, h, msb_l, msb_h, lsb_l, lsb_h, inc, c_) in self.DAA_SPEC:
+            if (n == self.neg() and c == self.carry() and
+                    h == self.half_carry() and
+                    msb_l <= msb <= msb_h and lsb_l <= lsb <= lsb_h):
+                a_ = a + inc
+                self.a(a_)
+                self.carry(c_)
+                self.half_carry(0)
+                self.zero(a_ == 0)
+                return
+        raise RuntimeError("Couldn't adjust A")
 
     def jrZn(self, n):
         """Decrements/increments PC by the signed byte n if Z is set."""
